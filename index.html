@@ -28,6 +28,7 @@
     }
     canvas {
       margin: 1em 0;
+      max-width: 100%;
     }
     .clickable {
       cursor: pointer;
@@ -76,9 +77,9 @@
     <h3>Top 3 Vendors</h3>
     <ul id="topVendors"></ul>
 
-    <canvas id="balanceChart"></canvas>
-    <canvas id="categoryChart"></canvas>
-    <canvas id="vendorBarChart" style="display:none"></canvas>
+    <canvas id="balanceChart" height="200"></canvas>
+    <canvas id="categoryChart" height="200"></canvas>
+    <canvas id="vendorBarChart" style="display:none;" height="200"></canvas>
 
     <button onclick="downloadCSV()">Download CSV</button>
   </div>
@@ -134,12 +135,8 @@
         byVendor[e.vendor] = (byVendor[e.vendor] || 0) + e.amount;
       });
 
-      const topCat = Object.entries(byCategory)
-        .sort((a,b) => b[1]-a[1])
-        .slice(0,3);
-      const topVen = Object.entries(byVendor)
-        .sort((a,b) => b[1]-a[1])
-        .slice(0,3);
+      const topCat = Object.entries(byCategory).sort((a,b) => b[1]-a[1]).slice(0,3);
+      const topVen = Object.entries(byVendor).sort((a,b) => b[1]-a[1]).slice(0,3);
 
       document.getElementById('topCategories').innerHTML = topCat.map(([cat, amt]) =>
         `<li class="clickable" onclick="showVendorBar('${cat}')">${cat}: ₹${amt.toFixed(2)} (${((amt/budget)*100).toFixed(1)}%)</li>`
@@ -152,8 +149,11 @@
       drawCategoryChart(byCategory);
     }
 
+    let balanceChart, categoryChart, vendorChart;
+
     function drawPieChart(balance, total) {
-      new Chart(document.getElementById('balanceChart'), {
+      if (balanceChart) balanceChart.destroy();
+      balanceChart = new Chart(document.getElementById('balanceChart'), {
         type: 'pie',
         data: {
           labels: ['Remaining', 'Spent'],
@@ -161,13 +161,13 @@
             data: [balance, total],
             backgroundColor: ['#4caf50', '#f44336']
           }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
+        }
       });
     }
 
     function drawCategoryChart(categoryData) {
-      new Chart(document.getElementById('categoryChart'), {
+      if (categoryChart) categoryChart.destroy();
+      categoryChart = new Chart(document.getElementById('categoryChart'), {
         type: 'pie',
         data: {
           labels: Object.keys(categoryData),
@@ -175,8 +175,7 @@
             data: Object.values(categoryData),
             backgroundColor: Object.keys(categoryData).map((_, i) => `hsl(${i * 40}, 70%, 60%)`)
           }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
+        }
       });
     }
 
@@ -187,7 +186,8 @@
       });
       const ctx = document.getElementById('vendorBarChart');
       ctx.style.display = 'block';
-      new Chart(ctx, {
+      if (vendorChart) vendorChart.destroy();
+      vendorChart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: Object.keys(vendors),
@@ -196,15 +196,14 @@
             data: Object.values(vendors),
             backgroundColor: '#2196f3'
           }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
+        }
       });
     }
 
     function downloadCSV() {
       const rows = [['Date/Time','Amount','Vendor','Category'],
         ...expenses.map(e => [e.datetime, e.amount, e.vendor, e.category])];
-      const csv = rows.map(r => r.join(',')).join('\n');
+      const csv = rows.map(r => r.join(',')).join('\\n');
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
