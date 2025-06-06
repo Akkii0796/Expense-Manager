@@ -384,6 +384,9 @@
         let categoryChart = null;
         let vendorChart = null;
         
+        // Performance optimization - debounce updates
+        let updateTimer = null;
+        
         // Initialize app
         function initApp() {
             // Load from localStorage
@@ -461,8 +464,19 @@
             document.getElementById('vendorName').value = '';
             document.getElementById('categorySelect').value = '';
             
-            updateDisplay();
+            // Debounced update for better performance
+            debouncedUpdate();
             checkBudgetAlerts();
+        }
+        
+        // Debounced update function to prevent excessive re-renders
+        function debouncedUpdate() {
+            if (updateTimer) {
+                clearTimeout(updateTimer);
+            }
+            updateTimer = setTimeout(() => {
+                updateDisplay();
+            }, 100);
         }
         
         function updateDisplay() {
@@ -486,57 +500,16 @@
             const totalExpenses = appData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
             const remainingBalance = Math.max(0, appData.budget - totalExpenses);
             
-            // Budget vs Expenses Chart
-            if (budgetChart) {
-                budgetChart.destroy();
-            }
-            
-            const budgetCtx = document.getElementById('budgetChart').getContext('2d');
-            budgetChart = new Chart(budgetCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Expenses', 'Remaining'],
-                    datasets: [{
-                        data: [totalExpenses, remainingBalance],
-                        backgroundColor: ['#ff6b6b', '#4ecdc4'],
-                        borderWidth: 2,
-                        borderColor: '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-            
-            // Category Chart
-            const categoryData = {};
-            appData.expenses.forEach(exp => {
-                categoryData[exp.category] = (categoryData[exp.category] || 0) + exp.amount;
-            });
-            
-            if (categoryChart) {
-                categoryChart.destroy();
-            }
-            
-            if (Object.keys(categoryData).length > 0) {
-                const categoryCtx = document.getElementById('categoryChart').getContext('2d');
-                categoryChart = new Chart(categoryCtx, {
+            // Only update budget chart if data changed
+            if (!budgetChart) {
+                const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+                budgetChart = new Chart(budgetCtx, {
                     type: 'pie',
                     data: {
-                        labels: Object.keys(categoryData),
+                        labels: ['Expenses', 'Remaining'],
                         datasets: [{
-                            data: Object.values(categoryData),
-                            backgroundColor: [
-                                '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7',
-                                '#dda0dd', '#98d8c8', '#f7dc6f', '#bb8fce', '#85c1e9',
-                                '#f8c471', '#82e0aa', '#f1948a'
-                            ],
+                            data: [totalExpenses, remainingBalance],
+                            backgroundColor: ['#ff6b6b', '#4ecdc4'],
                             borderWidth: 2,
                             borderColor: '#fff'
                         }]
@@ -544,20 +517,72 @@
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        animation: {
+                            duration: 400 // Reduced animation time
+                        },
                         plugins: {
                             legend: {
                                 position: 'bottom'
                             }
-                        },
-                        onClick: (event, elements) => {
-                            if (elements.length > 0) {
-                                const index = elements[0].index;
-                                const category = Object.keys(categoryData)[index];
-                                showCategoryDetails(category);
-                            }
                         }
                     }
                 });
+            } else {
+                // Update existing chart data instead of recreating
+                budgetChart.data.datasets[0].data = [totalExpenses, remainingBalance];
+                budgetChart.update('none'); // Skip animation for better performance
+            }
+            
+            // Category Chart with performance optimization
+            const categoryData = {};
+            appData.expenses.forEach(exp => {
+                categoryData[exp.category] = (categoryData[exp.category] || 0) + exp.amount;
+            });
+            
+            if (Object.keys(categoryData).length > 0) {
+                if (!categoryChart) {
+                    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+                    categoryChart = new Chart(categoryCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: Object.keys(categoryData),
+                            datasets: [{
+                                data: Object.values(categoryData),
+                                backgroundColor: [
+                                    '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7',
+                                    '#dda0dd', '#98d8c8', '#f7dc6f', '#bb8fce', '#85c1e9',
+                                    '#f8c471', '#82e0aa', '#f1948a'
+                                ],
+                                borderWidth: 2,
+                                borderColor: '#fff'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: {
+                                duration: 400 // Reduced animation time
+                            },
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            },
+                            onClick: (event, elements) => {
+                                if (elements.length > 0) {
+                                    const index = elements[0].index;
+                                    const category = Object.keys(categoryData)[index];
+                                    showCategoryDetails(category);
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    // Update existing chart data
+                    categoryChart.data.labels = Object.keys(categoryData);
+                    categoryChart.data.datasets[0].data = Object.values(categoryData);
+                    categoryChart.update('none');
+                }
             }
         }
         
@@ -573,7 +598,9 @@
             
             const totalExpenses = appData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
             const topCategoriesList = document.getElementById('topCategoriesList');
-            topCategoriesList.innerHTML = '';
+            
+            // Use document fragment for better performance
+            const fragment = document.createDocumentFragment();
             
             sortedCategories.forEach(([category, amount]) => {
                 const percentage = totalExpenses > 0 ? ((amount / totalExpenses) * 100).toFixed(1) : 0;
@@ -584,8 +611,11 @@
                     <span>${category}</span>
                     <span>₹${amount.toLocaleString()} (${percentage}%)</span>
                 `;
-                topCategoriesList.appendChild(item);
+                fragment.appendChild(item);
             });
+            
+            topCategoriesList.innerHTML = '';
+            topCategoriesList.appendChild(fragment);
         }
         
         function updateTopVendors() {
@@ -599,7 +629,9 @@
                 .slice(0, 3);
             
             const topVendorsList = document.getElementById('topVendorsList');
-            topVendorsList.innerHTML = '';
+            
+            // Use document fragment for better performance
+            const fragment = document.createDocumentFragment();
             
             sortedVendors.forEach(([vendor, amount]) => {
                 const item = document.createElement('div');
@@ -608,8 +640,11 @@
                     <span>${vendor}</span>
                     <span>₹${amount.toLocaleString()}</span>
                 `;
-                topVendorsList.appendChild(item);
+                fragment.appendChild(item);
             });
+            
+            topVendorsList.innerHTML = '';
+            topVendorsList.appendChild(fragment);
         }
         
         function showCategoryDetails(category) {
@@ -643,6 +678,9 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: {
+                        duration: 300 // Faster animation
+                    },
                     scales: {
                         y: {
                             beginAtZero: true,
