@@ -1,219 +1,738 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Personal Expense Manager</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 1em;
-      background: #f5f5f5;
-    }
-    .container {
-      max-width: 800px;
-      margin: auto;
-      background: #fff;
-      padding: 1em;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    input, select, button {
-      padding: 0.5em;
-      margin: 0.5em 0;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    canvas {
-      margin: 1em 0;
-      max-width: 100%;
-    }
-    .clickable {
-      cursor: pointer;
-      color: blue;
-    }
-    @media (max-width: 600px) {
-      canvas {
-        width: 100% !important;
-        height: auto !important;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Expense Manager</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .budget-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 4px solid #667eea;
+        }
+        
+        .stat-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .chart-container h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .top-categories, .top-vendors {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .top-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .top-item:hover {
+            background: #e9ecef;
+        }
+        
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .alert.warning {
+            background: #ff9800;
+        }
+        
+        .alert.danger {
+            background: #f44336;
+        }
+        
+        .alert.exhausted {
+            background: #d32f2f;
+            font-size: 1.2rem;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        
+        .close {
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .close:hover {
+            color: #000;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+        
+        .expense-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Personal Expense Manager</h2>
-    <div>
-      <input type="number" id="budget" placeholder="Enter initial budget (₹)" />
-      <input type="number" id="amount" placeholder="Expense amount (₹)" />
-      <input type="text" id="vendor" placeholder="Vendor name" />
-      <select id="category">
-        <option>Grocery</option>
-        <option>Bills</option>
-        <option>Online shopping</option>
-        <option>Travelling</option>
-        <option>Food & Entertainment</option>
-        <option>Medical expenses</option>
-        <option>Debt</option>
-        <option>Petrol</option>
-        <option>Home expenses (non-grocery)</option>
-        <option>Maintenance</option>
-        <option>EMI</option>
-        <option>Investment</option>
-        <option>Others</option>
-      </select>
-      <button onclick="addExpense()">Add Expense</button>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Personal Expense Manager</h1>
+            <p>Track your expenses and stay within budget</p>
+        </div>
+        
+        <div class="content">
+            <!-- Budget Setup Section -->
+            <div class="budget-section" id="budgetSection">
+                <h2>Set Your Budget</h2>
+                <div class="input-group">
+                    <label for="initialBudget">Initial Budget (₹)</label>
+                    <input type="number" id="initialBudget" placeholder="Enter your budget">
+                </div>
+                <button class="btn" onclick="setBudget()">Set Budget</button>
+            </div>
+            
+            <!-- Expense Entry Form -->
+            <div class="expense-form hidden" id="expenseForm">
+                <h2>Add Expense</h2>
+                <div class="input-group">
+                    <label for="expenseAmount">Amount (₹)</label>
+                    <input type="number" id="expenseAmount" placeholder="Enter amount">
+                </div>
+                <div class="input-group">
+                    <label for="vendorName">Vendor Name</label>
+                    <input type="text" id="vendorName" placeholder="Enter vendor name">
+                </div>
+                <div class="input-group">
+                    <label for="categorySelect">Category</label>
+                    <select id="categorySelect">
+                        <option value="">Select Category</option>
+                        <option value="Grocery">Grocery</option>
+                        <option value="Bills">Bills</option>
+                        <option value="Online shopping">Online shopping</option>
+                        <option value="Travelling">Travelling</option>
+                        <option value="Food & Entertainment">Food & Entertainment</option>
+                        <option value="Medical expenses">Medical expenses</option>
+                        <option value="Debt">Debt</option>
+                        <option value="Petrol">Petrol</option>
+                        <option value="Home expenses (non-grocery)">Home expenses (non-grocery)</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="EMI">EMI</option>
+                        <option value="Investment">Investment</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="addExpense()">Add Expense</button>
+                <button class="btn btn-secondary" onclick="downloadCSV()">Download CSV</button>
+            </div>
+            
+            <!-- Statistics Section -->
+            <div class="stats-grid hidden" id="statsSection">
+                <div class="stat-card">
+                    <h3>Total Budget</h3>
+                    <div class="stat-value" id="totalBudget">₹0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Expenses</h3>
+                    <div class="stat-value" id="totalExpenses">₹0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Remaining Balance</h3>
+                    <div class="stat-value" id="remainingBalance">₹0</div>
+                </div>
+            </div>
+            
+            <!-- Charts Section -->
+            <div class="charts-section hidden" id="chartsSection">
+                <div class="chart-container">
+                    <h3>Budget vs Expenses</h3>
+                    <canvas id="budgetChart" width="400" height="400"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Expenses by Category</h3>
+                    <canvas id="categoryChart" width="400" height="400"></canvas>
+                </div>
+            </div>
+            
+            <!-- Top Categories Section -->
+            <div class="top-categories hidden" id="topCategoriesSection">
+                <h3>Top 3 Categories</h3>
+                <div id="topCategoriesList"></div>
+            </div>
+            
+            <!-- Top Vendors Section -->
+            <div class="top-vendors hidden" id="topVendorsSection">
+                <h3>Top 3 Vendors</h3>
+                <div id="topVendorsList"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal for Category Details -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Category Details</h2>
+            <canvas id="vendorChart" width="400" height="300"></canvas>
+        </div>
     </div>
 
-    <p><strong>Total Expenses:</strong> ₹<span id="total"></span></p>
-    <p><strong>Remaining Balance:</strong> ₹<span id="balance"></span></p>
-    <p id="status"></p>
-
-    <h3>Top 3 Categories</h3>
-    <ul id="topCategories"></ul>
-
-    <h3>Top 3 Vendors</h3>
-    <ul id="topVendors"></ul>
-
-    <canvas id="balanceChart" height="200"></canvas>
-    <canvas id="categoryChart" height="200"></canvas>
-    <canvas id="vendorBarChart" style="display:none;" height="200"></canvas>
-
-    <button onclick="downloadCSV()">Download CSV</button>
-  </div>
-
-  <script>
-    const budgetInput = document.getElementById('budget');
-    const amountInput = document.getElementById('amount');
-    const vendorInput = document.getElementById('vendor');
-    const categoryInput = document.getElementById('category');
-    let expenses = JSON.parse(localStorage.getItem('expenses') || '[]');
-    let budget = parseFloat(localStorage.getItem('budget') || '0');
-    if (budget > 0) budgetInput.value = budget;
-
-    function addExpense() {
-      if (!budget && budgetInput.value) {
-        budget = parseFloat(budgetInput.value);
-        localStorage.setItem('budget', budget);
-      }
-      const amount = parseFloat(amountInput.value);
-      const vendor = vendorInput.value.trim();
-      const category = categoryInput.value;
-      const datetime = new Date().toLocaleString();
-      if (amount > 0 && vendor && category) {
-        expenses.push({ datetime, amount, vendor, category });
-        localStorage.setItem('expenses', JSON.stringify(expenses));
-        updateUI();
-      }
-      amountInput.value = vendorInput.value = '';
-    }
-
-    function updateUI() {
-      const total = expenses.reduce((sum, e) => sum + e.amount, 0);
-      const balance = budget - total;
-      document.getElementById('total').textContent = total.toFixed(2);
-      document.getElementById('balance').textContent = balance.toFixed(2);
-      const status = document.getElementById('status');
-      if (balance <= 0) {
-        status.textContent = 'Exhausted!!';
-        status.style.color = 'red';
-      } else {
-        status.textContent = '';
-      }
-
-      const percent = (total / budget) * 100;
-      if (percent >= 90) alert('Budget usage hit 90%!');
-      else if (percent >= 75) alert('Budget usage hit 75%!');
-      else if (percent >= 50) alert('Budget usage hit 50%!');
-
-      const byCategory = {};
-      const byVendor = {};
-      expenses.forEach(e => {
-        byCategory[e.category] = (byCategory[e.category] || 0) + e.amount;
-        byVendor[e.vendor] = (byVendor[e.vendor] || 0) + e.amount;
-      });
-
-      const topCat = Object.entries(byCategory).sort((a,b) => b[1]-a[1]).slice(0,3);
-      const topVen = Object.entries(byVendor).sort((a,b) => b[1]-a[1]).slice(0,3);
-
-      document.getElementById('topCategories').innerHTML = topCat.map(([cat, amt]) =>
-        `<li class="clickable" onclick="showVendorBar('${cat}')">${cat}: ₹${amt.toFixed(2)} (${((amt/budget)*100).toFixed(1)}%)</li>`
-      ).join('');
-
-      document.getElementById('topVendors').innerHTML = topVen.map(([v, amt]) =>
-        `<li>${v}: ₹${amt.toFixed(2)}</li>`).join('');
-
-      drawPieChart(balance, total);
-      drawCategoryChart(byCategory);
-    }
-
-    let balanceChart, categoryChart, vendorChart;
-
-    function drawPieChart(balance, total) {
-      if (balanceChart) balanceChart.destroy();
-      balanceChart = new Chart(document.getElementById('balanceChart'), {
-        type: 'pie',
-        data: {
-          labels: ['Remaining', 'Spent'],
-          datasets: [{
-            data: [balance, total],
-            backgroundColor: ['#4caf50', '#f44336']
-          }]
+    <script>
+        // Data storage with localStorage enabled
+        let appData = {
+            budget: 0,
+            expenses: [],
+            budgetAlerts: {
+                fifty: false,
+                seventyFive: false,
+                ninety: false
+            }
+        };
+        
+        // Charts
+        let budgetChart = null;
+        let categoryChart = null;
+        let vendorChart = null;
+        
+        // Initialize app
+        function initApp() {
+            // Load from localStorage
+            const savedData = localStorage.getItem('expenseManagerData');
+            if (savedData) {
+                appData = JSON.parse(savedData);
+                if (appData.budget > 0) {
+                    showExpenseInterface();
+                    updateDisplay();
+                }
+            }
         }
-      });
-    }
-
-    function drawCategoryChart(categoryData) {
-      if (categoryChart) categoryChart.destroy();
-      categoryChart = new Chart(document.getElementById('categoryChart'), {
-        type: 'pie',
-        data: {
-          labels: Object.keys(categoryData),
-          datasets: [{
-            data: Object.values(categoryData),
-            backgroundColor: Object.keys(categoryData).map((_, i) => `hsl(${i * 40}, 70%, 60%)`)
-          }]
+        
+        function saveData() {
+            // Save to localStorage
+            localStorage.setItem('expenseManagerData', JSON.stringify(appData));
         }
-      });
-    }
-
-    function showVendorBar(category) {
-      const vendors = {};
-      expenses.filter(e => e.category === category).forEach(e => {
-        vendors[e.vendor] = (vendors[e.vendor] || 0) + e.amount;
-      });
-      const ctx = document.getElementById('vendorBarChart');
-      ctx.style.display = 'block';
-      if (vendorChart) vendorChart.destroy();
-      vendorChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: Object.keys(vendors),
-          datasets: [{
-            label: `Vendors under ${category}`,
-            data: Object.values(vendors),
-            backgroundColor: '#2196f3'
-          }]
+        
+        function setBudget() {
+            const budget = parseFloat(document.getElementById('initialBudget').value);
+            if (!budget || budget <= 0) {
+                alert('Please enter a valid budget amount');
+                return;
+            }
+            
+            appData.budget = budget;
+            saveData();
+            showExpenseInterface();
+            updateDisplay();
         }
-      });
-    }
-
-    function downloadCSV() {
-      const rows = [['Date/Time','Amount','Vendor','Category'],
-        ...expenses.map(e => [e.datetime, e.amount, e.vendor, e.category])];
-      const csv = rows.map(r => r.join(',')).join('\\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'expenses.csv';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    updateUI();
-  </script>
+        
+        function showExpenseInterface() {
+            document.getElementById('budgetSection').classList.add('hidden');
+            document.getElementById('expenseForm').classList.remove('hidden');
+            document.getElementById('statsSection').classList.remove('hidden');
+            document.getElementById('chartsSection').classList.remove('hidden');
+            document.getElementById('topCategoriesSection').classList.remove('hidden');
+            document.getElementById('topVendorsSection').classList.remove('hidden');
+        }
+        
+        function addExpense() {
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const vendor = document.getElementById('vendorName').value.trim();
+            const category = document.getElementById('categorySelect').value;
+            
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            if (!vendor) {
+                alert('Please enter vendor name');
+                return;
+            }
+            
+            if (!category) {
+                alert('Please select a category');
+                return;
+            }
+            
+            const expense = {
+                id: Date.now(),
+                amount: amount,
+                vendor: vendor,
+                category: category,
+                date: new Date().toLocaleString(),
+                timestamp: new Date().toISOString()
+            };
+            
+            appData.expenses.push(expense);
+            saveData();
+            
+            // Clear form
+            document.getElementById('expenseAmount').value = '';
+            document.getElementById('vendorName').value = '';
+            document.getElementById('categorySelect').value = '';
+            
+            updateDisplay();
+            checkBudgetAlerts();
+        }
+        
+        function updateDisplay() {
+            const totalExpenses = appData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const remainingBalance = appData.budget - totalExpenses;
+            
+            document.getElementById('totalBudget').textContent = `₹${appData.budget.toLocaleString()}`;
+            document.getElementById('totalExpenses').textContent = `₹${totalExpenses.toLocaleString()}`;
+            document.getElementById('remainingBalance').textContent = `₹${remainingBalance.toLocaleString()}`;
+            
+            updateCharts();
+            updateTopCategories();
+            updateTopVendors();
+            
+            if (remainingBalance <= 0) {
+                showAlert('Exhausted!! Budget limit reached!', 'exhausted');
+            }
+        }
+        
+        function updateCharts() {
+            const totalExpenses = appData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const remainingBalance = Math.max(0, appData.budget - totalExpenses);
+            
+            // Budget vs Expenses Chart
+            if (budgetChart) {
+                budgetChart.destroy();
+            }
+            
+            const budgetCtx = document.getElementById('budgetChart').getContext('2d');
+            budgetChart = new Chart(budgetCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Expenses', 'Remaining'],
+                    datasets: [{
+                        data: [totalExpenses, remainingBalance],
+                        backgroundColor: ['#ff6b6b', '#4ecdc4'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+            
+            // Category Chart
+            const categoryData = {};
+            appData.expenses.forEach(exp => {
+                categoryData[exp.category] = (categoryData[exp.category] || 0) + exp.amount;
+            });
+            
+            if (categoryChart) {
+                categoryChart.destroy();
+            }
+            
+            if (Object.keys(categoryData).length > 0) {
+                const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+                categoryChart = new Chart(categoryCtx, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(categoryData),
+                        datasets: [{
+                            data: Object.values(categoryData),
+                            backgroundColor: [
+                                '#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#ffeaa7',
+                                '#dda0dd', '#98d8c8', '#f7dc6f', '#bb8fce', '#85c1e9',
+                                '#f8c471', '#82e0aa', '#f1948a'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        },
+                        onClick: (event, elements) => {
+                            if (elements.length > 0) {
+                                const index = elements[0].index;
+                                const category = Object.keys(categoryData)[index];
+                                showCategoryDetails(category);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        function updateTopCategories() {
+            const categoryData = {};
+            appData.expenses.forEach(exp => {
+                categoryData[exp.category] = (categoryData[exp.category] || 0) + exp.amount;
+            });
+            
+            const sortedCategories = Object.entries(categoryData)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3);
+            
+            const totalExpenses = appData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const topCategoriesList = document.getElementById('topCategoriesList');
+            topCategoriesList.innerHTML = '';
+            
+            sortedCategories.forEach(([category, amount]) => {
+                const percentage = totalExpenses > 0 ? ((amount / totalExpenses) * 100).toFixed(1) : 0;
+                const item = document.createElement('div');
+                item.className = 'top-item';
+                item.onclick = () => showCategoryDetails(category);
+                item.innerHTML = `
+                    <span>${category}</span>
+                    <span>₹${amount.toLocaleString()} (${percentage}%)</span>
+                `;
+                topCategoriesList.appendChild(item);
+            });
+        }
+        
+        function updateTopVendors() {
+            const vendorData = {};
+            appData.expenses.forEach(exp => {
+                vendorData[exp.vendor] = (vendorData[exp.vendor] || 0) + exp.amount;
+            });
+            
+            const sortedVendors = Object.entries(vendorData)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3);
+            
+            const topVendorsList = document.getElementById('topVendorsList');
+            topVendorsList.innerHTML = '';
+            
+            sortedVendors.forEach(([vendor, amount]) => {
+                const item = document.createElement('div');
+                item.className = 'top-item';
+                item.innerHTML = `
+                    <span>${vendor}</span>
+                    <span>₹${amount.toLocaleString()}</span>
+                `;
+                topVendorsList.appendChild(item);
+            });
+        }
+        
+        function showCategoryDetails(category) {
+            const categoryExpenses = appData.expenses.filter(exp => exp.category === category);
+            const vendorData = {};
+            
+            categoryExpenses.forEach(exp => {
+                vendorData[exp.vendor] = (vendorData[exp.vendor] || 0) + exp.amount;
+            });
+            
+            document.getElementById('modalTitle').textContent = `${category} - Vendor Breakdown`;
+            document.getElementById('categoryModal').style.display = 'block';
+            
+            if (vendorChart) {
+                vendorChart.destroy();
+            }
+            
+            const vendorCtx = document.getElementById('vendorChart').getContext('2d');
+            vendorChart = new Chart(vendorCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(vendorData),
+                    datasets: [{
+                        label: 'Amount Spent (₹)',
+                        data: Object.values(vendorData),
+                        backgroundColor: '#667eea',
+                        borderColor: '#764ba2',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '₹' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        function closeModal() {
+            document.getElementById('categoryModal').style.display = 'none';
+        }
+        
+        function checkBudgetAlerts() {
+            const totalExpenses = appData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
+            const usagePercentage = (totalExpenses / appData.budget) * 100;
+            
+            if (usagePercentage >= 90 && !appData.budgetAlerts.ninety) {
+                showAlert('Warning: 90% of budget used!', 'danger');
+                appData.budgetAlerts.ninety = true;
+            } else if (usagePercentage >= 75 && !appData.budgetAlerts.seventyFive) {
+                showAlert('Warning: 75% of budget used!', 'warning');
+                appData.budgetAlerts.seventyFive = true;
+            } else if (usagePercentage >= 50 && !appData.budgetAlerts.fifty) {
+                showAlert('Notice: 50% of budget used', 'warning');
+                appData.budgetAlerts.fifty = true;
+            }
+            
+            saveData();
+        }
+        
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+                document.body.removeChild(alert);
+            }, 5000);
+        }
+        
+        function downloadCSV() {
+            if (appData.expenses.length === 0) {
+                alert('No expenses to download');
+                return;
+            }
+            
+            const headers = ['Date', 'Amount', 'Vendor', 'Category'];
+            const csvContent = [
+                headers.join(','),
+                ...appData.expenses.map(exp => [
+                    exp.date,
+                    exp.amount,
+                    `"${exp.vendor}"`,
+                    `"${exp.category}"`
+                ].join(','))
+            ].join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `expenses_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('categoryModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Initialize app on load
+        initApp();
+    </script>
 </body>
 </html>
