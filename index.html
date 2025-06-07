@@ -1,123 +1,1187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Head content here -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Personal Expense Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+        }
+
+        .section {
+            background: white;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 5px;
+        }
+
+        .budget-section {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .budget-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .budget-input label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .budget-input input {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            width: 150px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #27ae60;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .expense-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .summary-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .summary-card .amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .amount.warning {
+            color: #f39c12;
+        }
+
+        .amount.danger {
+            color: #e74c3c;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .analytics-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .analytics-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .analytics-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .analytics-table th,
+        .analytics-table td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .analytics-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-section input {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .expense-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .expense-item {
+            display: grid;
+            grid-template-columns: 80px 100px 1fr 100px 80px 60px;
+            gap: 10px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+        }
+
+        .expense-item:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .expense-item:hover {
+            background: #e9ecef;
+        }
+
+        .expense-item .date {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .expense-item .amount {
+            font-weight: bold;
+            color: #e74c3c;
+        }
+
+        .expense-item .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .expense-item .actions button {
+            padding: 5px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn {
+            background: #f39c12;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: black;
+        }
+
+        @media (max-width: 768px) {
+            .expense-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .expense-item {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+            
+            .budget-section {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
 </head>
 <body>
-  <!-- Body content up to monthly table -->
-  <script>
-    // ... previous JavaScript functions
+    <div class="container">
+        <div class="header">
+            <h1>Monthly Personal Expense Manager</h1>
+            <p>Track your monthly expenses - <span id="currentMonth"></span></p>
+        </div>
 
-    function updateMonthlyTable() {
-        const tbody = document.getElementById('monthlyTableBody');
-        tbody.innerHTML = '';
+        <!-- Budget Section -->
+        <div class="section">
+            <h2>Set Monthly Budget</h2>
+            <div class="budget-section">
+                <div class="budget-input">
+                    <label for="monthlyBudget">Monthly Budget (₹):</label>
+                    <input type="number" id="monthlyBudget" placeholder="Enter budget" min="0">
+                    <button class="btn" onclick="setBudget()">Set Budget</button>
+                </div>
+                <div style="color: #7f8c8d; font-size: 14px;">
+                    Budget should be set at the start of each month. Default: ₹20,000
+                </div>
+            </div>
+        </div>
 
-        if (appData.expenses.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="no-data">No expenses added yet</td></tr>';
-            return;
+        <!-- Add Expense Section -->
+        <div class="section">
+            <h2>Add Expenses</h2>
+            <div class="expense-form">
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select id="category" required>
+                        <option value="">Select Category</option>
+                        <option value="Grocery">Grocery</option>
+                        <option value="Bills">Bills</option>
+                        <option value="Online shopping">Online shopping</option>
+                        <option value="Travelling">Travelling</option>
+                        <option value="Food">Food</option>
+                        <option value="Medical expenses">Medical expenses</option>
+                        <option value="Debt">Debt</option>
+                        <option value="Petrol">Petrol</option>
+                        <option value="Home expenses other than grocery">Home expenses other than grocery</option>
+                        <option value="Maintanance">Maintanance</option>
+                        <option value="EMI">EMI</option>
+                        <option value="Investment">Investment</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vendor">Vendor</label>
+                    <input type="text" id="vendor" placeholder="Enter vendor name" required>
+                </div>
+                <div class="form-group">
+                    <label for="amount">Amount (₹)</label>
+                    <input type="number" id="amount" placeholder="Enter amount" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="note">Note</label>
+                    <textarea id="note" placeholder="Optional note"></textarea>
+                </div>
+            </div>
+            <button class="btn btn-success" onclick="addExpense()">Add Expense</button>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>Monthly Budget</h3>
+                <div class="amount" id="budgetAmount">₹0</div>
+            </div>
+            <div class="summary-card">
+                <h3>Total Expenses</h3>
+                <div class="amount" id="totalExpenses">₹0</div>
+            </div>
+            <div class="summary-card">
+                <h3>Remaining Balance</h3>
+                <div class="amount" id="remainingBalance">₹0</div>
+            </div>
+        </div>
+
+        <!-- Export Buttons -->
+        <div class="section">
+            <div class="export-buttons">
+                <button class="btn" onclick="downloadCSV()">Download CSV</button>
+                <button class="btn" onclick="syncToGoogleSheet()">Sync to Google Sheet</button>
+                <button class="btn" onclick="downloadPDF()">Download PDF</button>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div class="analytics-section">
+            <div class="analytics-card">
+                <h3>Top 3 Categories</h3>
+                <table class="analytics-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topCategories">
+                        <tr><td colspan="3">No data available</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="analytics-card">
+                <h3>Top 3 Vendors</h3>
+                <table class="analytics-table">
+                    <thead>
+                        <tr>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topVendors">
+                        <tr><td colspan="3">No data available</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Weekly/Monthly Summary -->
+        <div class="analytics-section">
+            <div class="analytics-card">
+                <h3>Weekly Expense Summary</h3>
+                <table class="analytics-table">
+                    <thead>
+                        <tr>
+                            <th>Week</th>
+                            <th>Period</th>
+                            <th>Total Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="weeklySummary">
+                        <tr><td colspan="3">No data available</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="analytics-card">
+                <h3>Monthly Expense Summary</h3>
+                <table class="analytics-table">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Total Amount</th>
+                            <th>Top Category</th>
+                            <th>% Spend</th>
+                        </tr>
+                    </thead>
+                    <tbody id="monthlySummary">
+                        <tr><td colspan="4">No data available</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Expense List -->
+        <div class="section">
+            <h2>Recent Expenses</h2>
+            <div class="filter-section">
+                <label>Filter by date:</label>
+                <input type="date" id="startDate">
+                <label>to</label>
+                <input type="date" id="endDate">
+                <button class="btn" onclick="filterExpenses()">Filter</button>
+                <button class="btn" onclick="clearFilter()">Clear Filter</button>
+            </div>
+            <div class="expense-list" id="expenseList">
+                <div class="loading">Loading expenses...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeEditModal()">&times;</span>
+            <h2>Edit Expense</h2>
+            <div class="expense-form">
+                <div class="form-group">
+                    <label for="editCategory">Category</label>
+                    <select id="editCategory">
+                        <option value="Grocery">Grocery</option>
+                        <option value="Bills">Bills</option>
+                        <option value="Online shopping">Online shopping</option>
+                        <option value="Travelling">Travelling</option>
+                        <option value="Food">Food</option>
+                        <option value="Medical expenses">Medical expenses</option>
+                        <option value="Debt">Debt</option>
+                        <option value="Petrol">Petrol</option>
+                        <option value="Home expenses other than grocery">Home expenses other than grocery</option>
+                        <option value="Maintanance">Maintanance</option>
+                        <option value="EMI">EMI</option>
+                        <option value="Investment">Investment</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editVendor">Vendor</label>
+                    <input type="text" id="editVendor">
+                </div>
+                <div class="form-group">
+                    <label for="editAmount">Amount (₹)</label>
+                    <input type="number" id="editAmount" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="editNote">Note</label>
+                    <textarea id="editNote"></textarea>
+                </div>
+            </div>
+            <div style="margin-top: 20px;">
+                <button class="btn btn-success" onclick="saveEditedExpense()">Save Changes</button>
+                <button class="btn" onclick="closeEditModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzgAbcQM5P1sX8dwQVrYpQok6TCpBqoWO1vwXEikSTEVC4Q6wf4TGVyRJxP3XNZ4Y0b/exec';
+        
+        // Global variables
+        let allExpenses = [];
+        let currentBudget = 20000;
+        let editingExpense = null;
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentMonth();
+            loadData();
+        });
+
+        function updateCurrentMonth() {
+            const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            const now = new Date();
+            document.getElementById('currentMonth').textContent = `${months[now.getMonth()]} ${now.getFullYear()}`;
         }
 
-        const categoryData = {};
-        const totalExpenses = appData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-
-        appData.expenses.forEach(expense => {
-            if (!categoryData[expense.category]) {
-                categoryData[expense.category] = {
-                    total: 0,
-                    count: 0
-                };
+        async function loadData() {
+            try {
+                await Promise.all([loadExpenses(), loadBudget()]);
+                updateSummary();
+                updateAnalytics();
+                displayExpenses();
+            } catch (error) {
+                showError('Failed to load data: ' + error.message);
             }
-            categoryData[expense.category].total += expense.amount;
-            categoryData[expense.category].count += 1;
-        });
-
-        Object.entries(categoryData).forEach(([category, data]) => {
-            const percentage = totalExpenses > 0 ? ((data.total / totalExpenses) * 100).toFixed(1) : 0;
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${category}</td>
-                <td class="amount-cell">₹${data.total.toLocaleString()}</td>
-                <td>${percentage}%</td>
-                <td>${data.count}</td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-
-    function checkBudgetAlerts() {
-        const total = appData.expenses.reduce((sum, exp) => sum + exp.amount, 0);
-        const percent = (total / appData.budget) * 100;
-
-        if (percent >= 90 && !appData.budgetAlerts.ninety) {
-            showAlert('You have used 90% of your budget!', 'danger');
-            appData.budgetAlerts.ninety = true;
-        } else if (percent >= 75 && !appData.budgetAlerts.seventyFive) {
-            showAlert('You have used 75% of your budget!', 'warning');
-            appData.budgetAlerts.seventyFive = true;
-        } else if (percent >= 50 && !appData.budgetAlerts.fifty) {
-            showAlert('You have used 50% of your budget!', 'warning');
-            appData.budgetAlerts.fifty = true;
         }
-    }
 
-    function showAlert(message, type) {
-        const alertBox = document.createElement('div');
-        alertBox.className = `alert ${type}`;
-        alertBox.textContent = message;
-        document.body.appendChild(alertBox);
-
-        setTimeout(() => {
-            alertBox.remove();
-        }, 4000);
-    }
-
-    function downloadCSV() {
-        const rows = [['Date', 'Vendor', 'Category', 'Amount']];
-        appData.expenses.forEach(exp => {
-            rows.push([exp.date, exp.vendor, exp.category, exp.amount]);
-        });
-
-        let csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(",")).join("\n");
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", `expenses_${appData.currentMonth}_${appData.currentYear}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
-
-    function resetApp() {
-        if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
-            appData = {
-                budget: 0,
-                expenses: [],
-                budgetAlerts: {
-                    fifty: false,
-                    seventyFive: false,
-                    ninety: false
-                },
-                currentMonth: '',
-                currentYear: 0
-            };
-            location.reload();
-        }
-    }
-
-    function syncToGoogleSheets() {
-        fetch(GOOGLE_SHEETS_URL, {
-            method: 'POST',
-            body: JSON.stringify(appData),
-            headers: {
-                'Content-Type': 'application/json'
+        async function loadExpenses() {
+            try {
+                const response = await fetch(`${APPS_SCRIPT_URL}?action=getExpenses`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    allExpenses = data.data || [];
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading expenses:', error);
+                throw error;
             }
-        })
-        .then(response => response.json())
-        .then(data => showAlert('Data synced to Google Sheets!', 'success'))
-        .catch(err => showAlert('Error syncing data.', 'danger'));
-    }
+        }
 
-    window.onload = initApp;
-  </script>
+        async function loadBudget() {
+            try {
+                const response = await fetch(`${APPS_SCRIPT_URL}?action=getBudget`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentBudget = data.data.budget;
+                    document.getElementById('monthlyBudget').value = currentBudget;
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error loading budget:', error);
+                currentBudget = 20000;
+            }
+        }
+
+        async function setBudget() {
+            const budgetInput = document.getElementById('monthlyBudget');
+            const budget = parseFloat(budgetInput.value) || 20000;
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'setBudget',
+                        budget: budget
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentBudget = budget;
+                    updateSummary();
+                    showSuccess('Budget set successfully!');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                showError('Failed to set budget: ' + error.message);
+            }
+        }
+
+        async function addExpense() {
+            const category = document.getElementById('category').value;
+            const vendor = document.getElementById('vendor').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+            const note = document.getElementById('note').value;
+
+            if (!category || !vendor || !amount) {
+                showError('Please fill in all required fields');
+                return;
+            }
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'addExpense',
+                        category: category,
+                        vendor: vendor,
+                        amount: amount,
+                        note: note
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Clear form
+                    document.getElementById('category').value = '';
+                    document.getElementById('vendor').value = '';
+                    document.getElementById('amount').value = '';
+                    document.getElementById('note').value = '';
+                    
+                    // Reload data
+                    await loadData();
+                    showSuccess('Expense added successfully!');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                showError('Failed to add expense: ' + error.message);
+            }
+        }
+
+        function updateSummary() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            const monthlyExpenses = allExpenses.filter(expense => {
+                const expenseDate = new Date(expense.timestamp);
+                return expenseDate.getMonth() === currentMonth && 
+                       expenseDate.getFullYear() === currentYear;
+            });
+
+            const totalExpenses = monthlyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+            const remainingBalance = currentBudget - totalExpenses;
+
+            document.getElementById('budgetAmount').textContent = `₹${currentBudget.toLocaleString()}`;
+            
+            const totalExpensesElement = document.getElementById('totalExpenses');
+            totalExpensesElement.textContent = `₹${totalExpenses.toLocaleString()}`;
+            
+            // Color coding for expenses
+            const expensePercentage = (totalExpenses / currentBudget) * 100;
+            totalExpensesElement.className = 'amount';
+            if (expensePercentage > 90) {
+                totalExpensesElement.classList.add('danger');
+            } else if (expensePercentage > 50) {
+                totalExpensesElement.classList.add('warning');
+            }
+
+            const remainingElement = document.getElementById('remainingBalance');
+            remainingElement.textContent = `₹${remainingBalance.toLocaleString()}`;
+            remainingElement.className = 'amount';
+            if (remainingBalance < 0) {
+                remainingElement.classList.add('danger');
+            } else if (remainingBalance < currentBudget * 0.1) {
+                remainingElement.classList.add('warning');
+            }
+        }
+
+        function updateAnalytics() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            const monthlyExpenses = allExpenses.filter(expense => {
+                const expenseDate = new Date(expense.timestamp);
+                return expenseDate.getMonth() === currentMonth && 
+                       expenseDate.getFullYear() === currentYear;
+            });
+
+            updateTopCategories(monthlyExpenses);
+            updateTopVendors(monthlyExpenses);
+            updateWeeklySummary(monthlyExpenses);
+            updateMonthlySummary();
+        }
+
+        function updateTopCategories(expenses) {
+            const categoryTotals = {};
+            const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+            expenses.forEach(expense => {
+                categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + expense.amount;
+            });
+
+            const sortedCategories = Object.entries(categoryTotals)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3);
+
+            const tbody = document.getElementById('topCategories');
+            if (sortedCategories.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3">No data available</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = sortedCategories.map(([category, amount]) => {
+                const percentage = totalAmount > 0 ? ((amount / totalAmount) * 100).toFixed(1) : 0;
+                return `<tr>
+                    <td>${category}</td>
+                    <td>₹${amount.toLocaleString()}</td>
+                    <td>${percentage}%</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function updateTopVendors(expenses) {
+            const vendorTotals = {};
+            const totalAmount = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+            expenses.forEach(expense => {
+                vendorTotals[expense.vendor] = (vendorTotals[expense.vendor] || 0) + expense.amount;
+            });
+
+            const sortedVendors = Object.entries(vendorTotals)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3);
+
+            const tbody = document.getElementById('topVendors');
+            if (sortedVendors.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3">No data available</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = sortedVendors.map(([vendor, amount]) => {
+                const percentage = totalAmount > 0 ? ((amount / totalAmount) * 100).toFixed(1) : 0;
+                return `<tr>
+                    <td>${vendor}</td>
+                    <td>₹${amount.toLocaleString()}</td>
+                    <td>${percentage}%</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function updateWeeklySummary(expenses) {
+            const weeklySummary = {};
+            
+            expenses.forEach(expense => {
+                const date = new Date(expense.timestamp);
+                const weekNumber = getWeekNumber(date);
+                const weekKey = `Week ${weekNumber}`;
+                
+                if (!weeklySummary[weekKey]) {
+                    weeklySummary[weekKey] = {
+                        total: 0,
+                        startDate: getWeekStartDate(date),
+                        endDate: getWeekEndDate(date)
+                    };
+                }
+                weeklySummary[weekKey].total += expense.amount;
+            });
+
+            const tbody = document.getElementById('weeklySummary');
+            const weeks = Object.entries(weeklySummary);
+            
+            if (weeks.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3">No data available</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = weeks.map(([week, data]) => `
+                <tr>
+                    <td>${week}</td>
+                    <td>${data.startDate} - ${data.endDate}</td>
+                    <td>₹${data.total.toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function updateMonthlySummary() {
+            const monthlySummary = {};
+            
+            allExpenses.forEach(expense => {
+                const date = new Date(expense.timestamp);
+                const monthKey = `${date.getFullYear()}-${date.getMonth()}`;
+                const monthName = date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                
+                if (!monthlySummary[monthKey]) {
+                    monthlySummary[monthKey] = {
+                        name: monthName,
+                        total: 0,
+                        categories: {}
+                    };
+                }
+                
+                monthlySummary[monthKey].total += expense.amount;
+                monthlySummary[monthKey].categories[expense.category] = 
+                    (monthlySummary[monthKey].categories[expense.category] || 0) + expense.amount;
+            });
+
+            const tbody = document.getElementById('monthlySummary');
+            const months = Object.values(monthlySummary).slice(-6); // Last 6 months
+            
+            if (months.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">No data available</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = months.map(month => {
+                const topCategory = Object.entries(month.categories)
+                    .sort(([,a], [,b]) => b - a)[0];
+                const topCategoryName = topCategory ? topCategory[0] : 'None';
+                const topCategoryPercentage = topCategory ? 
+                    ((topCategory[1] / month.total) * 100).toFixed(1) : 0;
+                
+                return `<tr>
+                    <td>${month.name}</td>
+                    <td>₹${month.total.toLocaleString()}</td>
+                    <td>${topCategoryName}</td>
+                    <td>${topCategoryPercentage}%</td>
+                </tr>`;
+            }).join('');
+        }
+
+        function displayExpenses(filteredExpenses = null) {
+            const expensesToShow = filteredExpenses || allExpenses.slice(-20); // Show last 20 expenses
+            const container = document.getElementById('expenseList');
+            
+            if (expensesToShow.length === 0) {
+                container.innerHTML = '<div class="loading">No expenses found</div>';
+                return;
+            }
+
+            container.innerHTML = expensesToShow
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .map(expense => {
+                    const date = new Date(expense.timestamp);
+                    const formattedDate = date.toLocaleDateString('en-GB');
+                    const formattedTime = date.toLocaleTimeString('en-GB', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                    });
+                    
+                    return `<div class="expense-item">
+                        <div class="date">${formattedDate}<br>${formattedTime}</div>
+                        <div class="category">${expense.category}</div>
+                        <div class="vendor">${expense.vendor}${expense.note ? '<br><small>' + expense.note + '</small>' : ''}</div>
+                        <div class="amount">₹${expense.amount.toLocaleString()}</div>
+                        <div class="actions">
+                            <button class="edit-btn" onclick="editExpense(${JSON.stringify(expense).replace(/"/g, '&quot;')})">✏️</button>
+                            <button class="delete-btn" onclick="deleteExpense(${JSON.stringify(expense).replace(/"/g, '&quot;')})">🗑️</button>
+                        </div>
+                    </div>`;
+                }).join('');
+        }
+
+        function filterExpenses() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (!startDate || !endDate) {
+                showError('Please select both start and end dates');
+                return;
+            }
+
+            const filtered = allExpenses.filter(expense => {
+                const expenseDate = new Date(expense.timestamp).toISOString().split('T')[0];
+                return expenseDate >= startDate && expenseDate <= endDate;
+            });
+
+            displayExpenses(filtered);
+        }
+
+        function clearFilter() {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            displayExpenses();
+        }
+
+        function editExpense(expense) {
+            editingExpense = expense;
+            
+            document.getElementById('editCategory').value = expense.category;
+            document.getElementById('editVendor').value = expense.vendor;
+            document.getElementById('editAmount').value = expense.amount;
+            document.getElementById('editNote').value = expense.note || '';
+            
+            document.getElementById('editModal').style.display = 'block';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+            editingExpense = null;
+        }
+
+        async function saveEditedExpense() {
+            if (!editingExpense) return;
+
+            const category = document.getElementById('editCategory').value;
+            const vendor = document.getElementById('editVendor').value;
+            const amount = parseFloat(document.getElementById('editAmount').value);
+            const note = document.getElementById('editNote').value;
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'updateExpense',
+                        originalTimestamp: editingExpense.timestamp,
+                        originalAmount: editingExpense.amount,
+                        timestamp: editingExpense.timestamp,
+                        category: category,
+                        vendor: vendor,
+                        amount: amount,
+                        note: note
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    closeEditModal();
+                    await loadData();
+                    showSuccess('Expense updated successfully!');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                showError('Failed to update expense: ' + error.message);
+            }
+        }
+
+        async function deleteExpense(expense) {
+            if (!confirm('Are you sure you want to delete this expense?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'deleteExpense',
+                        timestamp: expense.timestamp,
+                        amount: expense.amount
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    await loadData();
+                    showSuccess('Expense deleted successfully!');
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                showError('Failed to delete expense: ' + error.message);
+            }
+        }
+
+        async function syncToGoogleSheet() {
+            try {
+                showSuccess('Data is already synced to Google Sheets automatically!');
+            } catch (error) {
+                showError('Sync failed: ' + error.message);
+            }
+        }
+
+        function downloadCSV() {
+            const csvContent = generateCSV();
+            downloadFile(csvContent, 'expenses.csv', 'text/csv');
+        }
+
+        function downloadPDF() {
+            // Simple PDF generation using window.print
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Expense Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; }
+                        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                        h1 { color: #333; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Monthly Expense Report</h1>
+                    <h3>Budget: ₹${currentBudget.toLocaleString()}</h3>
+                    <h3>Total Expenses: ₹${allExpenses.reduce((sum, e) => sum + e.amount, 0).toLocaleString()}</h3>
+                    <table>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Note</th>
+                        </tr>
+                        ${allExpenses.map(expense => `
+                            <tr>
+                                <td>${new Date(expense.timestamp).toLocaleDateString()}</td>
+                                <td>${expense.category}</td>
+                                <td>${expense.vendor}</td>
+                                <td>₹${expense.amount.toLocaleString()}</td>
+                                <td>${expense.note || ''}</td>
+                            </tr>
+                        `).join('')}
+                    </table>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function generateCSV() {
+            const headers = ['Date', 'Category', 'Vendor', 'Amount', 'Note'];
+            const rows = allExpenses.map(expense => [
+                new Date(expense.timestamp).toLocaleDateString(),
+                expense.category,
+                expense.vendor,
+                expense.amount,
+                expense.note || ''
+            ]);
+
+            return [headers, ...rows]
+                .map(row => row.map(cell => `"${cell}"`).join(','))
+                .join('\n');
+        }
+
+        function downloadFile(content, filename, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function getWeekNumber(date) {
+            const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+            const daysDifference = Math.floor((date - firstDayOfMonth) / (24 * 60 * 60 * 1000));
+            return Math.floor(daysDifference / 7) + 1;
+        }
+
+        function getWeekStartDate(date) {
+            const day = date.getDay();
+            const diff = date.getDate() - day;
+            return new Date(date.setDate(diff)).toLocaleDateString('en-GB');
+        }
+
+        function getWeekEndDate(date) {
+            const day = date.getDay();
+            const diff = date.getDate() - day + 6;
+            return new Date(date.setDate(diff)).toLocaleDateString('en-GB');
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            document.body.insertBefore(errorDiv, document.body.firstChild);
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            document.body.insertBefore(successDiv, document.body.firstChild);
+            setTimeout(() => successDiv.remove(), 3000);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('editModal');
+            if (event.target === modal) {
+                closeEditModal();
+            }
+        }
+    </script>
 </body>
 </html>
