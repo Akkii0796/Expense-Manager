@@ -320,7 +320,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>💰 Monthly Expense Tracker</h1>
+            <h1>💰 Monthly Expense Tracker - <span id="currentMonth"></span></h1>
             <p>Track your expenses and build healthy financial habits</p>
         </div>
 
@@ -400,6 +400,12 @@
                 </div>
             </div>
 
+            <!-- Recent Expenses (Last 5) -->
+            <div class="section">
+                <h2>📝 Recent Expenses (Last 5)</h2>
+                <div class="table-container" id="recentExpensesList"></div>
+            </div>
+
             <!-- Top 3 Summaries -->
             <div class="section">
                 <h2>🏆 Top 3 Summaries</h2>
@@ -432,7 +438,7 @@
 
             <!-- Expense List -->
             <div class="section">
-                <h2>📝 Recent Expenses</h2>
+                <h2>📝 All Expenses</h2>
                 <div class="filter-section">
                     <h3>Filter by Date</h3>
                     <div class="form-row">
@@ -518,11 +524,18 @@
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
+            setCurrentMonth();
             checkNewMonth();
             loadBudget();
             updateDisplay();
             loadArchiveMonths();
         });
+
+        // Set current month in header
+        function setCurrentMonth() {
+            const currentMonth = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
+            document.getElementById('currentMonth').textContent = currentMonth;
+        }
 
         // Check if new month started
         function checkNewMonth() {
@@ -628,6 +641,40 @@
             updateWeeklySummary();
             updateMonthlySummary();
             updateExpensesList();
+            updateRecentExpensesList();
+        }
+
+        // Update recent expenses list (last 5)
+        function updateRecentExpensesList() {
+            const recentExpenses = [...expenses].reverse().slice(0, 5);
+            
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr><th>Id</th><th>Date</th><th>Time</th><th>Category</th><th>Vendor</th><th>Amount</th></tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            if (recentExpenses.length === 0) {
+                tableHTML += '<tr><td colspan="6" style="text-align: center;">No expenses added yet</td></tr>';
+            } else {
+                recentExpenses.forEach((expense, index) => {
+                    tableHTML += `
+                        <tr>
+                            <td>${expenses.length - index}</td>
+                            <td>${expense.date}</td>
+                            <td>${expense.time}</td>
+                            <td>${expense.category}</td>
+                            <td>${expense.vendor}</td>
+                            <td>₹${expense.amount.toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            tableHTML += '</tbody></table>';
+            document.getElementById('recentExpensesList').innerHTML = tableHTML;
         }
 
         // Update top categories
@@ -709,7 +756,9 @@
             const weeklyTotals = [0, 0, 0, 0, 0]; // 5 weeks max in a month
             
             expenses.forEach(exp => {
-                const day = parseInt(exp.date.split('/')[0]);
+                // Parse date in DD/MM/YYYY format
+                const dateParts = exp.date.split('/');
+                const day = parseInt(dateParts[0]);
                 const weekIndex = Math.floor((day - 1) / 7);
                 if (weekIndex < 5) {
                     weeklyTotals[weekIndex] += exp.amount;
@@ -724,17 +773,17 @@
                     <tbody>
             `;
 
-            weeklyTotals.forEach((total, index) => {
-                const startDay = (index * 7) + 1;
-                const endDay = Math.min((index + 1) * 7, 31);
+            for (let i = 0; i < 5; i++) {
+                const startDay = (i * 7) + 1;
+                const endDay = Math.min((i + 1) * 7, 31);
                 tableHTML += `
                     <tr>
-                        <td>${index + 1}</td>
+                        <td>${i + 1}</td>
                         <td>${startDay}–${endDay}</td>
-                        <td>₹${total.toLocaleString()}</td>
+                        <td>₹${weeklyTotals[i].toLocaleString()}</td>
                     </tr>
                 `;
-            });
+            }
 
             tableHTML += '</tbody></table>';
             document.getElementById('weeklySummaryTable').innerHTML = tableHTML;
@@ -910,73 +959,90 @@
 
         // Export to CSV
         function exportToCSV() {
+            if (expenses.length === 0) {
+                showNotification('No expenses to export!', 'warning');
+                return;
+            }
+
             const headers = ['Date', 'Time', 'Category', 'Vendor', 'Amount', 'Note'];
             const csvContent = [
                 headers.join(','),
                 ...expenses.map(exp => [
                     exp.date,
                     exp.time,
-                    exp.category,
-                    exp.vendor,
+                    `"${exp.category}"`,
+                    `"${exp.vendor}"`,
                     exp.amount,
                     `"${exp.note.replace(/"/g, '""')}"`
                 ].join(','))
             ].join('\n');
 
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `expenses_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.csv`;
-            a.click();
-            window.URL.revokeObjectURL(url);
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `expenses_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
             showNotification('CSV exported successfully!', 'success');
         }
 
         // Export to PDF
         function exportToPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            // Title
-            doc.setFontSize(20);
-            doc.text('Monthly Expense Report', 20, 20);
-            
-            // Summary
-            doc.setFontSize(12);
-            const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
-            const remainingBalance = monthlyBudget - totalExpenses;
-            
-            doc.text(`Budget: ₹${monthlyBudget.toLocaleString()}`, 20, 40);
-            doc.text(`Total Expenses: ₹${totalExpenses.toLocaleString()}`, 20, 50);
-            doc.text(`Remaining Balance: ₹${remainingBalance.toLocaleString()}`, 20, 60);
-            doc.text(`Report Date: ${new Date().toLocaleDateString('en-GB')}`, 20, 70);
-            
-            // Expenses table
-            let yPosition = 90;
-            doc.setFontSize(10);
-            doc.text('Date', 20, yPosition);
-            doc.text('Category', 50, yPosition);
-            doc.text('Vendor', 90, yPosition);
-            doc.text('Amount', 130, yPosition);
-            doc.text('Note', 160, yPosition);
-            
-            yPosition += 10;
-            expenses.forEach(exp => {
-                if (yPosition > 280) {
-                    doc.addPage();
-                    yPosition = 20;
-                }
-                doc.text(exp.date, 20, yPosition);
-                doc.text(exp.category.substring(0, 15), 50, yPosition);
-                doc.text(exp.vendor.substring(0, 15), 90, yPosition);
-                doc.text(`₹${exp.amount}`, 130, yPosition);
-                doc.text(exp.note.substring(0, 20), 160, yPosition);
+            if (expenses.length === 0) {
+                showNotification('No expenses to export!', 'warning');
+                return;
+            }
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Title
+                doc.setFontSize(20);
+                doc.text('Monthly Expense Report', 20, 20);
+                
+                // Summary
+                doc.setFontSize(12);
+                const totalExpenses = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+                const remainingBalance = monthlyBudget - totalExpenses;
+                
+                doc.text(`Budget: Rs.${monthlyBudget.toLocaleString()}`, 20, 40);
+                doc.text(`Total Expenses: Rs.${totalExpenses.toLocaleString()}`, 20, 50);
+                doc.text(`Remaining Balance: Rs.${remainingBalance.toLocaleString()}`, 20, 60);
+                doc.text(`Report Date: ${new Date().toLocaleDateString('en-GB')}`, 20, 70);
+                
+                // Expenses table
+                let yPosition = 90;
+                doc.setFontSize(10);
+                doc.text('Date', 20, yPosition);
+                doc.text('Category', 50, yPosition);
+                doc.text('Vendor', 90, yPosition);
+                doc.text('Amount', 130, yPosition);
+                doc.text('Note', 160, yPosition);
+                
                 yPosition += 10;
-            });
-            
-            doc.save(`expense_report_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.pdf`);
-            showNotification('PDF exported successfully!', 'success');
+                expenses.forEach(exp => {
+                    if (yPosition > 280) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    doc.text(exp.date, 20, yPosition);
+                    doc.text(exp.category.substring(0, 15), 50, yPosition);
+                    doc.text(exp.vendor.substring(0, 15), 90, yPosition);
+                    doc.text(`Rs.${exp.amount}`, 130, yPosition);
+                    doc.text(exp.note.substring(0, 20), 160, yPosition);
+                    yPosition += 10;
+                });
+                
+                doc.save(`expense_report_${new Date().toLocaleDateString('en-GB').replace(/\//g, '-')}.pdf`);
+                showNotification('PDF exported successfully!', 'success');
+            } catch (error) {
+                console.error('PDF export error:', error);
+                showNotification('PDF export failed. Please try again.', 'error');
+            }
         }
 
         // Load archive months
@@ -985,12 +1051,15 @@
             const archivedData = getArchivedData();
             
             archiveSelect.innerHTML = '<option value="">Select archived month</option>';
-            archivedData.forEach((data, index) => {
-                const option = document.createElement('option');
-                option.value = index;
-                option.textContent = data.month;
-                archiveSelect.appendChild(option);
-            });
+            
+            if (archivedData.length > 0) {
+                archivedData.forEach((data, index) => {
+                    const option = document.createElement('option');
+                    option.value = index;
+                    option.textContent = data.month;
+                    archiveSelect.appendChild(option);
+                });
+            }
         }
 
         // Get archived data
@@ -998,11 +1067,23 @@
             const archivedData = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
-                if (key.startsWith('archive_')) {
-                    archivedData.push(JSON.parse(localStorage.getItem(key)));
+                if (key && key.startsWith('archive_')) {
+                    try {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        if (data && data.month) {
+                            archivedData.push(data);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing archived data:', e);
+                    }
                 }
             }
-            return archivedData.sort((a, b) => new Date(b.month) - new Date(a.month));
+            return archivedData.sort((a, b) => {
+                // Sort by year and month
+                const dateA = new Date(a.month);
+                const dateB = new Date(b.month);
+                return dateB - dateA;
+            });
         }
 
         // View archived month
