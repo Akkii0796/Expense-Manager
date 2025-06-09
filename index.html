@@ -27,6 +27,8 @@
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             animation: slideUp 0.5s ease-out;
+            padding-top: 20px; /* Added padding for header spacing */
+            padding-bottom: 20px; /* Added padding for bottom spacing */
         }
 
         @keyframes slideUp {
@@ -41,10 +43,14 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea, #764ba2); /* Slightly darker header */
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* Slightly darker header */
             color: white;
             padding: 20px;
             text-align: center;
+            margin: 0 20px; /* Aligned with tab buttons */
+            border-radius: 15px; /* Rounded corners for header */
+            margin-bottom: 20px; /* Space between header and tabs */
         }
 
         .header h1 {
@@ -65,7 +71,7 @@
             border-radius: 10px 10px 0 0;
             overflow: hidden;
             margin: 0 20px; 
-            margin-top: 20px; 
+            margin-top: 20px; /* Space between header and tabs */
         }
 
         .tab-button {
@@ -82,38 +88,38 @@
         }
 
         .tab-button:hover {
-            background: #c7d2fe; 
+            background: #c7d2fe;
         }
 
         .tab-button.active {
-            background: #667eea; 
+            background: #667eea;
             color: white;
             border-bottom: 3px solid #f59e0b; 
         }
 
         .tab-content {
-            display: none; 
+            display: none;
             padding: 20px;
             background: white;
             border-radius: 0 0 20px 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            min-height: 400px; 
+            min-height: 400px;
         }
 
         .tab-content.active {
-            display: grid; 
+            display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
         }
 
         @media (min-width: 768px) {
             .tab-content.active { 
-                grid-template-columns: 1fr 1fr; 
+                grid-template-columns: 1fr 1fr;
             }
         }
         @media (min-width: 1024px) {
             .tab-content.active { 
-                grid-template-columns: 1fr 1fr 1fr; 
+                grid-template-columns: 1fr 1fr 1fr;
             }
         }
         
@@ -128,7 +134,7 @@
         }
         @media (min-width: 768px) {
             .tab-content .stats-grid {
-                grid-template-columns: 1fr 1fr; 
+                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -209,7 +215,8 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2); /* Slightly darker buttons */
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* Slightly darker buttons */
             color: white;
             border: none;
             padding: 12px 24px;
@@ -240,7 +247,8 @@
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #38b2ac, #319795); /* Teal */
+            background: linear-gradient(135deg, #38b2ac, #319795);
+            /* Teal */
         }
 
         .btn-danger {
@@ -309,7 +317,7 @@
         }
 
         .table-container {
-            overflow-x: auto; /* Allows horizontal scrolling */
+            overflow-x: auto; /* Allows horizontal scrolling for larger tables if absolutely necessary */
             margin-top: 15px;
             border-radius: 10px;
             border: 1px solid #e5e7eb;
@@ -320,11 +328,12 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
-            min-width: 700px; /* Ensures table scrolls on small screens if content is wide */
+            /* min-width: 700px; Removed min-width to allow shrinking */
         }
 
         th {
-            background: linear-gradient(135deg, #667eea, #764ba2); /* Consistent header color */
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* Consistent header color */
             color: white;
             padding: 12px 8px;
             text-align: left;
@@ -335,19 +344,56 @@
         td {
             padding: 12px 8px;
             border-bottom: 1px solid #e5e7eb;
-            white-space: nowrap; /* Prevent wrapping by default */
-            overflow: hidden;
-            text-overflow: ellipsis; /* Add ellipsis for overflowed text */
-            max-width: 150px; /* Default max-width for most cells */
+            white-space: normal; /* Allow wrapping by default for mobile friendliness */
+            overflow: visible; /* Ensure content is visible */
+            text-overflow: clip; /* Prevent ellipsis, allow full content */
+            max-width: none; /* Remove max-width constraints */
         }
-        td:nth-child(1) { max-width: 180px; } /* Date column */
-        td:nth-child(2) { max-width: 120px; } /* Category */
-        td:nth-child(3) { max-width: 150px; } /* Vendor */
-        td:nth-child(4) { max-width: 100px; } /* Amount */
-        td:nth-child(5) { max-width: 100px; } /* Recorded By */
-        td:nth-child(6) { max-width: 200px; white-space: normal; } /* Note - allow wrapping */
-        td:nth-child(7) { max-width: 80px; text-align: center;} /* Receipt */
-        td:nth-child(8) { max-width: 80px; text-align: center;} /* Actions */
+        
+        /* Specific adjustments for smaller screens for better vertical display */
+        @media (max-width: 600px) {
+            table {
+                display: block; /* Make table behave like a block for stacking */
+                width: 100%;
+            }
+
+            thead {
+                display: none; /* Hide table header */
+            }
+
+            tr {
+                display: block; /* Make rows behave like blocks */
+                margin-bottom: 10px;
+                border: 1px solid #e5e7eb;
+                border-radius: 10px;
+                background-color: white;
+            }
+
+            td {
+                display: block; /* Make cells behave like blocks */
+                text-align: right;
+                padding-left: 50%; /* Make space for pseudo-element label */
+                position: relative;
+                border-bottom: 1px dashed #e5e7eb; /* Add dashed border for separation */
+            }
+
+            td:last-child {
+                border-bottom: none;
+            }
+
+            td::before {
+                content: attr(data-label); /* Use data-label for content */
+                position: absolute;
+                left: 10px;
+                width: calc(50% - 20px);
+                text-align: left;
+                font-weight: bold;
+                color: #4f46e5;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
 
 
         tr:hover {
@@ -380,11 +426,13 @@
             gap: 10px;
             flex-wrap: wrap;
             margin-top: 15px; /* Added margin for search/filter buttons */
+            justify-content: space-between; /* Distribute items evenly */
         }
 
         .download-buttons .btn {
             flex: 1;
-            min-width: 120px;
+            min-width: unset; /* Allow buttons to shrink */
+            margin-top: 0; /* Remove default margin-top if flex item */
         }
 
         @media (max-width: 480px) {
@@ -418,14 +466,14 @@
             }
             td:nth-child(6) { white-space: normal; } /* Ensure note wraps on small screens */
 
-            .download-buttons .btn {
-                font-size: 0.9rem;
-                padding: 10px 15px;
-                min-width: unset; /* Remove min-width to allow shrinking */
-                flex-basis: 100%; /* Stack buttons on very small screens */
-            }
             .download-buttons {
-                flex-direction: column; /* Stack buttons vertically */
+                flex-direction: row; /* Keep buttons in a row by default */
+                justify-content: space-around; /* Space them out */
+            }
+            .download-buttons .btn {
+                flex-basis: auto; /* Let content dictate width */
+                min-width: 100px; /* Ensure a minimum width */
+                padding: 10px 15px;
             }
         }
 
@@ -512,7 +560,7 @@
             font-weight: bold;
             font-size: 0.95rem;
             text-shadow: 0 1px 2px rgba(255,255,255,0.5); 
-            white-space: nowrap; 
+            white-space: nowrap;
         }
 
         .summary-tables {
@@ -524,7 +572,7 @@
 
         @media (min-width: 768px) {
             .summary-tables {
-                grid-template-columns: 1fr 1fr; 
+                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -560,7 +608,8 @@
             justify-content: space-between;
             font-weight: bold;
             padding-bottom: 8px;
-            border-bottom: 2px solid #e0e7ff; /* Thicker border for heading */
+            border-bottom: 2px solid #e0e7ff;
+            /* Thicker border for heading */
             margin-bottom: 5px;
             color: #374151;
             font-size: 0.9rem;
@@ -599,8 +648,7 @@
                     <label for="budgetAmount">Budget Amount (₹)</label>
                     <input type="number" id="budgetAmount" placeholder="Enter your monthly budget">
                 </div>
-                <div class="download-buttons">
-                    <button class="btn" onclick="setBudget(event)">Set Budget</button>
+                <div class="download-buttons"> <button class="btn" onclick="setBudget(event)">Set Budget</button>
                     <button class="btn btn-outline" onclick="resetBudget()">Reset Budget</button>
                 </div>
                 
@@ -689,7 +737,6 @@
 
         <div id="summaryTab" class="tab-content">
             <div class="card full-width">
-                <h2><span class="icon">📊</span> Spending by Category</h2>
                 <div class="chart-container">
                     <canvas id="categoryPieChart"></canvas>
                 </div>
@@ -697,14 +744,12 @@
 
             <div class="stats-grid">
                 <div class="card">
-                    <h2><span class="icon">📈</span> Monthly Spending</h2>
                     <div class="chart-container">
                         <canvas id="monthlyBarChart"></canvas>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h2><span class="icon">📉</span> Daily Spending Trend (Current Month)</h2>
                     <div class="chart-container">
                         <canvas id="dailyLineChart"></canvas>
                     </div>
@@ -712,21 +757,18 @@
             </div>
 
             <div class="card full-width">
-                <h2><span class="icon">📅</span> Weekly Spending Trend</h2>
                 <div class="chart-container">
                     <canvas id="weeklyBarChart"></canvas>
                 </div>
             </div>
 
             <div class="card full-width">
-                <h2><span class="icon">🔢</span> Number of Spends by Category</h2>
                 <div class="chart-container">
                     <canvas id="categoryCountBarChart"></canvas>
                 </div>
             </div>
 
             <div class="card full-width">
-                <h2><span class="icon">👥</span> Spending by User</h2>
                 <div class="chart-container">
                     <canvas id="userSpendingBarChart"></canvas>
                 </div>
@@ -740,8 +782,9 @@
                         <span style="flex: 1; text-align: right;">Amount (%)</span>
                     </div>
                     <ul id="topCategoriesList" class="top-list">
-                        </ul>
+                    </ul>
                 </div>
+                
                 <div class="card">
                     <h2><span class="icon">🛍️</span> Top 3 Vendors (by amount)</h2>
                     <div class="top-list-header">
@@ -749,7 +792,7 @@
                         <span style="flex: 1; text-align: right;">Amount</span>
                     </div>
                     <ul id="topVendorsList" class="top-list">
-                        </ul>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -761,8 +804,7 @@
                     <label for="searchQuery">Search by Vendor, Category, Note or User</label>
                     <input type="text" id="searchQuery" placeholder="e.g., 'Grocery', 'Amazon', 'fuel', 'Akshay'">
                 </div>
-                <div class="download-buttons">
-                    <button class="btn" onclick="performSearch()">Search</button>
+                <div class="download-buttons"> <button class="btn" onclick="performSearch()">Search</button>
                     <button class="btn btn-outline" onclick="clearSearch()">Clear Search</button>
                 </div>
                 
@@ -781,7 +823,7 @@
                     <input type="date" id="filterEndDate">
                 </div>
                 <button class="btn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
-                
+           
                 <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px;">
                     </div>
 
@@ -793,8 +835,7 @@
 
             <div class="card full-width">
                 <h2><span class="icon">💾</span> Export All Data</h2>
-                <div class="download-buttons">
-                    <button class="btn" onclick="downloadCSV()">📄 Download All CSV</button>
+                <div class="download-buttons"> <button class="btn" onclick="downloadCSV()">📄 Download All CSV</button>
                     <button class="btn" onclick="downloadPDF()">📊 Download All PDF</button>
                 </div>
             </div>
@@ -814,8 +855,8 @@
         let dailyLineChartInstance;
         let weeklyBarChartInstance; 
         let userSpendingBarChartInstance;
-        let categoryCountBarChartInstance; 
-
+        let categoryCountBarChartInstance;
+        
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             updateHeaderMonth();
@@ -844,11 +885,10 @@
 
             document.getElementById(tabId).classList.add('active');
             document.querySelector(`.tab-button[onclick="showTab('${tabId}')"]`).classList.add('active');
-
             // Re-render charts and update tables when their tab becomes active.
             // This is crucial because Chart.js can behave unexpectedly if rendered on hidden canvases.
             if (tabId === 'dashboardTab') {
-                updateBudgetSummary(); 
+                updateBudgetSummary();
                 updateBudgetProgressBar(); 
                 updateRecentExpenses();
             } else if (tabId === 'summaryTab') {
@@ -876,7 +916,7 @@
                 budget = parseFloat(savedBudget);
                 document.getElementById('budgetAmount').value = budget;
             } else {
-                budget = 0; 
+                budget = 0;
                 document.getElementById('budgetAmount').value = '';
             }
 
@@ -891,7 +931,6 @@
             expenses = expenses.filter(expense => {
                 return expense.recordedBy !== null && expense.recordedBy !== undefined && expense.recordedBy.trim() !== '';
             });
-
             // Sort expenses (most recent first) after loading
             expenses.sort((a, b) => {
                 const dateA = new Date(a.date + ' ' + a.time);
@@ -907,7 +946,6 @@
             const btn = event.target;
             const originalText = btn.textContent;
             const originalBackground = btn.style.background;
-
             if (isNaN(newBudget) || newBudget < 0) { 
                 alert('Please enter a valid budget amount (0 or greater)');
                 return;
@@ -948,19 +986,18 @@
                 alert('Please enter a vendor name');
                 return;
             }
-            
             if (isNaN(amount) || amount <= 0) {
                 alert('Please enter a valid amount');
                 return;
             }
-            
+
             // Handle receipt upload
             if (receiptInput.files.length > 0) {
                 const file = receiptInput.files[0];
-                const MAX_FILE_SIZE_BYTES = 1 * 1024 * 1024; // 1MB limit 
+                const MAX_FILE_SIZE_BYTES = 1 * 1024 * 1024; // 1MB limit
                 if (file.size > MAX_FILE_SIZE_BYTES) {
                     alert('File size exceeds 1MB. Please upload a smaller image.');
-                    receiptInput.value = ''; 
+                    receiptInput.value = '';
                     return;
                 }
                 // Only allow image files
@@ -969,7 +1006,6 @@
                     receiptInput.value = '';
                     return;
                 }
-
                 try {
                     receiptBase64 = await readFileAsBase64(file);
                 } catch (error) {
@@ -980,7 +1016,7 @@
             }
 
             const expense = {
-                id: Date.now().toString(), 
+                id: Date.now().toString(),
                 date: new Date().toISOString().split('T')[0],
                 time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
                 category: category,
@@ -988,21 +1024,19 @@
                 amount: amount,
                 note: note.trim(),
                 recordedBy: recordedBy,
-                receipt: receiptBase64 
+                receipt: receiptBase64
             };
-
-            expenses.push(expense); 
-            localStorage.setItem('expenses', JSON.stringify(expenses)); 
+            expenses.push(expense);
+            localStorage.setItem('expenses', JSON.stringify(expenses));
 
             // Clear form fields
             document.getElementById('vendor').value = '';
             document.getElementById('amount').value = '';
             document.getElementById('note').value = '';
             document.querySelector('input[name="recordedBy"][value="Akshay"]').checked = true;
-            receiptInput.value = ''; 
-            
-            updateDisplay(); 
-            
+            receiptInput.value = '';
+            updateDisplay();
+
             const btn = event.target;
             const originalText = btn.textContent;
             btn.textContent = '✅ Added!';
@@ -1020,13 +1054,11 @@
             });
         }
 
-
         function deleteExpense(id) {
             if (confirm('Are you sure you want to delete this expense?')) {
-                expenses = expenses.filter(expense => expense.id !== id); 
-                localStorage.setItem('expenses', JSON.stringify(expenses)); 
-                updateDisplay(); 
-                
+                expenses = expenses.filter(expense => expense.id !== id);
+                localStorage.setItem('expenses', JSON.stringify(expenses));
+                updateDisplay();
                 // Re-apply filters/search after deletion if active
                 const currentTab = document.querySelector('.tab-content.active').id;
                 if (currentTab === 'searchTab') {
@@ -1047,10 +1079,9 @@
         }
 
         // --- UI Update & Summary Functions ---
-
         function updateDisplay() {
             updateBudgetSummary();
-            updateBudgetProgressBar(); 
+            updateBudgetProgressBar();
             updateRecentExpenses();
             // Charts and Summary tables are rendered on tab switch, not every updateDisplay
         }
@@ -1058,7 +1089,6 @@
         function updateBudgetSummary() {
             const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
             const remaining = budget - totalSpent;
-            
             document.getElementById('budgetDisplay').textContent = `₹${budget.toLocaleString('en-IN')}`;
             document.getElementById('totalSpent').textContent = `₹${totalSpent.toLocaleString('en-IN')}`;
             document.getElementById('remaining').textContent = `₹${remaining.toLocaleString('en-IN')}`;
@@ -1071,18 +1101,16 @@
             if (budget > 0) {
                 percentage = (totalSpent / budget) * 100;
             }
-
             const progressBarFill = document.getElementById('budgetProgressBarFill');
             const progressBarText = document.getElementById('budgetProgressBarText');
-
-            progressBarFill.style.width = `${Math.min(percentage, 100).toFixed(1)}%`; 
+            progressBarFill.style.width = `${Math.min(percentage, 100).toFixed(1)}%`;
             progressBarText.textContent = `${percentage.toFixed(1)}% Used`;
 
             // Change color based on percentage
             if (percentage > 100) {
-                progressBarFill.style.background = 'linear-gradient(90deg, #fca5a5, #f87171)'; // Lighter red 
+                progressBarFill.style.background = 'linear-gradient(90deg, #fca5a5, #f87171)'; // Lighter red
                 progressBarText.textContent = `OVER BUDGET! (${percentage.toFixed(1)}%)`;
-                progressBarText.style.color = '#fff'; 
+                progressBarText.style.color = '#fff';
                 progressBarText.style.textShadow = '0 1px 2px rgba(0,0,0,0.5)';
             } else if (percentage >= 80) {
                 progressBarFill.style.background = 'linear-gradient(90deg, #fcd34d, #fbbf24)'; // Lighter amber
@@ -1093,11 +1121,11 @@
                 progressBarText.style.color = '#1f2937';
                 progressBarText.style.textShadow = '0 1px 2px rgba(255,255,255,0.5)';
             }
-            if (budget === 0) { 
-                 progressBarFill.style.width = '0%';
-                 progressBarText.textContent = 'Set a Budget!';
-                 progressBarText.style.color = '#1f2937';
-                 progressBarText.style.textShadow = 'none';
+            if (budget === 0) {
+                progressBarFill.style.width = '0%';
+                progressBarText.textContent = 'Set a Budget!';
+                progressBarText.style.color = '#1f2937';
+                progressBarText.style.textShadow = 'none';
             }
         }
 
@@ -1107,8 +1135,7 @@
                 container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No expenses added yet.</p>';
                 return;
             }
-            
-            const recentExpenses = expenses.slice(0, 5); 
+            const recentExpenses = expenses.slice(0, 5);
             container.innerHTML = recentExpenses.map(expense => `
                 <div class="expense-item">
                     <div class="expense-details">
@@ -1129,13 +1156,11 @@
         }
 
         // --- Export All Data Functions ---
-
         function downloadCSV() {
             if (expenses.length === 0) {
                 alert('No expenses to export');
                 return;
             }
-            
             const csvContent = [
                 ['Date', 'Time', 'Category', 'Vendor', 'Amount', 'Note', 'Recorded By', 'Receipt Available'],
                 ...expenses.map(expense => [
@@ -1146,9 +1171,10 @@
                     expense.amount,
                     expense.note || '',
                     expense.recordedBy || '',
-                    expense.receipt ? 'Yes' : 'No' 
+                    expense.receipt ? 'Yes' : 'No'
                 ])
-            ].map(row => row.map(field => `"${field.toString().replace(/"/g, '""')}"`).join(',')).join('\n'); 
+            ].map(row => row.map(field => `"${field.toString().replace(/"/g, '""')}"`).join(',')).join('\n');
+
             const blob = new Blob([csvContent], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1163,85 +1189,72 @@
                 alert('No expenses to export');
                 return;
             }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.text("Expense Tracker - All Expenses", 10, 10);
             
-            let content = `
-EXPENSE REPORT (ALL DATA)
---------------------------
-Generated On: ${new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-
-Budget:          ₹${budget.toLocaleString('en-IN')}
-Total Spent:     ₹${expenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString('en-IN')}
-Remaining Budget:₹${(budget - expenses.reduce((sum, expense) => sum + expense.amount, 0)).toLocaleString('en-IN')}
-
---------------------------
-EXPENSES DETAILS:
---------------------------
-`;
+            const tableColumn = ["Date", "Time", "Category", "Vendor", "Amount", "Recorded By", "Note"];
+            const tableRows = [];
 
             expenses.forEach(expense => {
-                content += `
-Date:           ${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
-Category:       ${expense.category}
-Vendor:         ${expense.vendor}
-Amount:         ₹${expense.amount.toLocaleString('en-IN')}
-Recorded By:    ${expense.recordedBy || 'N/A'}
-Note:           ${expense.note || 'N/A'}
-Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
---------------------------`;
+                const expenseData = [
+                    expense.date,
+                    expense.time,
+                    expense.category,
+                    expense.vendor,
+                    `₹${expense.amount.toLocaleString('en-IN')}`,
+                    expense.recordedBy || 'N/A',
+                    expense.note || ''
+                ];
+                tableRows.push(expenseData);
             });
-            
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `all_expense_report_${new Date().toISOString().split('T')[0]}.txt`;
-            a.click();
-            window.URL.revokeObjectURL(url);
+
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 20,
+                styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+                headStyles: { fillColor: [102, 126, 234], textColor: 255 },
+                margin: { top: 15, right: 10, bottom: 10, left: 10 },
+                didDrawPage: function(data) {
+                    // Footer
+                    let str = "Page " + doc.internal.getNumberOfPages()
+                    doc.setFontSize(8)
+                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                }
+            });
+
+            doc.save(`all_expenses_${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
-        // --- Chart Rendering Functions ---
-
-        const CHART_COLORS = [
-            '#a3bbf3', // Light Indigo
-            '#84e1b5', // Light Green
-            '#fcd34d', // Light Amber
-            '#fca5a5', // Light Red
-            '#c7d2fe', // Lighter Indigo
-            '#d1fae5', // Lighter Green
-            '#fef08a', // Lighter Amber
-            '#f87171', // Lighter Red
-            '#c084fc', // Light Purple
-            '#bef264', // Light Lime
-            '#f0abfc', // Light Fuchsia
-            '#fbcfe8', // Light Pink
-            '#93c5fd', // Light Blue
-            '#fde047'  // Light Yellow
-        ];
-
+        // --- Chart Rendering Functions (Modified to remove titles) ---
         function renderCategoryPieChart() {
             const ctx = document.getElementById('categoryPieChart').getContext('2d');
             if (categoryPieChartInstance) {
                 categoryPieChartInstance.destroy();
             }
 
-            const categoryTotals = expenses.reduce((acc, expense) => {
+            const categoryData = expenses.reduce((acc, expense) => {
                 acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
                 return acc;
             }, {});
 
-            const labels = Object.keys(categoryTotals);
-            const data = Object.values(categoryTotals);
-            const backgroundColors = labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
+            const labels = Object.keys(categoryData);
+            const data = Object.values(categoryData);
 
             categoryPieChartInstance = new Chart(ctx, {
-                type: 'doughnut', 
+                type: 'pie',
                 data: {
                     labels: labels,
                     datasets: [{
                         data: data,
-                        backgroundColor: backgroundColors,
-                        borderColor: '#fff',
-                        borderWidth: 2,
+                        backgroundColor: [
+                            '#667eea', '#764ba2', '#38b2ac', '#4299e1', '#ed8936',
+                            '#9f7aea', '#ecc94b', '#e53e3e', '#81e6d9', '#f6ad55',
+                            '#48bb78', '#fc8181', '#a0aec0'
+                        ],
                         hoverOffset: 4
                     }]
                 },
@@ -1249,21 +1262,12 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Spending by Category',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#333'
-                        },
-                        legend: { // Moved legend to bottom
-                            position: 'bottom',
+                        legend: {
+                            position: 'right', // Position legend to the right
                             labels: {
-                                color: '#555',
+                                color: '#374151',
                                 font: {
-                                    size: 11
+                                    size: 12
                                 }
                             }
                         },
@@ -1275,39 +1279,31 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                                         label += ': ';
                                     }
                                     if (context.parsed !== null) {
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = (context.parsed / total * 100).toFixed(1);
-                                        label += `₹${context.parsed.toLocaleString('en-IN')} (${percentage}%)`;
+                                        label += `₹${context.parsed.toLocaleString('en-IN')}`;
                                     }
                                     return label;
                                 }
                             }
                         },
-                        datalabels: { 
-                            formatter: (value, ctx) => {
-                                const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                if (total === 0) return '0%'; 
-                                const percentage = (value * 100 / total).toFixed(1) + '%';
-                                if (value > 0) return percentage; 
-                                return '';
+                        datalabels: {
+                            color: '#fff',
+                            formatter: (value, context) => {
+                                const total = context.chart.data.datasets[0].data.reduce((sum, val) => sum + val, 0);
+                                const percentage = (value / total * 100).toFixed(1);
+                                return percentage > 5 ? percentage + '%' : ''; // Only show percentage if greater than 5%
                             },
-                            color: '#1f2937', 
                             font: {
                                 weight: 'bold',
                                 size: 10
                             },
-                            anchor: 'end', 
-                            align: 'start', 
-                            offset: 4, 
-                            display: function(context) {
-                                // Only display if value is significant enough and chart size allows
-                                // Increased percentage threshold slightly for better visibility
-                                return context.dataset.data[context.dataIndex] > 0 && context.chart.width > 200 && context.percentage >= 3; 
-                            },
                             textShadow: {
-                                blur: 4,
-                                color: 'rgba(255,255,255,0.7)'
+                                enable: true,
+                                color: 'rgba(0,0,0,0.6)',
+                                blur: 3
                             }
+                        },
+                        title: {
+                            display: false // Removed chart title
                         }
                     }
                 }
@@ -1320,29 +1316,24 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                 monthlyBarChartInstance.destroy();
             }
 
-            const monthlyData = {};
-            expenses.forEach(expense => {
-                const expenseDate = new Date(expense.date);
-                const monthKey = `${expenseDate.getFullYear()}-${String(expenseDate.getMonth() + 1).padStart(2, '0')}`;
-                monthlyData[monthKey] = (monthlyData[monthKey] || 0) + expense.amount;
-            });
+            const monthlyData = expenses.reduce((acc, expense) => {
+                const month = new Date(expense.date).toLocaleString('en-IN', { month: 'short', year: '2-digit' });
+                acc[month] = (acc[month] || 0) + expense.amount;
+                return acc;
+            }, {});
 
-            const sortedMonthKeys = Object.keys(monthlyData).sort(); 
-            const labels = sortedMonthKeys.map(key => {
-                const [year, month] = key.split('-');
-                return new Date(year, month - 1).toLocaleDateString('en-IN', { year: 'numeric', month: 'short' });
-            });
-            const data = sortedMonthKeys.map(key => monthlyData[key]);
+            const labels = Object.keys(monthlyData);
+            const data = Object.values(monthlyData);
 
             monthlyBarChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Monthly Spending (₹)',
+                        label: 'Amount Spent (₹)',
                         data: data,
-                        backgroundColor: '#84e1b5', /* Lighter Green */
-                        borderColor: '#38b2ac',
+                        backgroundColor: '#667eea',
+                        borderColor: '#5a67d8',
                         borderWidth: 1
                     }]
                 },
@@ -1352,29 +1343,19 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Amount (₹)',
-                                color: '#555'
-                            },
-                             ticks: {
+                            ticks: {
                                 callback: function(value) {
                                     return '₹' + value.toLocaleString('en-IN');
                                 },
-                                color: '#555'
+                                color: '#374151'
                             },
                             grid: {
-                                color: 'rgba(0,0,0,0.05)'
+                                color: '#e5e7eb'
                             }
                         },
                         x: {
-                            title: {
-                                display: true,
-                                text: 'Month',
-                                color: '#555'
-                            },
                             ticks: {
-                                color: '#555'
+                                color: '#374151'
                             },
                             grid: {
                                 display: false
@@ -1382,44 +1363,27 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                         }
                     },
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Total Monthly Spending',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#333'
-                        },
-                        legend: { // Moved legend to bottom
-                            position: 'bottom',
-                            labels: {
-                                color: '#555',
-                                font: {
-                                    size: 11
-                                }
-                            }
+                        legend: {
+                            display: false // Hide legend as there's only one dataset
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `₹${context.raw.toLocaleString('en-IN')}`;
+                                    return `₹${context.parsed.y.toLocaleString('en-IN')}`;
                                 }
                             }
                         },
-                        datalabels: { 
-                            anchor: 'end', 
-                            align: 'top', 
-                            formatter: (value) => value > 0 ? `₹${value.toLocaleString('en-IN')}` : '', 
-                            color: '#1f2937', 
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            color: '#374151',
+                            formatter: (value) => '₹' + value.toLocaleString('en-IN'),
                             font: {
-                                weight: 'bold',
                                 size: 10
-                            },
-                            offset: 4, 
-                            display: function(context) {
-                                return context.dataset.data[context.dataIndex] > 0;
                             }
+                        },
+                        title: {
+                            display: false // Removed chart title
                         }
                     }
                 }
@@ -1432,44 +1396,33 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                 dailyLineChartInstance.destroy();
             }
 
+            // Get current month's expenses
             const today = new Date();
-            const currentMonth = today.getMonth();
-            const currentYear = today.getFullYear();
-
-            const dailyData = {};
-            expenses.forEach(expense => {
+            const currentMonthExpenses = expenses.filter(expense => {
                 const expenseDate = new Date(expense.date);
-                if (expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear) {
-                    const dayKey = expenseDate.toISOString().split('T')[0]; 
-                    dailyData[dayKey] = (dailyData[dayKey] || 0) + expense.amount;
-                }
+                return expenseDate.getMonth() === today.getMonth() && expenseDate.getFullYear() === today.getFullYear();
             });
 
-            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-            const labels = [];
-            const data = [];
-            for (let i = 1; i <= daysInMonth; i++) {
-                const date = new Date(currentYear, currentMonth, i);
-                const dayKey = date.toISOString().split('T')[0];
-                labels.push(date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }));
-                data.push(dailyData[dayKey] || 0); 
-            }
+            const dailyData = currentMonthExpenses.reduce((acc, expense) => {
+                const date = new Date(expense.date).getDate(); // Get day of the month
+                acc[date] = (acc[date] || 0) + expense.amount;
+                return acc;
+            }, {});
+
+            const labels = Array.from({ length: new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate() }, (_, i) => i + 1); // Days in current month
+            const data = labels.map(day => dailyData[day] || 0);
 
             dailyLineChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: `Daily Spending (₹)`,
+                        label: 'Amount Spent (₹)',
                         data: data,
-                        borderColor: '#93c5fd', /* Light Blue */
-                        backgroundColor: 'rgba(147, 197, 253, 0.3)', /* Lighter blue fill */
+                        borderColor: '#38b2ac',
+                        backgroundColor: 'rgba(56, 178, 172, 0.2)',
                         fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#60a5fa',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: '#2563eb'
+                        tension: 0.3
                     }]
                 },
                 options: {
@@ -1478,29 +1431,24 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Amount (₹)',
-                                color: '#555'
-                            },
-                             ticks: {
+                            ticks: {
                                 callback: function(value) {
                                     return '₹' + value.toLocaleString('en-IN');
                                 },
-                                color: '#555'
+                                color: '#374151'
                             },
                             grid: {
-                                color: 'rgba(0,0,0,0.05)'
+                                color: '#e5e7eb'
                             }
                         },
                         x: {
                             title: {
                                 display: true,
                                 text: 'Day of Month',
-                                color: '#555'
+                                color: '#374151'
                             },
                             ticks: {
-                                color: '#555'
+                                color: '#374151'
                             },
                             grid: {
                                 display: false
@@ -1508,126 +1456,66 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                         }
                     },
                     plugins: {
-                        title: {
-                            display: true,
-                            text: `Daily Spending Trend (Current Month)`,
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#333',
-                            padding: {
-                                top: 10,
-                                bottom: 20
-                            }
-                        },
-                        legend: { // Moved legend to bottom
-                            position: 'bottom',
-                            labels: {
-                                color: '#555',
-                                font: {
-                                    size: 11
-                                }
-                            }
+                        legend: {
+                            display: false
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `₹${context.raw.toLocaleString('en-IN')}`;
+                                    return `Day ${context.label}: ₹${context.parsed.y.toLocaleString('en-IN')}`;
                                 }
                             }
                         },
-                        datalabels: { 
-                            align: 'top', 
-                            formatter: (value) => value > 0 ? `₹${value.toLocaleString('en-IN')}` : '',
-                            color: '#1f2937',
-                            font: {
-                                weight: 'bold',
-                                size: 8 
-                            },
-                            offset: 8,
-                            display: function(context) {
-                                // Only display if value is greater than 0 and there's enough space
-                                return context.dataset.data[context.dataIndex] > 0 && context.chart.width > 300;
-                            }
+                        datalabels: {
+                            display: false // Hide datalabels for cleaner line chart
+                        },
+                        title: {
+                            display: false // Removed chart title
                         }
                     }
                 }
             });
         }
 
-        // Weekly Spending Trend (Bar Chart) - Now with percentages
         function renderWeeklyBarChart() {
             const ctx = document.getElementById('weeklyBarChart').getContext('2d');
             if (weeklyBarChartInstance) {
                 weeklyBarChartInstance.destroy();
             }
 
-            const today = new Date();
-            const currentMonth = today.getMonth();
-            const currentYear = today.getFullYear();
-
-            const monthlyFilteredExpenses = expenses.filter(expense => {
-                const expenseDate = new Date(expense.date);
-                return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
-            });
-
-            const totalMonthlySpend = monthlyFilteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
-
             const weeklyData = {};
-            monthlyFilteredExpenses.forEach(expense => {
-                const expenseDate = new Date(expense.date);
-                // Get the start of the week (Sunday)
-                const weekStart = new Date(expenseDate);
-                weekStart.setDate(expenseDate.getDate() - expenseDate.getDay());
-                weekStart.setHours(0, 0, 0, 0); 
-                const weekKey = weekStart.toISOString().split('T')[0]; 
+            expenses.forEach(expense => {
+                const date = new Date(expense.date);
+                const dayOfWeek = date.getDay(); // 0 for Sunday, 6 for Saturday
+                const diff = date.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust to get Monday of the week
+                const startOfWeek = new Date(date.setDate(diff));
                 
-                weeklyData[weekKey] = (weeklyData[weekKey] || 0) + expense.amount;
+                // Format as 'DD/MM' or 'DD/MM/YYYY' for week start
+                const weekLabel = `${startOfWeek.getDate().toString().padStart(2, '0')}/${(startOfWeek.getMonth() + 1).toString().padStart(2, '0')}`;
+                
+                weeklyData[weekLabel] = (weeklyData[weekLabel] || 0) + expense.amount;
             });
 
-            const labels = [];
-            const percentages = [];
-
-            const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
-            const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0); 
-
-            let currentWeekStartDate = new Date(firstDayOfMonth);
-            // Adjust to the first Sunday that falls within or before the first day of the month
-            currentWeekStartDate.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay());
-            currentWeekStartDate.setHours(0,0,0,0);
-
-
-            while (currentWeekStartDate <= lastDayOfMonth || (currentWeekStartDate.getMonth() === currentMonth && currentWeekStartDate.getDay() !== 0) ) {
-                const weekEndDate = new Date(currentWeekStartDate);
-                weekEndDate.setDate(currentWeekStartDate.getDate() + 6);
-
-                const weekKey = currentWeekStartDate.toISOString().split('T')[0];
-                const weekSpend = weeklyData[weekKey] || 0;
-                const percentage = totalMonthlySpend > 0 ? (weekSpend / totalMonthlySpend * 100) : 0;
-
-                labels.push(`${currentWeekStartDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} - ${weekEndDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`);
-                percentages.push(percentage);
-
-                currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
-                currentWeekStartDate.setHours(0,0,0,0); // Reset hours for clean comparison
-            }
-            // Remove any trailing empty weeks if they extend far into the next month without data
-            while (labels.length > 0 && percentages[labels.length - 1] === 0 && currentWeekStartDate.getMonth() !== currentMonth) {
-                labels.pop();
-                percentages.pop();
-            }
-
+            // Sort weeks chronologically
+            const sortedWeekLabels = Object.keys(weeklyData).sort((a, b) => {
+                const [dayA, monthA] = a.split('/').map(Number);
+                const [dayB, monthB] = b.split('/').map(Number);
+                const dateA = new Date(new Date().getFullYear(), monthA - 1, dayA);
+                const dateB = new Date(new Date().getFullYear(), monthB - 1, dayB);
+                return dateA - dateB;
+            });
+            
+            const data = sortedWeekLabels.map(label => weeklyData[label]);
 
             weeklyBarChartInstance = new Chart(ctx, {
-                type: 'bar', 
+                type: 'bar',
                 data: {
-                    labels: labels, 
+                    labels: sortedWeekLabels,
                     datasets: [{
-                        label: `Weekly Spending % of Total Monthly Expenses`,
-                        data: percentages, 
-                        backgroundColor: '#84e1b5', /* Lighter green */
-                        borderColor: '#38b2ac',
+                        label: 'Weekly Spending (₹)',
+                        data: data,
+                        backgroundColor: '#4299e1',
+                        borderColor: '#3182ce',
                         borderWidth: 1
                     }]
                 },
@@ -1637,29 +1525,19 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: '% of Monthly Total',
-                                color: '#555'
-                            },
-                             ticks: {
+                            ticks: {
                                 callback: function(value) {
-                                    return value.toFixed(0) + '%';
+                                    return '₹' + value.toLocaleString('en-IN');
                                 },
-                                color: '#555'
+                                color: '#374151'
                             },
                             grid: {
-                                color: 'rgba(0,0,0,0.05)'
+                                color: '#e5e7eb'
                             }
                         },
                         x: {
-                            title: {
-                                display: true,
-                                text: 'Week (Sunday - Saturday)',
-                                color: '#555'
-                            },
                             ticks: {
-                                color: '#555'
+                                color: '#374151'
                             },
                             grid: {
                                 display: false
@@ -1667,67 +1545,33 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                         }
                     },
                     plugins: {
-                        title: {
-                            display: true,
-                            text: `Weekly Spending Trend (${new Date(currentYear, currentMonth).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })})`,
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#333',
-                            padding: {
-                                top: 10,
-                                bottom: 20
-                            }
-                        },
-                        legend: { // Moved legend to bottom
-                            position: 'bottom',
-                            labels: {
-                                color: '#555',
-                                font: {
-                                    size: 11
-                                }
-                            }
+                        legend: {
+                            display: false
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    const weekKey = labels[context.dataIndex].split(' ')[0]; // Extract the start date part of the label
-                                    const originalWeekStartDate = new Date(currentYear, currentMonth); // Reconstruct initial date
-                                    originalWeekStartDate.setDate(1);
-                                    originalWeekStartDate.setDate(originalWeekStartDate.getDate() - originalWeekStartDate.getDay()); // First Sunday of the month
-                                    
-                                    let actualWeekSpend = 0;
-                                    // Find the actual spending for this week from weeklyData map
-                                    for (let i = 0; i < context.dataIndex; i++) {
-                                        originalWeekStartDate.setDate(originalWeekStartDate.getDate() + 7);
-                                    }
-                                    actualWeekSpend = weeklyData[originalWeekStartDate.toISOString().split('T')[0]] || 0;
-
-                                    return `₹${actualWeekSpend.toLocaleString('en-IN')} (${context.raw.toFixed(1)}%)`;
+                                    return `Week of ${context.label}: ₹${context.parsed.y.toLocaleString('en-IN')}`;
                                 }
                             }
                         },
-                        datalabels: { 
-                            anchor: 'end', 
-                            align: 'top', 
-                            formatter: (value) => value > 0 ? `${value.toFixed(1)}%` : '',
-                            color: '#1f2937',
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            color: '#374151',
+                            formatter: (value) => '₹' + value.toLocaleString('en-IN'),
                             font: {
-                                weight: 'bold',
-                                size: 8 
-                            },
-                            offset: 8,
-                            display: function(context) {
-                                return context.dataset.data[context.dataIndex] > 0;
+                                size: 10
                             }
+                        },
+                        title: {
+                            display: false // Removed chart title
                         }
                     }
                 }
             });
         }
 
-        // New Chart: Number of Spends by Category
         function renderCategoryCountBarChart() {
             const ctx = document.getElementById('categoryCountBarChart').getContext('2d');
             if (categoryCountBarChartInstance) {
@@ -1742,8 +1586,6 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             const labels = Object.keys(categoryCounts);
             const data = Object.values(categoryCounts);
 
-            const backgroundColors = labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
-
             categoryCountBarChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -1751,38 +1593,29 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     datasets: [{
                         label: 'Number of Spends',
                         data: data,
-                        backgroundColor: backgroundColors,
-                        borderColor: backgroundColors.map(color => color.replace('0.2)', '1)')), 
+                        backgroundColor: '#ed8936',
+                        borderColor: '#dd6b20',
                         borderWidth: 1
                     }]
                 },
                 options: {
+                    indexAxis: 'y', // Make it a horizontal bar chart
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        y: {
+                        x: {
                             beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Number of Spends',
-                                color: '#555'
-                            },
                             ticks: {
-                                precision: 0, 
-                                color: '#555'
+                                precision: 0, // Ensure integer ticks
+                                color: '#374151'
                             },
                             grid: {
-                                color: 'rgba(0,0,0,0.05)'
+                                color: '#e5e7eb'
                             }
                         },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Category',
-                                color: '#555'
-                            },
+                        y: {
                             ticks: {
-                                color: '#555'
+                                color: '#374151'
                             },
                             grid: {
                                 display: false
@@ -1790,82 +1623,57 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                         }
                     },
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Number of Spends for Each Category',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#333',
-                            padding: {
-                                top: 10,
-                                bottom: 20
-                            }
-                        },
-                        legend: { // Moved legend to bottom
-                            position: 'bottom',
-                            labels: {
-                                color: '#555',
-                                font: {
-                                    size: 11
-                                }
-                            }
+                        legend: {
+                            display: false
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `Spends: ${context.raw.toLocaleString('en-IN')}`;
+                                    return `${context.label}: ${context.parsed.x} spends`;
                                 }
                             }
                         },
-                        datalabels: { 
-                            anchor: 'end', 
-                            align: 'top', 
-                            formatter: (value) => value > 0 ? value.toLocaleString('en-IN') : '',
-                            color: '#1f2937',
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'right',
+                            color: '#374151',
+                            formatter: (value) => value,
                             font: {
-                                weight: 'bold',
                                 size: 10
-                            },
-                            offset: 4,
-                            display: function(context) {
-                                return context.dataset.data[context.dataIndex] > 0;
                             }
+                        },
+                        title: {
+                            display: false // Removed chart title
                         }
                     }
                 }
             });
         }
 
-
-        // Spending by User (Bar Chart)
         function renderUserSpendingBarChart() {
             const ctx = document.getElementById('userSpendingBarChart').getContext('2d');
             if (userSpendingBarChartInstance) {
                 userSpendingBarChartInstance.destroy();
             }
 
-            const userSpending = {};
-            expenses.forEach(expense => {
-                const recordedBy = expense.recordedBy || 'Unknown'; 
-                userSpending[recordedBy] = (userSpending[recordedBy] || 0) + expense.amount;
-            });
+            const userSpending = expenses.reduce((acc, expense) => {
+                const user = expense.recordedBy || 'Unknown';
+                acc[user] = (acc[user] || 0) + expense.amount;
+                return acc;
+            }, {});
 
             const labels = Object.keys(userSpending);
             const data = Object.values(userSpending);
-
-            const backgroundColors = labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
 
             userSpendingBarChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Total Spending (₹)',
+                        label: 'Amount Spent (₹)',
                         data: data,
-                        backgroundColor: backgroundColors,
-                        borderColor: backgroundColors,
+                        backgroundColor: '#9f7aea',
+                        borderColor: '#805ad5',
                         borderWidth: 1
                     }]
                 },
@@ -1875,29 +1683,19 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     scales: {
                         y: {
                             beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Amount (₹)',
-                                color: '#555'
-                            },
-                             ticks: {
+                            ticks: {
                                 callback: function(value) {
                                     return '₹' + value.toLocaleString('en-IN');
                                 },
-                                color: '#555'
+                                color: '#374151'
                             },
                             grid: {
-                                color: 'rgba(0,0,0,0.05)'
+                                color: '#e5e7eb'
                             }
                         },
                         x: {
-                            title: {
-                                display: true,
-                                text: 'User',
-                                color: '#555'
-                            },
                             ticks: {
-                                color: '#555'
+                                color: '#374151'
                             },
                             grid: {
                                 display: false
@@ -1905,99 +1703,80 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                         }
                     },
                     plugins: {
-                        title: {
-                            display: true,
-                            text: 'Spending by User',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#333'
-                        },
-                        legend: { // Moved legend to bottom
-                            position: 'bottom',
-                            labels: {
-                                color: '#555',
-                                font: {
-                                    size: 11
-                                }
-                            }
+                        legend: {
+                            display: false
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `₹${context.raw.toLocaleString('en-IN')}`;
+                                    return `${context.label}: ₹${context.parsed.y.toLocaleString('en-IN')}`;
                                 }
                             }
                         },
-                        datalabels: { 
-                            anchor: 'end', 
-                            align: 'top', 
-                            formatter: (value) => value > 0 ? `₹${value.toLocaleString('en-IN')}` : '',
-                            color: '#1f2937',
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'top',
+                            color: '#374151',
+                            formatter: (value) => '₹' + value.toLocaleString('en-IN'),
                             font: {
-                                weight: 'bold',
                                 size: 10
-                            },
-                            offset: 4,
-                            display: function(context) {
-                                return context.dataset.data[context.dataIndex] > 0;
                             }
+                        },
+                        title: {
+                            display: false // Removed chart title
                         }
                     }
                 }
             });
         }
 
-        // Top Metrics Tables
+
         function updateTopCategories() {
-            const container = document.getElementById('topCategoriesList');
-            
-            const categoryTotals = expenses.reduce((acc, expense) => {
+            const topCategories = expenses.reduce((acc, expense) => {
                 acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
                 return acc;
             }, {});
 
-            const totalSpentOverall = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-
-            const sortedCategories = Object.entries(categoryTotals)
+            const sortedCategories = Object.entries(topCategories)
                 .sort(([, a], [, b]) => b - a)
                 .slice(0, 3);
 
+            const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+            const listContainer = document.getElementById('topCategoriesList');
             if (sortedCategories.length === 0) {
-                 container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px; flex-direction: column;">No categories found.</li>';
-                 return;
+                listContainer.innerHTML = '<li><span class="label">No categories yet.</span></li>';
+                return;
             }
 
-            container.innerHTML = sortedCategories.map(([category, amount]) => {
-                const percentage = totalSpentOverall > 0 ? (amount / totalSpentOverall * 100).toFixed(1) : 0;
+            listContainer.innerHTML = sortedCategories.map(([category, amount]) => {
+                const percentage = totalSpent > 0 ? ((amount / totalSpent) * 100).toFixed(1) : 0;
                 return `
-                <li>
-                    <span class="label">${category}</span>
-                    <span class="value">₹${amount.toLocaleString('en-IN')} (${percentage}%)</span>
-                </li>
+                    <li>
+                        <span class="label">${category}</span>
+                        <span class="value">₹${amount.toLocaleString('en-IN')} (${percentage}%)</span>
+                    </li>
                 `;
             }).join('');
         }
 
         function updateTopVendors() {
-            const container = document.getElementById('topVendorsList');
-            
-            const vendorTotals = expenses.reduce((acc, expense) => {
+            const topVendors = expenses.reduce((acc, expense) => {
                 acc[expense.vendor] = (acc[expense.vendor] || 0) + expense.amount;
                 return acc;
             }, {});
 
-            const sortedVendors = Object.entries(vendorTotals)
+            const sortedVendors = Object.entries(topVendors)
                 .sort(([, a], [, b]) => b - a)
                 .slice(0, 3);
 
+            const listContainer = document.getElementById('topVendorsList');
             if (sortedVendors.length === 0) {
-                 container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px; flex-direction: column;">No vendors found.</li>';
-                 return;
+                listContainer.innerHTML = '<li><span class="label">No vendors yet.</span></li>';
+                return;
             }
 
-            container.innerHTML = sortedVendors.map(([vendor, amount]) => `
+            listContainer.innerHTML = sortedVendors.map(([vendor, amount]) => `
                 <li>
                     <span class="label">${vendor}</span>
                     <span class="value">₹${amount.toLocaleString('en-IN')}</span>
@@ -2005,99 +1784,151 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             `).join('');
         }
 
+        // --- Search and Filter Functions ---
+        function performSearch() {
+            const searchQuery = document.getElementById('searchQuery').value.toLowerCase();
+            const searchResultsDisplay = document.getElementById('searchResultsDisplay');
 
-        // Helper to update header month 
-        function updateHeaderMonth() {
-            const today = new Date();
-            const currentMonthName = today.toLocaleDateString('en-IN', { month: 'long' });
-            const currentYear = today.getFullYear();
-            document.getElementById('headerTitle').textContent = `💰 Expense Tracker - ${currentMonthName} ${currentYear}`;
-        }
-
-        // --- New Filter and Download Functions ---
-
-        function filterAndDisplayExpenses() {
-            const startDateInput = document.getElementById('filterStartDate').value;
-            const endDateInput = document.getElementById('filterEndDate').value;
-
-            const container = document.getElementById('filteredExpensesDisplay');
-
-            if (!startDateInput || !endDateInput) {
-                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Please select both start and end dates to filter.</p>';
-                updateFilteredDownloadButtons();
+            if (!searchQuery.trim()) {
+                searchResultsDisplay.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>';
+                currentSearchResults = [];
                 return;
             }
 
-            const startDate = new Date(startDateInput);
-            const endDate = new Date(endDateInput);
-            endDate.setHours(23, 59, 59, 999); 
-
-            if (startDate > endDate) {
-                container.innerHTML = '<p style="text-align: center; color: #ef4444; padding: 20px;">Start date cannot be after end date.</p>';
-                updateFilteredDownloadButtons();
-                return;
-            }
-
-            filteredExpenses = expenses.filter(expense => {
-                const expenseDate = new Date(expense.date);
-                return expenseDate >= startDate && expenseDate <= endDate;
+            currentSearchResults = expenses.filter(expense => {
+                return (
+                    expense.vendor.toLowerCase().includes(searchQuery) ||
+                    expense.category.toLowerCase().includes(searchQuery) ||
+                    expense.note.toLowerCase().includes(searchQuery) ||
+                    expense.recordedBy.toLowerCase().includes(searchQuery)
+                );
             });
 
-            renderFilteredExpensesTable();
-            updateFilteredDownloadButtons();
-        }
-
-        function renderFilteredExpensesTable() {
-            const container = document.getElementById('filteredExpensesDisplay');
-            if (filteredExpenses.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No expenses found for the selected date range.</p>';
+            if (currentSearchResults.length === 0) {
+                searchResultsDisplay.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">No results found for "${searchQuery}".</p>`;
                 return;
             }
 
+            // Generate table for search results
             const tableHtml = `
-                <table id="filteredExpensesTable">
+                <table class="search-results-table">
                     <thead>
                         <tr>
-                            <th>Date</th>
+                            <th>Date & Time</th>
                             <th>Category</th>
                             <th>Vendor</th>
                             <th>Amount</th>
                             <th>Recorded By</th>
                             <th>Note</th>
                             <th>Receipt</th>
-                            <th>Actions</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${filteredExpenses.map(expense => `
+                        ${currentSearchResults.map(expense => `
                             <tr>
-                                <td>${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
-                                <td>${expense.category}</td>
-                                <td>${expense.vendor}</td>
-                                <td>₹${expense.amount.toLocaleString('en-IN')}</td>
-                                <td>${expense.recordedBy || 'N/A'}</td>
-                                <td>${expense.note || ''}</td>
-                                <td>${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">🧾</a>` : 'N/A'}</td>
-                                <td><button class="btn btn-danger" onclick="deleteExpense('${expense.id}')">🗑️</button></td>
+                                <td data-label="Date & Time">${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
+                                <td data-label="Category">${expense.category}</td>
+                                <td data-label="Vendor">${expense.vendor}</td>
+                                <td data-label="Amount">₹${expense.amount.toLocaleString('en-IN')}</td>
+                                <td data-label="Recorded By">${expense.recordedBy || 'N/A'}</td>
+                                <td data-label="Note">${expense.note || ''}</td>
+                                <td data-label="Receipt">${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">🧾</a>` : 'N/A'}</td>
+                                <td data-label="Action"><button class="btn btn-danger" onclick="deleteExpense('${expense.id}')">🗑️</button></td>
                             </tr>
                         `).join('')}
                     </tbody>
                 </table>
             `;
-            container.innerHTML = tableHtml;
+            searchResultsDisplay.innerHTML = tableHtml;
+        }
+
+        function clearSearch() {
+            document.getElementById('searchQuery').value = '';
+            document.getElementById('searchResultsDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>';
+            currentSearchResults = [];
+        }
+
+        function filterAndDisplayExpenses() {
+            const startDate = document.getElementById('filterStartDate').value;
+            const endDate = document.getElementById('filterEndDate').value;
+            const filteredDisplay = document.getElementById('filteredExpensesDisplay');
+            const downloadCsvBtn = document.getElementById('downloadFilteredCsvBtn');
+            const downloadPdfBtn = document.getElementById('downloadFilteredPdfBtn');
+
+            if (!startDate || !endDate) {
+                filteredDisplay.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Please select both start and end dates.</p>';
+                downloadCsvBtn.disabled = true;
+                downloadPdfBtn.disabled = true;
+                filteredExpenses = [];
+                return;
+            }
+
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999); // Include the entire end day
+
+            if (start > end) {
+                filteredDisplay.innerHTML = '<p style="text-align: center; color: #ef4444; padding: 20px;">Start date cannot be after end date.</p>';
+                downloadCsvBtn.disabled = true;
+                downloadPdfBtn.disabled = true;
+                filteredExpenses = [];
+                return;
+            }
+
+            filteredExpenses = expenses.filter(expense => {
+                const expenseDate = new Date(expense.date);
+                return expenseDate >= start && expenseDate <= end;
+            });
+
+            if (filteredExpenses.length === 0) {
+                filteredDisplay.innerHTML = `<p style="text-align: center; color: #6b7280; padding: 20px;">No expenses found between ${new Date(startDate).toLocaleDateString()} and ${new Date(endDate).toLocaleDateString()}.</p>`;
+                downloadCsvBtn.disabled = true;
+                downloadPdfBtn.disabled = true;
+                return;
+            }
+
+            // Generate table for filtered results
+            const tableHtml = `
+                <table class="search-results-table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Category</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Recorded By</th>
+                            <th>Note</th>
+                            <th>Receipt</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredExpenses.map(expense => `
+                            <tr>
+                                <td data-label="Date & Time">${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
+                                <td data-label="Category">${expense.category}</td>
+                                <td data-label="Vendor">${expense.vendor}</td>
+                                <td data-label="Amount">₹${expense.amount.toLocaleString('en-IN')}</td>
+                                <td data-label="Recorded By">${expense.recordedBy || 'N/A'}</td>
+                                <td data-label="Note">${expense.note || ''}</td>
+                                <td data-label="Receipt">${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">🧾</a>` : 'N/A'}</td>
+                                <td data-label="Action"><button class="btn btn-danger" onclick="deleteExpense('${expense.id}')">🗑️</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            filteredDisplay.innerHTML = tableHtml;
+            updateFilteredDownloadButtons();
         }
 
         function updateFilteredDownloadButtons() {
             const downloadCsvBtn = document.getElementById('downloadFilteredCsvBtn');
             const downloadPdfBtn = document.getElementById('downloadFilteredPdfBtn');
-
-            if (filteredExpenses.length > 0) {
-                downloadCsvBtn.disabled = false;
-                downloadPdfBtn.disabled = false;
-            } else {
-                downloadCsvBtn.disabled = true;
-                downloadPdfBtn.disabled = true;
-            }
+            const hasFilteredResults = filteredExpenses.length > 0;
+            downloadCsvBtn.disabled = !hasFilteredResults;
+            downloadPdfBtn.disabled = !hasFilteredResults;
         }
 
         function downloadFilteredCSV() {
@@ -2119,12 +1950,12 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     expense.receipt ? 'Yes' : 'No'
                 ])
             ].map(row => row.map(field => `"${field.toString().replace(/"/g, '""')}"`).join(',')).join('\n');
-            
+
             const blob = new Blob([csvContent], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `filtered_expenses_${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = `filtered_expenses_${document.getElementById('filterStartDate').value}_to_${document.getElementById('filterEndDate').value}.csv`;
             a.click();
             window.URL.revokeObjectURL(url);
         }
@@ -2134,110 +1965,57 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                 alert('No filtered expenses to export.');
                 return;
             }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.text(`Expense Tracker - Filtered Expenses (${new Date(document.getElementById('filterStartDate').value).toLocaleDateString()} to ${new Date(document.getElementById('filterEndDate').value).toLocaleDateString()})`, 10, 10);
             
-            const startDate = document.getElementById('filterStartDate').value;
-            const endDate = document.getElementById('filterEndDate').value;
+            const tableColumn = ["Date", "Time", "Category", "Vendor", "Amount", "Recorded By", "Note"];
+            const tableRows = [];
 
-            let content = `
-EXPENSE REPORT (FILTERED DATA)
-------------------------------
-Generated On: ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-Date Range:   ${new Date(startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} to ${new Date(endDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-
-Total Expenses in Filter: ₹${filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString('en-IN')}
-
-------------------------------
-FILTERED EXPENSES DETAILS:
-------------------------------
-`;
-            
             filteredExpenses.forEach(expense => {
-                content += `
-Date:           ${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
-Category:       ${expense.category}
-Vendor:         ${expense.vendor}
-Amount:         ₹${expense.amount.toLocaleString('en-IN')}
-Recorded By:    ${expense.recordedBy || 'N/A'}
-Note:           ${expense.note || 'N/A'}
-Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
-------------------------------`;
+                const expenseData = [
+                    expense.date,
+                    expense.time,
+                    expense.category,
+                    expense.vendor,
+                    `₹${expense.amount.toLocaleString('en-IN')}`,
+                    expense.recordedBy || 'N/A',
+                    expense.note || ''
+                ];
+                tableRows.push(expenseData);
             });
-            
-            const blob = new Blob([content], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `filtered_expense_report_${new Date().toISOString().split('T')[0]}.txt`;
-            a.click();
-            window.URL.revokeObjectURL(url);
+
+            doc.autoTable({
+                head: [tableColumn],
+                body: tableRows,
+                startY: 20,
+                styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+                headStyles: { fillColor: [102, 126, 234], textColor: 255 },
+                margin: { top: 15, right: 10, bottom: 10, left: 10 },
+                didDrawPage: function(data) {
+                    // Footer
+                    let str = "Page " + doc.internal.getNumberOfPages()
+                    doc.setFontSize(8)
+                    doc.text(str, data.settings.margin.left, doc.internal.pageSize.height - 10);
+                }
+            });
+
+            doc.save(`filtered_expenses_${document.getElementById('filterStartDate').value}_to_${document.getElementById('filterEndDate').value}.pdf`);
         }
 
-        // --- Search Functions ---
-        function performSearch() {
-            const query = document.getElementById('searchQuery').value.toLowerCase().trim();
-            const searchResultsContainer = document.getElementById('searchResultsDisplay');
-
-            if (query === '') {
-                searchResultsContainer.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>';
-                currentSearchResults = [];
-                return;
-            }
-
-            currentSearchResults = expenses.filter(expense =>
-                expense.category.toLowerCase().includes(query) ||
-                expense.vendor.toLowerCase().includes(query) ||
-                (expense.note && expense.note.toLowerCase().includes(query)) ||
-                (expense.recordedBy && expense.recordedBy.toLowerCase().includes(query))
-            );
-
-            renderSearchResultsTable();
-        }
-
-        function renderSearchResultsTable() {
-            const container = document.getElementById('searchResultsDisplay');
-            if (currentSearchResults.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No expenses found matching your search.</p>';
-                return;
-            }
-
-            const tableHtml = `
-                <table id="searchResultsTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Category</th>
-                            <th>Vendor</th>
-                            <th>Amount</th>
-                            <th>Recorded By</th>
-                            <th>Note</th>
-                            <th>Receipt</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${currentSearchResults.map(expense => `
-                            <tr>
-                                <td>${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
-                                <td>${expense.category}</td>
-                                <td>${expense.vendor}</td>
-                                <td>₹${expense.amount.toLocaleString('en-IN')}</td>
-                                <td>${expense.recordedBy || 'N/A'}</td>
-                                <td>${expense.note || ''}</td>
-                                <td>${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">🧾</a>` : 'N/A'}</td>
-                                <td><button class="btn btn-danger" onclick="deleteExpense('${expense.id}')">🗑️</button></td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            `;
-            container.innerHTML = tableHtml;
-        }
-
-        function clearSearch() {
-            document.getElementById('searchQuery').value = '';
-            document.getElementById('searchResultsDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>';
-            currentSearchResults = [];
+        function updateHeaderMonth() {
+            const now = new Date();
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const currentMonthName = monthNames[now.getMonth()];
+            const currentYear = now.getFullYear();
+            // document.getElementById('headerTitle').textContent = `💰 Expense Tracker - ${currentMonthName} ${currentYear}`;
+            // Keeping original title as per previous code, if user wants current month, uncomment above and comment below.
+            document.getElementById('headerTitle').textContent = `💰 Expense Tracker`;
         }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.21/jspdf.plugin.autotable.min.js"></script>
 </body>
 </html>
