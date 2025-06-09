@@ -191,6 +191,19 @@
             margin: 0;
         }
 
+        .btn-outline {
+            background: none;
+            border: 2px solid #ef4444;
+            color: #ef4444;
+            margin-top: 10px;
+        }
+        .btn-outline:hover {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.3);
+        }
+
+
         .budget-summary {
             display: grid;
             grid-template-columns: 1fr;
@@ -390,7 +403,9 @@
                     <label for="budgetAmount">Budget Amount (₹)</label>
                     <input type="number" id="budgetAmount" placeholder="Enter your monthly budget">
                 </div>
-                <button class="btn" onclick="setBudget(event)">Set Budget</button>
+                <div class="download-buttons"> <button class="btn" onclick="setBudget(event)">Set Budget</button>
+                    <button class="btn btn-outline" onclick="resetBudget()">Reset Budget</button>
+                </div>
                 
                 <div class="budget-summary">
                     <div class="budget-item budget">
@@ -442,6 +457,11 @@
                     <textarea id="note" rows="3" placeholder="Add a note (optional)"></textarea>
                 </div>
                 <div class="input-group">
+                    <label for="receiptUpload">Upload Receipt (Optional)</label>
+                    <input type="file" id="receiptUpload" accept="image/*">
+                    <small style="color: #6b7280; font-size: 0.8em; margin-top: 5px; display: block;">Max 1MB for optimal performance. Larger files may not save.</small>
+                </div>
+                <div class="input-group">
                     <label>Recorded By</label>
                     <div class="radio-group">
                         <label>
@@ -461,6 +481,45 @@
                 <h2><span class="icon">📋</span> Recent Expenses</h2>
                 <div id="recentExpenses">
                     <p style="text-align: center; color: #6b7280; padding: 20px;">No expenses added yet</p>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2><span class="icon">🔍</span> Search Expenses</h2>
+                <div class="input-group">
+                    <label for="searchQuery">Search by Vendor, Category, Note or User</label>
+                    <input type="text" id="searchQuery" placeholder="e.g., 'Grocery', 'Amazon', 'fuel', 'Akshay'">
+                </div>
+                <div class="download-buttons">
+                    <button class="btn" onclick="performSearch()">Search</button>
+                    <button class="btn btn-outline" onclick="clearSearch()">Clear Search</button>
+                </div>
+                
+
+                <div id="searchResultsDisplay" class="table-container" style="margin-top: 20px; min-height: 100px;">
+                    <p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2><span class="icon">📅</span> Filter Expenses by Date</h2>
+                <div class="input-group">
+                    <label for="filterStartDate">Start Date</label>
+                    <input type="date" id="filterStartDate">
+                </div>
+                <div class="input-group">
+                    <label for="filterEndDate">End Date</label>
+                    <input type="date" id="filterEndDate">
+                </div>
+                <button class="btn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
+                
+                <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px; min-height: 100px;">
+                    <p style="text-align: center; color: #6b7280; padding: 20px;">Enter dates and click 'Apply Filter' to see results.</p>
+                </div>
+
+                <div class="download-buttons" style="margin-top: 15px;">
+                    <button class="btn" id="downloadFilteredCsvBtn" onclick="downloadFilteredCSV()" disabled>📄 Download Filtered CSV</button>
+                    <button class="btn" id="downloadFilteredPdfBtn" onclick="downloadFilteredPDF()" disabled>📊 Download Filtered PDF</button>
                 </div>
             </div>
 
@@ -577,27 +636,7 @@
                     <canvas id="userSpendingBarChart"></canvas>
                 </div>
             </div>
-            <div class="card full-width">
-                <h2><span class="icon">🔍</span> Filter Expenses by Date</h2>
-                <div class="input-group">
-                    <label for="filterStartDate">Start Date</label>
-                    <input type="date" id="filterStartDate">
-                </div>
-                <div class="input-group">
-                    <label for="filterEndDate">End Date</label>
-                    <input type="date" id="filterEndDate">
-                </div>
-                <button class="btn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
-                
-                <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px; min-height: 100px;">
-                    <p style="text-align: center; color: #6b7280; padding: 20px;">Enter dates and click 'Apply Filter' to see results.</p>
-                </div>
 
-                <div class="download-buttons" style="margin-top: 15px;">
-                    <button class="btn" id="downloadFilteredCsvBtn" onclick="downloadFilteredCSV()" disabled>📄 Download Filtered CSV</button>
-                    <button class="btn" id="downloadFilteredPdfBtn" onclick="downloadFilteredPDF()" disabled>📊 Download Filtered PDF</button>
-                </div>
-            </div>
             <div class="card full-width">
                 <h2><span class="icon">💾</span> Export All Data</h2>
                 <div class="download-buttons">
@@ -613,6 +652,7 @@
         let budget = 0;
         let expenses = [];
         let filteredExpenses = []; // New global variable for filtered expenses
+        let currentSearchResults = []; // New global variable for search results
 
         // Chart instances
         let categoryPieChartInstance;
@@ -632,6 +672,7 @@
             thirtyDaysAgo.setDate(today.getDate() - 30);
             document.getElementById('filterEndDate').value = today.toISOString().split('T')[0];
             document.getElementById('filterStartDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+            document.getElementById('searchResultsDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>';
         });
 
         // --- Data Handling (Local Storage) ---
@@ -686,12 +727,24 @@
             }, 2000);
         }
 
-        function addExpense(event) {
+        function resetBudget() {
+            if (confirm('Are you sure you want to reset your budget to ₹0? This will not affect your expenses.')) {
+                budget = 0;
+                localStorage.setItem('budget', '0');
+                document.getElementById('budgetAmount').value = '';
+                updateDisplay();
+                alert('Budget has been reset to ₹0.');
+            }
+        }
+
+        async function addExpense(event) {
             const category = document.getElementById('category').value;
             const vendor = document.getElementById('vendor').value;
             const amount = parseFloat(document.getElementById('amount').value);
             const note = document.getElementById('note').value;
             const recordedBy = document.querySelector('input[name="recordedBy"]:checked').value;
+            const receiptInput = document.getElementById('receiptUpload');
+            let receiptBase64 = '';
 
             if (!vendor.trim()) {
                 alert('Please enter a vendor name');
@@ -703,6 +756,26 @@
                 return;
             }
             
+            // Handle receipt upload
+            if (receiptInput.files.length > 0) {
+                const file = receiptInput.files[0];
+                // Max 1MB file size for local storage (approximate, varies by browser)
+                const MAX_FILE_SIZE_BYTES = 1 * 1024 * 1024; 
+                if (file.size > MAX_FILE_SIZE_BYTES) {
+                    alert('File size exceeds 1MB. Please upload a smaller image.');
+                    receiptInput.value = ''; // Clear the input
+                    return;
+                }
+
+                try {
+                    receiptBase64 = await readFileAsBase64(file);
+                } catch (error) {
+                    alert('Error reading receipt file: ' + error.message);
+                    receiptInput.value = '';
+                    return;
+                }
+            }
+
             const expense = {
                 id: Date.now().toString(), // Generate a simple unique ID for local storage
                 date: new Date().toISOString().split('T')[0],
@@ -711,7 +784,8 @@
                 vendor: vendor.trim(),
                 amount: amount,
                 note: note.trim(),
-                recordedBy: recordedBy
+                recordedBy: recordedBy,
+                receipt: receiptBase64 // Store Base64 string if available
             };
 
             expenses.push(expense); // Add to the in-memory array
@@ -722,6 +796,7 @@
             document.getElementById('amount').value = '';
             document.getElementById('note').value = '';
             document.querySelector('input[name="recordedBy"][value="Akshay"]').checked = true;
+            receiptInput.value = ''; // Clear file input
             
             updateDisplay(); // Refresh all UI elements
             
@@ -733,16 +808,31 @@
             }, 2000);
         }
 
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+
         function deleteExpense(id) {
             if (confirm('Are you sure you want to delete this expense?')) {
                 expenses = expenses.filter(expense => expense.id !== id); // Filter out the deleted expense
                 localStorage.setItem('expenses', JSON.stringify(expenses)); // Save the updated array
                 updateDisplay(); // Refresh all UI elements
-                // Re-apply the filter after deletion if dates are set
+                
+                // Re-apply filters/search after deletion if active
                 const startDate = document.getElementById('filterStartDate').value;
                 const endDate = document.getElementById('filterEndDate').value;
                 if (startDate && endDate) {
                     filterAndDisplayExpenses();
+                }
+                const searchQuery = document.getElementById('searchQuery').value;
+                if (searchQuery) {
+                    performSearch();
                 }
             }
         }
@@ -792,6 +882,7 @@
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <div class="expense-amount">₹${expense.amount.toLocaleString()}</div>
+                        ${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem; margin-left: 10px;">🧾 View Receipt</a>` : ''}
                         <button class="btn btn-danger" onclick="deleteExpense('${expense.id}')">🗑️</button>
                     </div>
                 </div>
@@ -936,7 +1027,7 @@
             }
             
             const csvContent = [
-                ['Date', 'Time', 'Category', 'Vendor', 'Amount', 'Note', 'Recorded By'],
+                ['Date', 'Time', 'Category', 'Vendor', 'Amount', 'Note', 'Recorded By', 'Receipt Available'],
                 ...expenses.map(expense => [
                     expense.date,
                     expense.time,
@@ -944,7 +1035,8 @@
                     expense.vendor,
                     expense.amount,
                     expense.note || '',
-                    expense.recordedBy || ''
+                    expense.recordedBy || '',
+                    expense.receipt ? 'Yes' : 'No' // Indicate if receipt is available
                 ])
             ].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
             const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -972,7 +1064,7 @@
                 
                 EXPENSES:
                 ${expenses.map(expense => 
-                    `${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time} - ${expense.category} - ${expense.vendor} - ₹${expense.amount} (by ${expense.recordedBy || 'N/A'})${expense.note ? ' (' + expense.note + ')' : ''}`
+                    `${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time} - ${expense.category} - ${expense.vendor} - ₹${expense.amount} (by ${expense.recordedBy || 'N/A'})${expense.note ? ' (' + expense.note + ')' : ''}${expense.receipt ? ' [Receipt Attached]' : ''}`
                 ).join('\n                ')}
             `;
             
@@ -1473,6 +1565,8 @@
                             <th>Vendor</th>
                             <th>Amount</th>
                             <th>Recorded By</th>
+                            <th>Note</th>
+                            <th>Receipt</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -1484,6 +1578,8 @@
                                 <td>${expense.vendor}</td>
                                 <td>₹${expense.amount.toLocaleString()}</td>
                                 <td>${expense.recordedBy || 'N/A'}</td>
+                                <td>${expense.note || ''}</td>
+                                <td>${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">🧾</a>` : 'N/A'}</td>
                                 <td><button class="btn btn-danger" onclick="deleteExpense('${expense.id}')">🗑️</button></td>
                             </tr>
                         `).join('')}
@@ -1513,7 +1609,7 @@
             }
 
             const csvContent = [
-                ['Date', 'Time', 'Category', 'Vendor', 'Amount', 'Note', 'Recorded By'],
+                ['Date', 'Time', 'Category', 'Vendor', 'Amount', 'Note', 'Recorded By', 'Receipt Available'],
                 ...filteredExpenses.map(expense => [
                     expense.date,
                     expense.time,
@@ -1521,7 +1617,8 @@
                     expense.vendor,
                     expense.amount,
                     expense.note || '',
-                    expense.recordedBy || ''
+                    expense.recordedBy || '',
+                    expense.receipt ? 'Yes' : 'No'
                 ])
             ].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
             
@@ -1552,7 +1649,7 @@
                 
                 EXPENSES:
                 ${filteredExpenses.map(expense => 
-                    `${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time} - ${expense.category} - ${expense.vendor} - ₹${expense.amount} (by ${expense.recordedBy || 'N/A'})${expense.note ? ' (' + expense.note + ')' : ''}`
+                    `${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time} - ${expense.category} - ${expense.vendor} - ₹${expense.amount} (by ${expense.recordedBy || 'N/A'})${expense.note ? ' (' + expense.note + ')' : ''}${expense.receipt ? ' [Receipt Attached]' : ''}`
                 ).join('\n                ')}
             `;
             
@@ -1563,6 +1660,73 @@
             a.download = `filtered_expense_report_${new Date().toISOString().split('T')[0]}.txt`;
             a.click();
             window.URL.revokeObjectURL(url);
+        }
+
+        // --- Search Functions ---
+        function performSearch() {
+            const query = document.getElementById('searchQuery').value.toLowerCase().trim();
+            const searchResultsContainer = document.getElementById('searchResultsDisplay');
+
+            if (query === '') {
+                searchResultsContainer.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Please enter a search term.</p>';
+                currentSearchResults = [];
+                return;
+            }
+
+            currentSearchResults = expenses.filter(expense =>
+                expense.category.toLowerCase().includes(query) ||
+                expense.vendor.toLowerCase().includes(query) ||
+                (expense.note && expense.note.toLowerCase().includes(query)) ||
+                (expense.recordedBy && expense.recordedBy.toLowerCase().includes(query))
+            );
+
+            renderSearchResultsTable();
+        }
+
+        function renderSearchResultsTable() {
+            const container = document.getElementById('searchResultsDisplay');
+            if (currentSearchResults.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No expenses found matching your search.</p>';
+                return;
+            }
+
+            const tableHtml = `
+                <table id="searchResultsTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Recorded By</th>
+                            <th>Note</th>
+                            <th>Receipt</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${currentSearchResults.map(expense => `
+                            <tr>
+                                <td>${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
+                                <td>${expense.category}</td>
+                                <td>${expense.vendor}</td>
+                                <td>₹${expense.amount.toLocaleString()}</td>
+                                <td>${expense.recordedBy || 'N/A'}</td>
+                                <td>${expense.note || ''}</td>
+                                <td>${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">🧾</a>` : 'N/A'}</td>
+                                <td><button class="btn btn-danger" onclick="deleteExpense('${expense.id}')">🗑️</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = tableHtml;
+        }
+
+        function clearSearch() {
+            document.getElementById('searchQuery').value = '';
+            document.getElementById('searchResultsDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>';
+            currentSearchResults = [];
         }
     </script>
 </body>
