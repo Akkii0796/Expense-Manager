@@ -171,6 +171,14 @@
             transform: translateY(0);
         }
 
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            background: #a0aec0; /* A neutral gray */
+            box-shadow: none;
+            transform: none;
+        }
+
         .btn-secondary {
             background: linear-gradient(135deg, #10b981, #059669);
         }
@@ -570,10 +578,31 @@
                 </div>
             </div>
             <div class="card full-width">
-                <h2><span class="icon">💾</span> Export Data</h2>
+                <h2><span class="icon">🔍</span> Filter Expenses by Date</h2>
+                <div class="input-group">
+                    <label for="filterStartDate">Start Date</label>
+                    <input type="date" id="filterStartDate">
+                </div>
+                <div class="input-group">
+                    <label for="filterEndDate">End Date</label>
+                    <input type="date" id="filterEndDate">
+                </div>
+                <button class="btn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
+                
+                <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px; min-height: 100px;">
+                    <p style="text-align: center; color: #6b7280; padding: 20px;">Enter dates and click 'Apply Filter' to see results.</p>
+                </div>
+
+                <div class="download-buttons" style="margin-top: 15px;">
+                    <button class="btn" id="downloadFilteredCsvBtn" onclick="downloadFilteredCSV()" disabled>📄 Download Filtered CSV</button>
+                    <button class="btn" id="downloadFilteredPdfBtn" onclick="downloadFilteredPDF()" disabled>📊 Download Filtered PDF</button>
+                </div>
+            </div>
+            <div class="card full-width">
+                <h2><span class="icon">💾</span> Export All Data</h2>
                 <div class="download-buttons">
-                    <button class="btn" onclick="downloadCSV()">📄 Download CSV</button>
-                    <button class="btn" onclick="downloadPDF()">📊 Download PDF</button>
+                    <button class="btn" onclick="downloadCSV()">📄 Download All CSV</button>
+                    <button class="btn" onclick="downloadPDF()">📊 Download All PDF</button>
                 </div>
             </div>
         </div>
@@ -583,6 +612,7 @@
         // Data storage using Local Storage
         let budget = 0;
         let expenses = [];
+        let filteredExpenses = []; // New global variable for filtered expenses
 
         // Chart instances
         let categoryPieChartInstance;
@@ -594,6 +624,14 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             updateHeaderMonth();
+            // Initialize the filtered expenses display message
+            document.getElementById('filteredExpensesDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter dates and click \'Apply Filter\' to see results.</p>';
+            // Set default dates for convenience (e.g., last 30 days)
+            const today = new Date();
+            const thirtyDaysAgo = new Date(today);
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            document.getElementById('filterEndDate').value = today.toISOString().split('T')[0];
+            document.getElementById('filterStartDate').value = thirtyDaysAgo.toISOString().split('T')[0];
         });
 
         // --- Data Handling (Local Storage) ---
@@ -700,6 +738,12 @@
                 expenses = expenses.filter(expense => expense.id !== id); // Filter out the deleted expense
                 localStorage.setItem('expenses', JSON.stringify(expenses)); // Save the updated array
                 updateDisplay(); // Refresh all UI elements
+                // Re-apply the filter after deletion if dates are set
+                const startDate = document.getElementById('filterStartDate').value;
+                const endDate = document.getElementById('filterEndDate').value;
+                if (startDate && endDate) {
+                    filterAndDisplayExpenses();
+                }
             }
         }
 
@@ -883,7 +927,7 @@
             }).join('');
         }
 
-        // --- Export Functions ---
+        // --- Export All Data Functions ---
 
         function downloadCSV() {
             if (expenses.length === 0) {
@@ -907,7 +951,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `expenses_${new Date().toISOString().split('T')[0]}.csv`;
+            a.download = `all_expenses_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             window.URL.revokeObjectURL(url);
         }
@@ -919,7 +963,7 @@
             }
             
             const content = `
-                EXPENSE REPORT
+                EXPENSE REPORT (ALL DATA)
                 Generated: ${new Date().toLocaleDateString()}
                 
                 Budget: ₹${budget.toLocaleString()}
@@ -936,7 +980,7 @@
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `expense_report_${new Date().toISOString().split('T')[0]}.txt`;
+            a.download = `all_expense_report_${new Date().toISOString().split('T')[0]}.txt`;
             a.click();
             window.URL.revokeObjectURL(url);
         }
@@ -1194,7 +1238,7 @@
                 // Ensure weekStart is Sunday, based on locale's getDay()
                 weekStart.setDate(expenseDate.getDate() - expenseDate.getDay());
                 weekStart.setHours(0, 0, 0, 0); // Normalize to start of day
-                const weekKey = weekStart.toISOString().split('T')[0]; // YYYY-MM-DD
+                const weekKey = weekStart.toISOString().split('T')[0]; //YYYY-MM-DD
                 
                 weeklyData[weekKey] = (weeklyData[weekKey] || 0) + expense.amount;
             });
@@ -1233,11 +1277,17 @@
             const finalData = [];
             for(let i=0; i < labels.length; i++){
                 const [startPart, endPart] = labels[i].split(' - ');
-                const startDate = new Date(startPart + ', ' + currentYear); // Add year for parsing
-                const endDate = new Date(endPart + ', ' + currentYear); // Add year for parsing
+                // Make sure to parse with the current year to avoid issues if the label crosses a year boundary
+                const startDate = new Date(startPart + ', ' + currentYear); 
+                const endDate = new Date(endPart + ', ' + currentYear); 
 
                 // Check if the week *intersects* the current month
-                if (startDate.getMonth() === currentMonth || endDate.getMonth() === currentMonth || (startDate < firstDayOfMonth && endDate > lastDayOfMonth)) {
+                // This condition handles weeks that start before the month but end in it,
+                // weeks fully within the month, and weeks starting in the month but ending after it.
+                if ( (startDate.getMonth() === currentMonth && startDate.getFullYear() === currentYear) || 
+                     (endDate.getMonth() === currentMonth && endDate.getFullYear() === currentYear) ||
+                     (startDate < firstDayOfMonth && endDate > lastDayOfMonth && startDate.getFullYear() === currentYear && endDate.getFullYear() === currentYear)
+                   ) {
                      finalLabels.push(labels[i]);
                      finalData.push(data[i]);
                 } else if (startDate.getMonth() > currentMonth && startDate.getDate() > 7 && startDate.getFullYear() === currentYear) {
@@ -1376,6 +1426,143 @@
             const currentMonthName = monthNames[today.getMonth()];
             const currentYear = today.getFullYear();
             document.getElementById('headerTitle').textContent = `💰 Expense Tracker - ${currentMonthName} ${currentYear}`;
+        }
+
+        // --- New Filter and Download Functions ---
+
+        function filterAndDisplayExpenses() {
+            const startDateInput = document.getElementById('filterStartDate').value;
+            const endDateInput = document.getElementById('filterEndDate').value;
+
+            if (!startDateInput || !endDateInput) {
+                alert('Please select both start and end dates.');
+                return;
+            }
+
+            const startDate = new Date(startDateInput);
+            const endDate = new Date(endDateInput);
+            endDate.setHours(23, 59, 59, 999); // Include expenses up to the end of the end date
+
+            if (startDate > endDate) {
+                alert('Start date cannot be after end date.');
+                return;
+            }
+
+            filteredExpenses = expenses.filter(expense => {
+                const expenseDate = new Date(expense.date);
+                return expenseDate >= startDate && expenseDate <= endDate;
+            });
+
+            renderFilteredExpensesTable();
+            updateFilteredDownloadButtons();
+        }
+
+        function renderFilteredExpensesTable() {
+            const container = document.getElementById('filteredExpensesDisplay');
+            if (filteredExpenses.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No expenses found for the selected date range.</p>';
+                return;
+            }
+
+            const tableHtml = `
+                <table id="filteredExpensesTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Recorded By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filteredExpenses.map(expense => `
+                            <tr>
+                                <td>${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
+                                <td>${expense.category}</td>
+                                <td>${expense.vendor}</td>
+                                <td>₹${expense.amount.toLocaleString()}</td>
+                                <td>${expense.recordedBy || 'N/A'}</td>
+                                <td><button class="btn btn-danger" onclick="deleteExpense('${expense.id}')">🗑️</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = tableHtml;
+        }
+
+        function updateFilteredDownloadButtons() {
+            const downloadCsvBtn = document.getElementById('downloadFilteredCsvBtn');
+            const downloadPdfBtn = document.getElementById('downloadFilteredPdfBtn');
+
+            if (filteredExpenses.length > 0) {
+                downloadCsvBtn.disabled = false;
+                downloadPdfBtn.disabled = false;
+            } else {
+                downloadCsvBtn.disabled = true;
+                downloadPdfBtn.disabled = true;
+            }
+        }
+
+        function downloadFilteredCSV() {
+            if (filteredExpenses.length === 0) {
+                alert('No filtered expenses to export.');
+                return;
+            }
+
+            const csvContent = [
+                ['Date', 'Time', 'Category', 'Vendor', 'Amount', 'Note', 'Recorded By'],
+                ...filteredExpenses.map(expense => [
+                    expense.date,
+                    expense.time,
+                    expense.category,
+                    expense.vendor,
+                    expense.amount,
+                    expense.note || '',
+                    expense.recordedBy || ''
+                ])
+            ].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `filtered_expenses_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function downloadFilteredPDF() {
+            if (filteredExpenses.length === 0) {
+                alert('No filtered expenses to export.');
+                return;
+            }
+            
+            const startDate = document.getElementById('filterStartDate').value;
+            const endDate = document.getElementById('filterEndDate').value;
+
+            const content = `
+                EXPENSE REPORT (FILTERED)
+                Date Range: ${startDate} to ${endDate}
+                Generated: ${new Date().toLocaleDateString()}
+                
+                Total Expenses in Filter: ₹${filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString()}
+                
+                EXPENSES:
+                ${filteredExpenses.map(expense => 
+                    `${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time} - ${expense.category} - ${expense.vendor} - ₹${expense.amount} (by ${expense.recordedBy || 'N/A'})${expense.note ? ' (' + expense.note + ')' : ''}`
+                ).join('\n                ')}
+            `;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `filtered_expense_report_${new Date().toISOString().split('T')[0]}.txt`;
+            a.click();
+            window.URL.revokeObjectURL(url);
         }
     </script>
 </body>
