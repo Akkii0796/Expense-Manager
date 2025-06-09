@@ -496,43 +496,6 @@
                 </div>
             </div>
 
-            <div class="card full-width">
-                <h2><span class="icon">📊</span> Spending by Category</h2>
-                <div class="chart-container">
-                    <canvas id="categoryPieChart"></canvas>
-                </div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="card">
-                    <h2><span class="icon">📈</span> Monthly Spending</h2>
-                    <div class="chart-container">
-                        <canvas id="monthlyBarChart"></canvas>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2><span class="icon">📉</span> Daily Spending Trend (Current Month)</h2>
-                    <div class="chart-container">
-                        <canvas id="dailyLineChart"></canvas>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card full-width">
-                <h2><span class="icon">📅</span> Weekly Spending Trend</h2>
-                <div class="chart-container">
-                    <canvas id="weeklyLineChart"></canvas>
-                </div>
-            </div>
-
-            <div class="card full-width">
-                <h2><span class="icon">👥</span> Spending by User</h2>
-                <div class="chart-container">
-                    <canvas id="userSpendingBarChart"></canvas>
-                </div>
-            </div>
-
             <div class="card">
                 <h2><span class="icon">📊</span> Weekly Summary</h2>
                 <div class="table-container">
@@ -571,6 +534,42 @@
             </div>
 
             <div class="card full-width">
+                <h2><span class="icon">📊</span> Spending by Category</h2>
+                <div class="chart-container">
+                    <canvas id="categoryPieChart"></canvas>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="card">
+                    <h2><span class="icon">📈</span> Monthly Spending</h2>
+                    <div class="chart-container">
+                        <canvas id="monthlyBarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2><span class="icon">📉</span> Daily Spending Trend (Current Month)</h2>
+                    <div class="chart-container">
+                        <canvas id="dailyLineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2><span class="icon">📅</span> Weekly Spending Trend</h2>
+                <div class="chart-container">
+                    <canvas id="weeklyLineChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2><span class="icon">👥</span> Spending by User</h2>
+                <div class="chart-container">
+                    <canvas id="userSpendingBarChart"></canvas>
+                </div>
+            </div>
+            <div class="card full-width">
                 <h2><span class="icon">💾</span> Export Data</h2>
                 <div class="download-buttons">
                     <button class="btn" onclick="downloadCSV()">📄 Download CSV</button>
@@ -581,7 +580,7 @@
     </div>
 
     <script>
-        // No Firebase Configuration needed for Local Storage version
+        // Data storage using Local Storage
         let budget = 0;
         let expenses = [];
 
@@ -597,7 +596,7 @@
             updateHeaderMonth();
         });
 
-        // --- Expense Tracker Functions ---
+        // --- Data Handling (Local Storage) ---
 
         function loadData() {
             const savedBudget = localStorage.getItem('budget');
@@ -703,6 +702,8 @@
                 updateDisplay(); // Refresh all UI elements
             }
         }
+
+        // --- UI Update & Summary Functions ---
 
         function updateDisplay() {
             updateBudgetSummary();
@@ -882,6 +883,8 @@
             }).join('');
         }
 
+        // --- Export Functions ---
+
         function downloadCSV() {
             if (expenses.length === 0) {
                 alert('No expenses to export');
@@ -938,7 +941,8 @@
             window.URL.revokeObjectURL(url);
         }
 
-        // Chart Rendering Functions
+        // --- Chart Rendering Functions ---
+
         function renderCategoryPieChart() {
             const ctx = document.getElementById('categoryPieChart').getContext('2d');
             if (categoryPieChartInstance) {
@@ -998,7 +1002,9 @@
                                         label += ': ';
                                     }
                                     if (context.parsed !== null) {
-                                        label += `₹${context.parsed.toLocaleString()} (${(context.dataset.data[context.dataIndex] / context.dataset.data.reduce((a, b) => a + b, 0) * 100).toFixed(1)}%)`;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = (context.parsed / total * 100).toFixed(1);
+                                        label += `₹${context.parsed.toLocaleString()} (${percentage}%)`;
                                     }
                                     return label;
                                 }
@@ -1171,37 +1177,83 @@
                 weeklyLineChartInstance.destroy();
             }
 
-            const weeklyData = {};
-            expenses.forEach(expense => {
+            const today = new Date();
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+
+            // Filter expenses to only include the current month
+            const monthlyFilteredExpenses = expenses.filter(expense => {
                 const expenseDate = new Date(expense.date);
-                // Get the start of the week (Sunday for en-US locale's getDay())
+                return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
+            });
+
+            const weeklyData = {};
+            monthlyFilteredExpenses.forEach(expense => {
+                const expenseDate = new Date(expense.date);
                 const weekStart = new Date(expenseDate);
+                // Ensure weekStart is Sunday, based on locale's getDay()
                 weekStart.setDate(expenseDate.getDate() - expenseDate.getDay());
                 weekStart.setHours(0, 0, 0, 0); // Normalize to start of day
-                const weekKey = weekStart.toISOString().split('T')[0]; // Use date as key
+                const weekKey = weekStart.toISOString().split('T')[0]; // YYYY-MM-DD
+                
+                weeklyData[weekKey] = (weeklyData[weekKey] || 0) + expense.amount;
+            });
 
-                if (!weeklyData[weekKey]) {
-                    weeklyData[weekKey] = 0;
+            // Generate labels and data for all weeks that *intersect* the current month
+            const labels = [];
+            const data = [];
+
+            const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
+            const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0); // Last day of the current month
+
+            let currentWeekStartDate = new Date(firstDayOfMonth);
+            // Adjust to the Sunday of the week that contains the first day of the month
+            currentWeekStartDate.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay());
+
+            while (currentWeekStartDate <= lastDayOfMonth || currentWeekStartDate.getMonth() === currentMonth) {
+                const weekEndDate = new Date(currentWeekStartDate);
+                weekEndDate.setDate(currentWeekStartDate.getDate() + 6);
+
+                const weekKey = currentWeekStartDate.toISOString().split('T')[0];
+                labels.push(`${currentWeekStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`);
+                data.push(weeklyData[weekKey] || 0);
+
+                // Move to the start of the next week
+                currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
+
+                // Stop if the next week's start date is clearly in a future month/year
+                if (currentWeekStartDate.getMonth() !== currentMonth && currentWeekStartDate.getFullYear() >= currentYear) {
+                    if (currentWeekStartDate > lastDayOfMonth.setDate(lastDayOfMonth.getDate() + 7)) { // Ensures it doesn't go too far
+                        break;
+                    }
                 }
-                weeklyData[weekKey] += expense.amount;
-            });
+            }
+            // Remove any labels that are purely for next month if the loop overshot slightly
+            const finalLabels = [];
+            const finalData = [];
+            for(let i=0; i < labels.length; i++){
+                const [startPart, endPart] = labels[i].split(' - ');
+                const startDate = new Date(startPart + ', ' + currentYear); // Add year for parsing
+                const endDate = new Date(endPart + ', ' + currentYear); // Add year for parsing
 
-            const sortedWeekKeys = Object.keys(weeklyData).sort((a, b) => new Date(a) - new Date(b));
-            const labels = sortedWeekKeys.map(key => {
-                const start = new Date(key);
-                const end = new Date(start);
-                end.setDate(start.getDate() + 6);
-                return `${start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
-            });
-            const data = sortedWeekKeys.map(key => weeklyData[key]);
+                // Check if the week *intersects* the current month
+                if (startDate.getMonth() === currentMonth || endDate.getMonth() === currentMonth || (startDate < firstDayOfMonth && endDate > lastDayOfMonth)) {
+                     finalLabels.push(labels[i]);
+                     finalData.push(data[i]);
+                } else if (startDate.getMonth() > currentMonth && startDate.getDate() > 7 && startDate.getFullYear() === currentYear) {
+                    // Break if it's the next month and past the first week (avoids adding irrelevant weeks)
+                    break;
+                }
+            }
+
 
             weeklyLineChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: finalLabels, // Use the refined labels
                     datasets: [{
-                        label: 'Weekly Spending (₹)',
-                        data: data,
+                        label: `Weekly Spending for ${new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} (₹)`,
+                        data: finalData, // Use the refined data
                         borderColor: '#22d3ee', // Cyan
                         backgroundColor: 'rgba(34, 211, 238, 0.2)',
                         fill: true,
@@ -1222,14 +1274,14 @@
                         x: {
                             title: {
                                 display: true,
-                                text: 'Week'
+                                text: 'Week (Sunday - Saturday)'
                             }
                         }
                     },
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Weekly Spending Trend',
+                            text: `Weekly Spending Trend (${new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })})`,
                             font: {
                                 size: 16
                             }
