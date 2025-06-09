@@ -333,12 +333,14 @@
             margin-top: 15px;
             border-radius: 10px;
             border: 1px solid #e5e7eb;
+            max-width: 100%; /* Ensure it doesn't overflow its parent */
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
+            min-width: 600px; /* Ensure a minimum width for columns on small screens */
         }
 
         th {
@@ -347,12 +349,26 @@
             padding: 12px 8px;
             text-align: left;
             font-weight: 600;
+            white-space: nowrap; /* Prevent headers from wrapping too much */
         }
 
         td {
             padding: 12px 8px;
             border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap; /* Keep content on one line */
+            overflow: hidden;
+            text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+            max-width: 150px; /* Constrain cell width, allowing overflow-x on container */
         }
+        td:nth-child(1) { max-width: 180px; } /* Date column */
+        td:nth-child(2) { max-width: 120px; } /* Category */
+        td:nth-child(3) { max-width: 150px; } /* Vendor */
+        td:nth-child(4) { max-width: 100px; } /* Amount */
+        td:nth-child(5) { max-width: 100px; } /* Recorded By */
+        td:nth-child(6) { max-width: 200px; white-space: normal; } /* Note - allow wrapping */
+        td:nth-child(7) { max-width: 80px; text-align: center;} /* Receipt */
+        td:nth-child(8) { max-width: 80px; text-align: center;} /* Actions */
+
 
         tr:hover {
             background: #f9fafb;
@@ -411,6 +427,7 @@
             th, td {
                 padding: 8px 4px;
             }
+            td:nth-child(6) { white-space: normal; } /* Ensure note wraps on small screens */
         }
 
         .expense-item {
@@ -475,6 +492,7 @@
             height: 30px;
             overflow: hidden;
             position: relative;
+            margin-top: 20px; /* Moved below buttons */
             margin-bottom: 15px;
         }
 
@@ -496,6 +514,43 @@
             font-size: 0.95rem;
             text-shadow: 0 1px 2px rgba(255,255,255,0.5); 
             white-space: nowrap; 
+        }
+
+        .summary-tables {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            grid-column: 1 / -1; /* Span full width within the tab-content */
+        }
+
+        @media (min-width: 768px) {
+            .summary-tables {
+                grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
+            }
+        }
+
+        .top-list {
+            list-style: none;
+            padding: 0;
+        }
+        .top-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed #e5e7eb;
+            font-size: 0.95rem;
+        }
+        .top-list li:last-child {
+            border-bottom: none;
+        }
+        .top-list .label {
+            font-weight: 500;
+            color: #374151;
+        }
+        .top-list .value {
+            font-weight: bold;
+            color: #4f46e5;
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -540,10 +595,7 @@
                         <div class="amount" id="remaining">₹0</div>
                     </div>
                 </div>
-            </div>
 
-            <div class="card full-width">
-                <h2><span class="icon">📈</span> Budget Progress</h2>
                 <div class="budget-progress-bar">
                     <div class="budget-progress-fill" id="budgetProgressBarFill"></div>
                     <div class="budget-progress-text" id="budgetProgressBarText">0% Used</div>
@@ -608,8 +660,7 @@
             <div class="card full-width">
                 <h2><span class="icon">📋</span> Recent Expenses</h2>
                 <div id="recentExpenses">
-                    <p style="text-align: center; color: #6b7280; padding: 20px;">No expenses added yet</p>
-                </div>
+                    </div>
             </div>
         </div>
 
@@ -640,7 +691,14 @@
             <div class="card full-width">
                 <h2><span class="icon">📅</span> Weekly Spending Trend</h2>
                 <div class="chart-container">
-                    <canvas id="weeklyLineChart"></canvas>
+                    <canvas id="weeklyBarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2><span class="icon">🔢</span> Number of Spends by Category</h2>
+                <div class="chart-container">
+                    <canvas id="categoryCountBarChart"></canvas>
                 </div>
             </div>
 
@@ -648,6 +706,19 @@
                 <h2><span class="icon">👥</span> Spending by User</h2>
                 <div class="chart-container">
                     <canvas id="userSpendingBarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="summary-tables">
+                <div class="card">
+                    <h2><span class="icon">🏆</span> Top 3 Categories (by amount)</h2>
+                    <ul id="topCategoriesList" class="top-list">
+                        </ul>
+                </div>
+                <div class="card">
+                    <h2><span class="icon">🛍️</span> Top 3 Vendors (by amount)</h2>
+                    <ul id="topVendorsList" class="top-list">
+                        </ul>
                 </div>
             </div>
         </div>
@@ -664,9 +735,8 @@
                     <button class="btn btn-outline" onclick="clearSearch()">Clear Search</button>
                 </div>
                 
-                <div id="searchResultsDisplay" class="table-container" style="margin-top: 20px; min-height: 100px;">
-                    <p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>
-                </div>
+                <div id="searchResultsDisplay" class="table-container" style="margin-top: 20px;">
+                    </div>
             </div>
 
             <div class="card full-width">
@@ -681,9 +751,8 @@
                 </div>
                 <button class="btn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
                 
-                <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px; min-height: 100px;">
-                    <p style="text-align: center; color: #6b7280; padding: 20px;">Select dates and click 'Apply Filter'.</p>
-                </div>
+                <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px;">
+                    </div>
 
                 <div class="download-buttons" style="margin-top: 15px;">
                     <button class="btn" id="downloadFilteredCsvBtn" onclick="downloadFilteredCSV()" disabled>📄 Download Filtered CSV</button>
@@ -712,8 +781,9 @@
         let categoryPieChartInstance;
         let monthlyBarChartInstance;
         let dailyLineChartInstance;
-        let weeklyLineChartInstance;
+        let weeklyBarChartInstance; // Changed from LineChart
         let userSpendingBarChartInstance;
+        let categoryCountBarChartInstance; // New Chart
 
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
@@ -744,7 +814,7 @@
             document.getElementById(tabId).classList.add('active');
             document.querySelector(`.tab-button[onclick="showTab('${tabId}')"]`).classList.add('active');
 
-            // Re-render charts when their tab becomes active
+            // Re-render charts and update tables when their tab becomes active.
             // This is crucial because Chart.js can behave unexpectedly if rendered on hidden canvases.
             if (tabId === 'dashboardTab') {
                 updateBudgetSummary(); // Ensure summary is fresh
@@ -754,14 +824,16 @@
                 renderCategoryPieChart();
                 renderMonthlyBarChart();
                 renderDailyLineChart();
-                renderWeeklyLineChart();
+                renderWeeklyBarChart(); // Changed to Bar Chart
+                renderCategoryCountBarChart(); // New Chart
                 renderUserSpendingBarChart();
+                updateTopCategories(); // Re-added table update
+                updateTopVendors();   // Re-added table update
             } else if (tabId === 'searchTab') {
-                // Tables for search/filter are populated on demand, not on tab switch
-                // Ensure default text is present if no search/filter has been applied yet
-                if (document.getElementById('searchQuery').value === '') {
-                    document.getElementById('searchResultsDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>';
-                }
+                // Clear search and filter displays when entering the tab
+                clearSearch();
+                document.getElementById('filteredExpensesDisplay').innerHTML = ''; // Clear filtered display on tab switch
+                // Pre-populate with instruction if no filter applied yet
                 if (!document.getElementById('filterStartDate').value || !document.getElementById('filterEndDate').value) {
                     document.getElementById('filteredExpensesDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Select dates and click \'Apply Filter\'.</p>';
                 }
@@ -786,6 +858,11 @@
             } else {
                 expenses = [];
             }
+
+            // Filter out expenses with unknown users (empty, null, undefined)
+            expenses = expenses.filter(expense => {
+                return expense.recordedBy !== null && expense.recordedBy !== undefined && expense.recordedBy.trim() !== '';
+            });
 
             // Sort expenses (most recent first) after loading
             expenses.sort((a, b) => {
@@ -943,8 +1020,7 @@
             updateBudgetSummary();
             updateBudgetProgressBar(); 
             updateRecentExpenses();
-            // Charts are rendered on tab switch, not every updateDisplay
-            // Summary tables (if any) are also removed based on user's new layout
+            // Charts and Summary tables are rendered on tab switch, not every updateDisplay
         }
 
         function updateBudgetSummary() {
@@ -996,7 +1072,7 @@
         function updateRecentExpenses() {
             const container = document.getElementById('recentExpenses');
             if (expenses.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No expenses added yet</p>';
+                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No expenses added yet.</p>';
                 return;
             }
             
@@ -1056,19 +1132,31 @@
                 return;
             }
             
-            const content = `
-                EXPENSE REPORT (ALL DATA)
-                Generated: ${new Date().toLocaleDateString()}
-                
-                Budget: ₹${budget.toLocaleString()}
-                Total Spent: ₹${expenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString()}
-                Remaining: ₹${(budget - expenses.reduce((sum, expense) => sum + expense.amount, 0)).toLocaleString()}
-                
-                EXPENSES:
-                ${expenses.map(expense => 
-                    `${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time} - ${expense.category} - ${expense.vendor} - ₹${expense.amount} (by ${expense.recordedBy || 'N/A'})${expense.note ? ' (' + expense.note + ')' : ''}${expense.receipt ? ' [Receipt Attached]' : ''}`
-                ).join('\n                ')}
-            `;
+            let content = `
+EXPENSE REPORT (ALL DATA)
+--------------------------
+Generated On: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+
+Budget:          ₹${budget.toLocaleString()}
+Total Spent:     ₹${expenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString()}
+Remaining Budget:₹${(budget - expenses.reduce((sum, expense) => sum + expense.amount, 0)).toLocaleString()}
+
+--------------------------
+EXPENSES DETAILS:
+--------------------------
+`;
+
+            expenses.forEach(expense => {
+                content += `
+Date:           ${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
+Category:       ${expense.category}
+Vendor:         ${expense.vendor}
+Amount:         ₹${expense.amount.toLocaleString()}
+Recorded By:    ${expense.recordedBy || 'N/A'}
+Note:           ${expense.note || 'N/A'}
+Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
+--------------------------`;
+            });
             
             const blob = new Blob([content], { type: 'text/plain' });
             const url = window.URL.createObjectURL(blob);
@@ -1364,11 +1452,11 @@
             });
         }
 
-        // Weekly Spending Trend (Line Chart)
-        function renderWeeklyLineChart() {
-            const ctx = document.getElementById('weeklyLineChart').getContext('2d');
-            if (weeklyLineChartInstance) {
-                weeklyLineChartInstance.destroy();
+        // Weekly Spending Trend (Bar Chart)
+        function renderWeeklyBarChart() {
+            const ctx = document.getElementById('weeklyBarChart').getContext('2d');
+            if (weeklyBarChartInstance) {
+                weeklyBarChartInstance.destroy();
             }
 
             const today = new Date();
@@ -1411,17 +1499,16 @@
                 currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
             }
             
-            weeklyLineChartInstance = new Chart(ctx, {
-                type: 'line',
+            weeklyBarChartInstance = new Chart(ctx, {
+                type: 'bar', // Changed to bar chart
                 data: {
                     labels: labels, 
                     datasets: [{
                         label: `Weekly Spending for ${new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} (₹)`,
                         data: data, 
-                        borderColor: '#22d3ee', 
-                        backgroundColor: 'rgba(34, 211, 238, 0.2)',
-                        fill: true,
-                        tension: 0.1
+                        backgroundColor: '#22d3ee', // Bar color
+                        borderColor: '#06b6d4',
+                        borderWidth: 1
                     }]
                 },
                 options: {
@@ -1463,6 +1550,7 @@
                             }
                         },
                         datalabels: { 
+                            anchor: 'end', 
                             align: 'top', 
                             formatter: (value) => value > 0 ? `₹${value.toLocaleString()}` : '',
                             color: '#1f2937',
@@ -1479,6 +1567,102 @@
                 }
             });
         }
+
+        // New Chart: Number of Spends by Category
+        function renderCategoryCountBarChart() {
+            const ctx = document.getElementById('categoryCountBarChart').getContext('2d');
+            if (categoryCountBarChartInstance) {
+                categoryCountBarChartInstance.destroy();
+            }
+
+            const categoryCounts = expenses.reduce((acc, expense) => {
+                acc[expense.category] = (acc[expense.category] || 0) + 1;
+                return acc;
+            }, {});
+
+            const labels = Object.keys(categoryCounts);
+            const data = Object.values(categoryCounts);
+
+            const backgroundColors = [
+                '#a78bfa', // Purple
+                '#a3e635', // Lime
+                '#d946ef', // Fuchsia
+                '#e879f9', // Pink
+                '#60a5fa', // Blue
+                '#eab308',  // Yellow
+                '#4f46e5', 
+                '#10b981', 
+                '#f59e0b', 
+                '#ef4444'
+            ];
+
+            categoryCountBarChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Spends',
+                        data: data,
+                        backgroundColor: backgroundColors,
+                        borderColor: backgroundColors.map(color => color.replace('0.2)', '1)')), // Darker border
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Spends'
+                            },
+                            ticks: {
+                                precision: 0 // Ensure whole numbers for counts
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Category'
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Number of Spends for Each Category',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `Spends: ${context.raw.toLocaleString()}`;
+                                }
+                            }
+                        },
+                        datalabels: { 
+                            anchor: 'end', 
+                            align: 'top', 
+                            formatter: (value) => value > 0 ? value.toLocaleString() : '',
+                            color: '#1f2937',
+                            font: {
+                                weight: 'bold',
+                                size: 10
+                            },
+                            offset: 4,
+                            display: function(context) {
+                                return context.dataset.data[context.dataIndex] > 0;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
 
         // Spending by User (Bar Chart)
         function renderUserSpendingBarChart() {
@@ -1569,6 +1753,66 @@
                 }
             });
         }
+
+        // Top Metrics Tables
+        function updateTopCategories() {
+            const container = document.getElementById('topCategoriesList');
+            if (expenses.length === 0) {
+                container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px;">No expenses yet.</li>';
+                return;
+            }
+
+            const categoryTotals = expenses.reduce((acc, expense) => {
+                acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+                return acc;
+            }, {});
+
+            const sortedCategories = Object.entries(categoryTotals)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 3);
+
+            if (sortedCategories.length === 0) {
+                 container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px;">No categories found.</li>';
+                 return;
+            }
+
+            container.innerHTML = sortedCategories.map(([category, amount]) => `
+                <li>
+                    <span class="label">${category}</span>
+                    <span class="value">₹${amount.toLocaleString()}</span>
+                </li>
+            `).join('');
+        }
+
+        function updateTopVendors() {
+            const container = document.getElementById('topVendorsList');
+            if (expenses.length === 0) {
+                container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px;">No expenses yet.</li>';
+                return;
+            }
+
+            const vendorTotals = expenses.reduce((acc, expense) => {
+                acc[expense.vendor] = (acc[expense.vendor] || 0) + expense.amount;
+                return acc;
+            }, {});
+
+            const sortedVendors = Object.entries(vendorTotals)
+                .sort(([, a], [, b]) => b - a)
+                .slice(0, 3);
+
+            if (sortedVendors.length === 0) {
+                 container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px;">No vendors found.</li>';
+                 return;
+            }
+
+            container.innerHTML = sortedVendors.map(([vendor, amount]) => `
+                <li>
+                    <span class="label">${vendor}</span>
+                    <span class="value">₹${amount.toLocaleString()}</span>
+                </li>
+            `).join('');
+        }
+
 
         // Helper to update header month (assuming for current month's title)
         function updateHeaderMonth() {
@@ -1703,18 +1947,30 @@
             const startDate = document.getElementById('filterStartDate').value;
             const endDate = document.getElementById('filterEndDate').value;
 
-            const content = `
-                EXPENSE REPORT (FILTERED)
-                Date Range: ${startDate} to ${endDate}
-                Generated: ${new Date().toLocaleDateString()}
-                
-                Total Expenses in Filter: ₹${filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString()}
-                
-                EXPENSES:
-                ${filteredExpenses.map(expense => 
-                    `${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time} - ${expense.category} - ${expense.vendor} - ₹${expense.amount} (by ${expense.recordedBy || 'N/A'})${expense.note ? ' (' + expense.note + ')' : ''}${expense.receipt ? ' [Receipt Attached]' : ''}`
-                ).join('\n                ')}
-            `;
+            let content = `
+EXPENSE REPORT (FILTERED DATA)
+------------------------------
+Generated On: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+Date Range:   ${startDate} to ${endDate}
+
+Total Expenses in Filter: ₹${filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString()}
+
+------------------------------
+FILTERED EXPENSES DETAILS:
+------------------------------
+`;
+            
+            filteredExpenses.forEach(expense => {
+                content += `
+Date:           ${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
+Category:       ${expense.category}
+Vendor:         ${expense.vendor}
+Amount:         ₹${expense.amount.toLocaleString()}
+Recorded By:    ${expense.recordedBy || 'N/A'}
+Note:           ${expense.note || 'N/A'}
+Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
+------------------------------`;
+            });
             
             const blob = new Blob([content], { type: 'text/plain' });
             const url = window.URL.createObjectURL(blob);
