@@ -632,6 +632,7 @@
     <div class="container" id="appContent">
         <div class="header">
             <h1 id="headerTitle">💰 Expense Tracker</h1>
+            <p id="currentMonthYear"></p>
             <p>Track your expenses and manage your budget efficiently</p>
         </div>
 
@@ -1252,7 +1253,7 @@
             const data = Object.values(categoryData);
 
             categoryPieChartInstance = new Chart(ctx, {
-                type: 'pie',
+                type: 'doughnut', // Changed to doughnut chart
                 data: {
                     labels: labels,
                     datasets: [{
@@ -1307,7 +1308,11 @@
                                 enable: true,
                                 color: 'rgba(0,0,0,0.6)',
                                 blur: 3
-                            }
+                            },
+                            anchor: 'center', // Center labels in doughnut slices
+                            align: 'center',
+                            offset: 0, // No offset
+                            clamp: true // Clamp labels to pie slices
                         },
                         title: { // Removed title plugin configuration
                             display: false
@@ -1436,7 +1441,8 @@
                         borderColor: '#80CBC4', // Lighter teal
                         backgroundColor: 'rgba(128, 203, 196, 0.2)',
                         fill: true,
-                        tension: 0.3
+                        tension: 0.3,
+                        borderWidth: 2 // Made the line thinner
                     }]
                 },
                 options: {
@@ -2063,9 +2069,8 @@
             const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const currentMonthName = monthNames[now.getMonth()];
             const currentYear = now.getFullYear();
-            // document.getElementById('headerTitle').textContent = `💰 Expense Tracker - ${currentMonthName} ${currentYear}`;
-            // Keeping original title as per previous code, if user wants current month, uncomment above and comment below.
-            document.getElementById('headerTitle').textContent = `💰 Expense Tracker`;
+            // Update the new paragraph element with month and year
+            document.getElementById('currentMonthYear').textContent = `${currentMonthName} ${currentYear}`;
         }
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
