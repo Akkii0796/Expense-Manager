@@ -737,39 +737,39 @@
 
         <div id="summaryTab" class="tab-content">
             <div class="card full-width">
-                <div class="chart-container">
+                <h2><span class="icon">📊</span> Spending by Category</h2> <div class="chart-container">
                     <canvas id="categoryPieChart"></canvas>
                 </div>
             </div>
 
             <div class="stats-grid">
                 <div class="card">
-                    <div class="chart-container">
+                    <h2><span class="icon">📈</span> Monthly Spending</h2> <div class="chart-container">
                         <canvas id="monthlyBarChart"></canvas>
                     </div>
                 </div>
 
                 <div class="card">
-                    <div class="chart-container">
+                    <h2><span class="icon">📉</span> Daily Spending Trend (Current Month)</h2> <div class="chart-container">
                         <canvas id="dailyLineChart"></canvas>
                     </div>
                 </div>
             </div>
 
             <div class="card full-width">
-                <div class="chart-container">
+                <h2><span class="icon">📅</span> Weekly Spending Trend</h2> <div class="chart-container">
                     <canvas id="weeklyBarChart"></canvas>
                 </div>
             </div>
 
             <div class="card full-width">
-                <div class="chart-container">
+                <h2><span class="icon">🔢</span> Number of Spends by Category</h2> <div class="chart-container">
                     <canvas id="categoryCountBarChart"></canvas>
                 </div>
             </div>
 
             <div class="card full-width">
-                <div class="chart-container">
+                <h2><span class="icon">👥</span> Spending by User</h2> <div class="chart-container">
                     <canvas id="userSpendingBarChart"></canvas>
                 </div>
             </div>
@@ -779,8 +779,8 @@
                     <h2><span class="icon">🏆</span> Top 3 Categories (by amount)</h2>
                     <div class="top-list-header">
                         <span style="flex: 2;">Category</span>
-                        <span style="flex: 1; text-align: right;">Amount (%)</span>
-                    </div>
+                        <span style="flex: 1; text-align: right;">Amount</span>
+                        <span style="flex: 1; text-align: right;">% of Total</span> </div>
                     <ul id="topCategoriesList" class="top-list">
                     </ul>
                 </div>
@@ -1229,7 +1229,7 @@
             doc.save(`all_expenses_${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
-        // --- Chart Rendering Functions (Modified to remove titles) ---
+        // --- Chart Rendering Functions (Titles re-added) ---
         function renderCategoryPieChart() {
             const ctx = document.getElementById('categoryPieChart').getContext('2d');
             if (categoryPieChartInstance) {
@@ -1251,9 +1251,9 @@
                     datasets: [{
                         data: data,
                         backgroundColor: [
-                            '#667eea', '#764ba2', '#38b2ac', '#4299e1', '#ed8936',
-                            '#9f7aea', '#ecc94b', '#e53e3e', '#81e6d9', '#f6ad55',
-                            '#48bb78', '#fc8181', '#a0aec0'
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                            '#FF9F40', '#C9CBCF', '#7B68EE', '#B0E0E6', '#FFDAB9',
+                            '#A0522D', '#CD5C5C', '#20B2AA'
                         ],
                         hoverOffset: 4
                     }]
@@ -1302,8 +1302,14 @@
                                 blur: 3
                             }
                         },
-                        title: {
-                            display: false // Removed chart title
+                        title: { // Re-added title plugin configuration
+                            display: true,
+                            text: 'Spending by Category',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#4f46e5'
                         }
                     }
                 }
@@ -1382,8 +1388,14 @@
                                 size: 10
                             }
                         },
-                        title: {
-                            display: false // Removed chart title
+                        title: { // Re-added title plugin configuration
+                            display: true,
+                            text: 'Monthly Spending',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#4f46e5'
                         }
                     }
                 }
@@ -1469,8 +1481,14 @@
                         datalabels: {
                             display: false // Hide datalabels for cleaner line chart
                         },
-                        title: {
-                            display: false // Removed chart title
+                        title: { // Re-added title plugin configuration
+                            display: true,
+                            text: 'Daily Spending Trend (Current Month)',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#4f46e5'
                         }
                     }
                 }
@@ -1564,8 +1582,14 @@
                                 size: 10
                             }
                         },
-                        title: {
-                            display: false // Removed chart title
+                        title: { // Re-added title plugin configuration
+                            display: true,
+                            text: 'Weekly Spending Trend',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#4f46e5'
                         }
                     }
                 }
@@ -1642,8 +1666,14 @@
                                 size: 10
                             }
                         },
-                        title: {
-                            display: false // Removed chart title
+                        title: { // Re-added title plugin configuration
+                            display: true,
+                            text: 'Number of Spends by Category',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#4f46e5'
                         }
                     }
                 }
@@ -1722,8 +1752,14 @@
                                 size: 10
                             }
                         },
-                        title: {
-                            display: false // Removed chart title
+                        title: { // Re-added title plugin configuration
+                            display: true,
+                            text: 'Spending by User',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#4f46e5'
                         }
                     }
                 }
@@ -1754,8 +1790,8 @@
                 return `
                     <li>
                         <span class="label">${category}</span>
-                        <span class="value">₹${amount.toLocaleString('en-IN')} (${percentage}%)</span>
-                    </li>
+                        <span class="value">₹${amount.toLocaleString('en-IN')}</span>
+                        <span class="value">${percentage}%</span> </li>
                 `;
             }).join('');
         }
