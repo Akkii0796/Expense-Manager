@@ -737,39 +737,45 @@
 
         <div id="summaryTab" class="tab-content">
             <div class="card full-width">
-                <h2><span class="icon">📊</span> Spending by Category</h2> <div class="chart-container">
+                <h2><span class="icon">📊</span> Spending by Category</h2> 
+                <div class="chart-container">
                     <canvas id="categoryPieChart"></canvas>
                 </div>
             </div>
 
             <div class="stats-grid">
                 <div class="card">
-                    <h2><span class="icon">📈</span> Monthly Spending</h2> <div class="chart-container">
+                    <h2><span class="icon">📈</span> Monthly Spending</h2>
+                    <div class="chart-container">
                         <canvas id="monthlyBarChart"></canvas>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h2><span class="icon">📉</span> Daily Spending Trend (Current Month)</h2> <div class="chart-container">
+                    <h2><span class="icon">📉</span> Daily Spending Trend (Current Month)</h2>
+                    <div class="chart-container">
                         <canvas id="dailyLineChart"></canvas>
                     </div>
                 </div>
             </div>
 
             <div class="card full-width">
-                <h2><span class="icon">📅</span> Weekly Spending Trend</h2> <div class="chart-container">
+                <h2><span class="icon">📅</span> Weekly Spending Trend</h2>
+                <div class="chart-container">
                     <canvas id="weeklyBarChart"></canvas>
                 </div>
             </div>
 
             <div class="card full-width">
-                <h2><span class="icon">🔢</span> Number of Spends by Category</h2> <div class="chart-container">
+                <h2><span class="icon">🔢</span> Number of Spends by Category</h2>
+                <div class="chart-container">
                     <canvas id="categoryCountBarChart"></canvas>
                 </div>
             </div>
 
             <div class="card full-width">
-                <h2><span class="icon">👥</span> Spending by User</h2> <div class="chart-container">
+                <h2><span class="icon">👥</span> Spending by User</h2>
+                <div class="chart-container">
                     <canvas id="userSpendingBarChart"></canvas>
                 </div>
             </div>
@@ -780,7 +786,8 @@
                     <div class="top-list-header">
                         <span style="flex: 2;">Category</span>
                         <span style="flex: 1; text-align: right;">Amount</span>
-                        <span style="flex: 1; text-align: right;">% of Total</span> </div>
+                        <span style="flex: 1; text-align: right;">% of Total</span>
+                    </div>
                     <ul id="topCategoriesList" class="top-list">
                     </ul>
                 </div>
@@ -1251,9 +1258,9 @@
                     datasets: [{
                         data: data,
                         backgroundColor: [
-                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
-                            '#FF9F40', '#C9CBCF', '#7B68EE', '#B0E0E6', '#FFDAB9',
-                            '#A0522D', '#CD5C5C', '#20B2AA'
+                            '#FFCC80', '#A7D9FD', '#FFE0B2', '#80CBC4', '#D1C4E9', // Lighter, theme-consistent
+                            '#FFD180', '#CFD8DC', '#B39DDB', '#D0F0F8', '#FFECB3',
+                            '#D8C0B2', '#F4A2A2', '#81C784'
                         ],
                         hoverOffset: 4
                     }]
@@ -1294,7 +1301,7 @@
                             },
                             font: {
                                 weight: 'bold',
-                                size: 10
+                                size: 14 // Increased data label size and bolded
                             },
                             textShadow: {
                                 enable: true,
@@ -1302,14 +1309,8 @@
                                 blur: 3
                             }
                         },
-                        title: { // Re-added title plugin configuration
-                            display: true,
-                            text: 'Spending by Category',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#4f46e5'
+                        title: { // Removed title plugin configuration
+                            display: false
                         }
                     }
                 }
@@ -1338,8 +1339,8 @@
                     datasets: [{
                         label: 'Amount Spent (₹)',
                         data: data,
-                        backgroundColor: '#667eea',
-                        borderColor: '#5a67d8',
+                        backgroundColor: '#A7D9FD', // Lighter blue
+                        borderColor: '#81C784',
                         borderWidth: 1
                     }]
                 },
@@ -1353,7 +1354,10 @@
                                 callback: function(value) {
                                     return '₹' + value.toLocaleString('en-IN');
                                 },
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 color: '#e5e7eb'
@@ -1361,7 +1365,10 @@
                         },
                         x: {
                             ticks: {
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 display: false
@@ -1385,17 +1392,12 @@
                             color: '#374151',
                             formatter: (value) => '₹' + value.toLocaleString('en-IN'),
                             font: {
-                                size: 10
+                                size: 14, // Increased data label size and bolded
+                                weight: 'bold'
                             }
                         },
-                        title: { // Re-added title plugin configuration
-                            display: true,
-                            text: 'Monthly Spending',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#4f46e5'
+                        title: { // Removed title plugin configuration
+                            display: false
                         }
                     }
                 }
@@ -1431,8 +1433,8 @@
                     datasets: [{
                         label: 'Amount Spent (₹)',
                         data: data,
-                        borderColor: '#38b2ac',
-                        backgroundColor: 'rgba(56, 178, 172, 0.2)',
+                        borderColor: '#80CBC4', // Lighter teal
+                        backgroundColor: 'rgba(128, 203, 196, 0.2)',
                         fill: true,
                         tension: 0.3
                     }]
@@ -1447,7 +1449,10 @@
                                 callback: function(value) {
                                     return '₹' + value.toLocaleString('en-IN');
                                 },
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 color: '#e5e7eb'
@@ -1457,10 +1462,16 @@
                             title: {
                                 display: true,
                                 text: 'Day of Month',
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             ticks: {
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 display: false
@@ -1481,14 +1492,8 @@
                         datalabels: {
                             display: false // Hide datalabels for cleaner line chart
                         },
-                        title: { // Re-added title plugin configuration
-                            display: true,
-                            text: 'Daily Spending Trend (Current Month)',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#4f46e5'
+                        title: { // Removed title plugin configuration
+                            display: false
                         }
                     }
                 }
@@ -1532,8 +1537,8 @@
                     datasets: [{
                         label: 'Weekly Spending (₹)',
                         data: data,
-                        backgroundColor: '#4299e1',
-                        borderColor: '#3182ce',
+                        backgroundColor: '#FFCC80', // Lighter orange
+                        borderColor: '#FFB74D',
                         borderWidth: 1
                     }]
                 },
@@ -1547,7 +1552,10 @@
                                 callback: function(value) {
                                     return '₹' + value.toLocaleString('en-IN');
                                 },
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 color: '#e5e7eb'
@@ -1555,7 +1563,10 @@
                         },
                         x: {
                             ticks: {
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 display: false
@@ -1579,17 +1590,12 @@
                             color: '#374151',
                             formatter: (value) => '₹' + value.toLocaleString('en-IN'),
                             font: {
-                                size: 10
+                                size: 14, // Increased data label size and bolded
+                                weight: 'bold'
                             }
                         },
-                        title: { // Re-added title plugin configuration
-                            display: true,
-                            text: 'Weekly Spending Trend',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#4f46e5'
+                        title: { // Removed title plugin configuration
+                            display: false
                         }
                     }
                 }
@@ -1617,8 +1623,8 @@
                     datasets: [{
                         label: 'Number of Spends',
                         data: data,
-                        backgroundColor: '#ed8936',
-                        borderColor: '#dd6b20',
+                        backgroundColor: '#FFB74D', // Lighter orange
+                        borderColor: '#FFD180',
                         borderWidth: 1
                     }]
                 },
@@ -1631,7 +1637,10 @@
                             beginAtZero: true,
                             ticks: {
                                 precision: 0, // Ensure integer ticks
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 color: '#e5e7eb'
@@ -1639,7 +1648,10 @@
                         },
                         y: {
                             ticks: {
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 display: false
@@ -1658,22 +1670,18 @@
                             }
                         },
                         datalabels: {
+                            display: true, // Ensured datalabels are displayed
                             anchor: 'end',
                             align: 'right',
                             color: '#374151',
                             formatter: (value) => value,
                             font: {
-                                size: 10
+                                size: 14, // Increased data label size and bolded
+                                weight: 'bold'
                             }
                         },
-                        title: { // Re-added title plugin configuration
-                            display: true,
-                            text: 'Number of Spends by Category',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#4f46e5'
+                        title: { // Removed title plugin configuration
+                            display: false
                         }
                     }
                 }
@@ -1692,18 +1700,20 @@
                 return acc;
             }, {});
 
+            const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
             const labels = Object.keys(userSpending);
-            const data = Object.values(userSpending);
+            const data = labels.map(label => userSpending[label]); // Absolute values for chart calculation
 
             userSpendingBarChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Amount Spent (₹)',
+                        label: 'Share of Total Expense (%)',
                         data: data,
-                        backgroundColor: '#9f7aea',
-                        borderColor: '#805ad5',
+                        backgroundColor: '#D1C4E9', // Lighter purple
+                        borderColor: '#B39DDB',
                         borderWidth: 1
                     }]
                 },
@@ -1715,9 +1725,13 @@
                             beginAtZero: true,
                             ticks: {
                                 callback: function(value) {
-                                    return '₹' + value.toLocaleString('en-IN');
+                                    // Calculate percentage for tick labels if needed, or keep absolute
+                                    return totalSpent > 0 ? `${((value / totalSpent) * 100).toFixed(1)}%` : '0%';
                                 },
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 color: '#e5e7eb'
@@ -1725,7 +1739,10 @@
                         },
                         x: {
                             ticks: {
-                                color: '#374151'
+                                color: '#374151',
+                                font: {
+                                    size: 9 // Reduced axis label size
+                                }
                             },
                             grid: {
                                 display: false
@@ -1739,7 +1756,9 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `${context.label}: ₹${context.parsed.y.toLocaleString('en-IN')}`;
+                                    const amount = context.parsed.y;
+                                    const percentage = totalSpent > 0 ? ((amount / totalSpent) * 100).toFixed(1) : 0;
+                                    return `${context.label}: ₹${amount.toLocaleString('en-IN')} (${percentage}%)`;
                                 }
                             }
                         },
@@ -1747,19 +1766,17 @@
                             anchor: 'end',
                             align: 'top',
                             color: '#374151',
-                            formatter: (value) => '₹' + value.toLocaleString('en-IN'),
+                            formatter: (value) => {
+                                const percentage = totalSpent > 0 ? ((value / totalSpent) * 100).toFixed(1) : 0;
+                                return `${percentage}%`;
+                            },
                             font: {
-                                size: 10
+                                size: 14, // Increased data label size and bolded
+                                weight: 'bold'
                             }
                         },
-                        title: { // Re-added title plugin configuration
-                            display: true,
-                            text: 'Spending by User',
-                            font: {
-                                size: 16,
-                                weight: 'bold'
-                            },
-                            color: '#4f46e5'
+                        title: { // Removed title plugin configuration
+                            display: false
                         }
                     }
                 }
