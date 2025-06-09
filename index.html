@@ -55,17 +55,17 @@
 
         /* Tabs Styling */
         .tabs-container {
-            margin-top: 0px; /* Adjusted to fit better within the overall container */
+            margin-top: 0px; 
         }
 
         .tab-buttons {
             display: flex;
             justify-content: space-around;
-            background: #e0e7ff; /* Light blue background for tab buttons */
+            background: #e0e7ff; 
             border-radius: 10px 10px 0 0;
             overflow: hidden;
-            margin: 0 20px; /* Aligned with main-content padding for consistency */
-            margin-top: 20px; /* Space from header */
+            margin: 0 20px; 
+            margin-top: 20px; 
         }
 
         .tab-button {
@@ -76,65 +76,64 @@
             cursor: pointer;
             font-size: 1.1rem;
             font-weight: 600;
-            color: #4f46e5; /* Indigo color for inactive */
+            color: #4f46e5; 
             transition: all 0.3s ease;
             border-bottom: 3px solid transparent;
         }
 
         .tab-button:hover {
-            background: #c7d2fe; /* Lighter hover */
+            background: #c7d2fe; 
         }
 
         .tab-button.active {
-            background: #667eea; /* Darker blue for active tab */
+            background: #667eea; 
             color: white;
-            border-bottom: 3px solid #f59e0b; /* Amber accent */
+            border-bottom: 3px solid #f59e0b; 
         }
 
         .tab-content {
-            display: none; /* Hidden by default */
+            display: none; /* Hidden by default - THIS WAS THE KEY FIX */
             padding: 20px;
             background: white;
             border-radius: 0 0 20px 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            min-height: 400px; /* Ensure content area is visible */
-            display: grid; /* Always use grid for consistent internal layout */
-            grid-template-columns: 1fr;
-            gap: 20px;
+            min-height: 400px; 
         }
 
         .tab-content.active {
             display: grid; /* Only active tab gets displayed as a grid */
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
         @media (min-width: 768px) {
-            .tab-content {
-                grid-template-columns: 1fr 1fr; /* Adjust for larger screens */
+            .tab-content.active { 
+                grid-template-columns: 1fr 1fr; 
             }
         }
         @media (min-width: 1024px) {
-            .tab-content {
-                grid-template-columns: 1fr 1fr 1fr; /* Adjust for even larger screens */
+            .tab-content.active { 
+                grid-template-columns: 1fr 1fr 1fr; 
             }
         }
-        /* Ensure full-width cards still span all columns inside tabs */
+        
         .tab-content .full-width {
             grid-column: 1 / -1;
         }
         .tab-content .stats-grid {
             grid-column: 1 / -1;
             display: grid;
-            grid-template-columns: 1fr; /* Default for mobile */
+            grid-template-columns: 1fr; 
             gap: 20px;
         }
         @media (min-width: 768px) {
             .tab-content .stats-grid {
-                grid-template-columns: 1fr 1fr; /* Two columns for medium screens */
+                grid-template-columns: 1fr 1fr; 
             }
         }
 
 
-        .main-content {
+        .main-content { /* This class is now less critical as content is directly inside tab-content */
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
@@ -255,7 +254,7 @@
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
-            background: #a0aec0; /* A neutral gray */
+            background: #a0aec0; 
             box-shadow: none;
             transform: none;
         }
@@ -471,7 +470,7 @@
         /* Budget Progress Bar */
         .budget-progress-bar {
             width: 100%;
-            background-color: #e0e7ff; /* Light background */
+            background-color: #e0e7ff; 
             border-radius: 15px;
             height: 30px;
             overflow: hidden;
@@ -481,8 +480,8 @@
 
         .budget-progress-fill {
             height: 100%;
-            width: 0%; /* Will be set by JS */
-            background: linear-gradient(90deg, #10b981, #059669); /* Green gradient */
+            width: 0%; 
+            background: linear-gradient(90deg, #10b981, #059669); 
             transition: width 0.5s ease-in-out;
             border-radius: 15px;
         }
@@ -492,11 +491,11 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            color: #1f2937; /* Dark text for contrast */
+            color: #1f2937; 
             font-weight: bold;
             font-size: 0.95rem;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.5); /* Slight shadow for visibility */
-            white-space: nowrap; /* Prevent text wrapping */
+            text-shadow: 0 1px 2px rgba(255,255,255,0.5); 
+            white-space: nowrap; 
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -511,29 +510,19 @@
 
         <div class="tab-buttons">
             <button class="tab-button active" onclick="showTab('dashboardTab')">Dashboard</button>
-            <button class="tab-button" onclick="showTab('analyticsTab')">Analytics & Summaries</button>
-            <button class="tab-button" onclick="showTab('dataManagementTab')">Data Management</button>
+            <button class="tab-button" onclick="showTab('summaryTab')">Summary</button>
+            <button class="tab-button" onclick="showTab('searchTab')">Search</button>
         </div>
 
         <div id="dashboardTab" class="tab-content active">
-            <div class="card full-width">
-                <h2><span class="icon">📈</span> Budget Progress & Top Spends</h2>
-                <div class="budget-progress-bar">
-                    <div class="budget-progress-fill" id="budgetProgressBarFill"></div>
-                    <div class="budget-progress-text" id="budgetProgressBarText">0% Used</div>
-                </div>
-                <div class="chart-container" style="margin-top: 20px; height: 200px;">
-                    <canvas id="topCategoriesStackedBarChart"></canvas>
-                </div>
-            </div>
-
             <div class="card">
                 <h2><span class="icon">🎯</span> Set Monthly Budget</h2>
                 <div class="input-group">
                     <label for="budgetAmount">Budget Amount (₹)</label>
                     <input type="number" id="budgetAmount" placeholder="Enter your monthly budget">
                 </div>
-                <div class="download-buttons"> <button class="btn" onclick="setBudget(event)">Set Budget</button>
+                <div class="download-buttons">
+                    <button class="btn" onclick="setBudget(event)">Set Budget</button>
                     <button class="btn btn-outline" onclick="resetBudget()">Reset Budget</button>
                 </div>
                 
@@ -550,6 +539,14 @@
                         <h3>Remaining</h3>
                         <div class="amount" id="remaining">₹0</div>
                     </div>
+                </div>
+            </div>
+
+            <div class="card full-width">
+                <h2><span class="icon">📈</span> Budget Progress</h2>
+                <div class="budget-progress-bar">
+                    <div class="budget-progress-fill" id="budgetProgressBarFill"></div>
+                    <div class="budget-progress-text" id="budgetProgressBarText">0% Used</div>
                 </div>
             </div>
 
@@ -616,84 +613,7 @@
             </div>
         </div>
 
-        <div id="analyticsTab" class="tab-content">
-            <div class="stats-grid">
-                <div class="card">
-                    <h2><span class="icon">🏆</span> Top 3 Categories</h2>
-                    <div class="table-container">
-                        <table id="topCategoriesTable">
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Category</th>
-                                    <th>Amount</th>
-                                    <th>%</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2><span class="icon">🛍️</span> Top 3 Vendors</h2>
-                    <div class="table-container">
-                        <table id="topVendorsTable">
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Vendor</th>
-                                    <th>Amount</th>
-                                    <th>%</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">📊</span> Weekly Summary</h2>
-                <div class="table-container">
-                    <table id="weeklySummaryTable">
-                        <thead>
-                            <tr>
-                                <th>Week</th>
-                                <th>Period</th>
-                                <th>Total Spent</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td colspan="3" style="text-align: center; color: #6b7280;">No data available</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">📈</span> Monthly Summary</h2>
-                <div class="table-container">
-                    <table id="monthlySummaryTable">
-                        <thead>
-                            <tr>
-                                <th>Month</th>
-                                <th>Total Spent</th>
-                                <th>Top Category</th>
-                                <th>%</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
+        <div id="summaryTab" class="tab-content">
             <div class="card full-width">
                 <h2><span class="icon">📊</span> Spending by Category</h2>
                 <div class="chart-container">
@@ -732,7 +652,7 @@
             </div>
         </div>
 
-        <div id="dataManagementTab" class="tab-content">
+        <div id="searchTab" class="tab-content">
             <div class="card full-width">
                 <h2><span class="icon">🔍</span> Search Expenses</h2>
                 <div class="input-group">
@@ -745,7 +665,8 @@
                 </div>
                 
                 <div id="searchResultsDisplay" class="table-container" style="margin-top: 20px; min-height: 100px;">
-                    </div>
+                    <p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>
+                </div>
             </div>
 
             <div class="card full-width">
@@ -761,7 +682,8 @@
                 <button class="btn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
                 
                 <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px; min-height: 100px;">
-                    </div>
+                    <p style="text-align: center; color: #6b7280; padding: 20px;">Select dates and click 'Apply Filter'.</p>
+                </div>
 
                 <div class="download-buttons" style="margin-top: 15px;">
                     <button class="btn" id="downloadFilteredCsvBtn" onclick="downloadFilteredCSV()" disabled>📄 Download Filtered CSV</button>
@@ -783,8 +705,8 @@
         // Data storage using Local Storage
         let budget = 0;
         let expenses = [];
-        let filteredExpenses = []; // New global variable for filtered expenses
-        let currentSearchResults = []; // New global variable for search results
+        let filteredExpenses = []; 
+        let currentSearchResults = []; 
 
         // Chart instances
         let categoryPieChartInstance;
@@ -792,11 +714,11 @@
         let dailyLineChartInstance;
         let weeklyLineChartInstance;
         let userSpendingBarChartInstance;
-        let topCategoriesStackedBarChartInstance; // New chart instance
 
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             updateHeaderMonth();
+            
             // Set default dates for convenience (e.g., last 30 days)
             const today = new Date();
             const thirtyDaysAgo = new Date(today);
@@ -823,18 +745,27 @@
             document.querySelector(`.tab-button[onclick="showTab('${tabId}')"]`).classList.add('active');
 
             // Re-render charts when their tab becomes active
-            // This is important because Chart.js can behave unexpectedly if rendered on hidden canvases.
+            // This is crucial because Chart.js can behave unexpectedly if rendered on hidden canvases.
             if (tabId === 'dashboardTab') {
-                updateBudgetProgressBar(); // Ensure progress bar is updated
-                renderTopCategoriesStackedBarChart();
-            } else if (tabId === 'analyticsTab') {
+                updateBudgetSummary(); // Ensure summary is fresh
+                updateBudgetProgressBar(); 
+                updateRecentExpenses();
+            } else if (tabId === 'summaryTab') {
                 renderCategoryPieChart();
                 renderMonthlyBarChart();
                 renderDailyLineChart();
                 renderWeeklyLineChart();
                 renderUserSpendingBarChart();
+            } else if (tabId === 'searchTab') {
+                // Tables for search/filter are populated on demand, not on tab switch
+                // Ensure default text is present if no search/filter has been applied yet
+                if (document.getElementById('searchQuery').value === '') {
+                    document.getElementById('searchResultsDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>';
+                }
+                if (!document.getElementById('filterStartDate').value || !document.getElementById('filterEndDate').value) {
+                    document.getElementById('filteredExpensesDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Select dates and click \'Apply Filter\'.</p>';
+                }
             }
-            // For Data Management tab, tables are rendered on filter/search action
         }
 
         // --- Data Handling (Local Storage) ---
@@ -872,13 +803,13 @@
             const originalText = btn.textContent;
             const originalBackground = btn.style.background;
 
-            if (isNaN(newBudget) || newBudget < 0) { // Allow 0 budget
+            if (isNaN(newBudget) || newBudget < 0) { 
                 alert('Please enter a valid budget amount (0 or greater)');
                 return;
             }
             
             budget = newBudget;
-            localStorage.setItem('budget', budget.toString()); // Save budget to local storage
+            localStorage.setItem('budget', budget.toString()); 
             updateDisplay();
 
             btn.textContent = '✅ Budget Set!';
@@ -924,7 +855,7 @@
                 const MAX_FILE_SIZE_BYTES = 1 * 1024 * 1024; // 1MB limit 
                 if (file.size > MAX_FILE_SIZE_BYTES) {
                     alert('File size exceeds 1MB. Please upload a smaller image.');
-                    receiptInput.value = ''; // Clear the input
+                    receiptInput.value = ''; 
                     return;
                 }
                 // Only allow image files
@@ -994,12 +925,14 @@
                 // Re-apply filters/search after deletion if active
                 const startDate = document.getElementById('filterStartDate').value;
                 const endDate = document.getElementById('filterEndDate').value;
-                if (startDate && endDate) {
-                    filterAndDisplayExpenses();
-                }
-                const searchQuery = document.getElementById('searchQuery').value;
-                if (searchQuery) {
-                    performSearch();
+                if (document.getElementById('searchTab').classList.contains('active')) { // Only if search tab is active
+                    if (startDate && endDate) {
+                        filterAndDisplayExpenses();
+                    }
+                    const searchQuery = document.getElementById('searchQuery').value;
+                    if (searchQuery) {
+                        performSearch();
+                    }
                 }
             }
         }
@@ -1008,24 +941,10 @@
 
         function updateDisplay() {
             updateBudgetSummary();
-            updateBudgetProgressBar(); // New call
+            updateBudgetProgressBar(); 
             updateRecentExpenses();
-            updateTopCategories();
-            updateTopVendors();
-            updateWeeklySummary();
-            updateMonthlySummary();
-            // Charts are rendered on tab switch for performance, not every updateDisplay
-            // but ensure they are drawn at least once on initial load or if active tab.
-            if (document.getElementById('dashboardTab').classList.contains('active')) {
-                renderTopCategoriesStackedBarChart();
-            }
-            if (document.getElementById('analyticsTab').classList.contains('active')) {
-                renderCategoryPieChart();
-                renderMonthlyBarChart();
-                renderDailyLineChart();
-                renderWeeklyLineChart();
-                renderUserSpendingBarChart();
-            }
+            // Charts are rendered on tab switch, not every updateDisplay
+            // Summary tables (if any) are also removed based on user's new layout
         }
 
         function updateBudgetSummary() {
@@ -1037,7 +956,7 @@
             document.getElementById('remaining').textContent = `₹${remaining.toLocaleString()}`;
         }
 
-        // New: Budget Progress Bar Update
+        // Budget Progress Bar Update
         function updateBudgetProgressBar() {
             const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
             let percentage = 0;
@@ -1048,25 +967,25 @@
             const progressBarFill = document.getElementById('budgetProgressBarFill');
             const progressBarText = document.getElementById('budgetProgressBarText');
 
-            progressBarFill.style.width = `${Math.min(percentage, 100).toFixed(1)}%`; // Cap visual fill at 100%
+            progressBarFill.style.width = `${Math.min(percentage, 100).toFixed(1)}%`; 
             progressBarText.textContent = `${percentage.toFixed(1)}% Used`;
 
             // Change color based on percentage
             if (percentage > 100) {
-                progressBarFill.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)'; // Red for over budget
+                progressBarFill.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)'; 
                 progressBarText.textContent = `OVER BUDGET! (${percentage.toFixed(1)}%)`;
-                progressBarText.style.color = '#fff'; // White text on red background
+                progressBarText.style.color = '#fff'; 
                 progressBarText.style.textShadow = '0 1px 2px rgba(0,0,0,0.5)';
             } else if (percentage >= 80) {
-                progressBarFill.style.background = 'linear-gradient(90deg, #f59e0b, #d97706)'; // Amber for warning
+                progressBarFill.style.background = 'linear-gradient(90deg, #f59e0b, #d97706)'; 
                 progressBarText.style.color = '#1f2937';
                 progressBarText.style.textShadow = '0 1px 2px rgba(255,255,255,0.5)';
             } else {
-                progressBarFill.style.background = 'linear-gradient(90deg, #10b981, #059669)'; // Green for good
+                progressBarFill.style.background = 'linear-gradient(90deg, #10b981, #059669)'; 
                 progressBarText.style.color = '#1f2937';
                 progressBarText.style.textShadow = '0 1px 2px rgba(255,255,255,0.5)';
             }
-            if (budget === 0) { // If budget is 0, show a specific message
+            if (budget === 0) { 
                  progressBarFill.style.width = '0%';
                  progressBarText.textContent = 'Set a Budget!';
                  progressBarText.style.color = '#1f2937';
@@ -1081,7 +1000,7 @@
                 return;
             }
             
-            const recentExpenses = expenses.slice(0, 5); // Show only 5 recent expenses
+            const recentExpenses = expenses.slice(0, 5); 
             container.innerHTML = recentExpenses.map(expense => `
                 <div class="expense-item">
                     <div class="expense-details">
@@ -1099,135 +1018,6 @@
                     </div>
                 </div>
             `).join('');
-        }
-
-        function updateTopCategories() {
-            const categoryTotals = expenses.reduce((acc, expense) => {
-                acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-                return acc;
-            }, {});
-            const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-            const sortedCategories = Object.entries(categoryTotals)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 3);
-            const tbody = document.getElementById('topCategoriesTable').querySelector('tbody');
-            
-            if (sortedCategories.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = sortedCategories.map(([category, amount], index) => `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${category}</td>
-                    <td>₹${amount.toLocaleString()}</td>
-                    <td>${((amount / totalSpent) * 100).toFixed(1)}%</td>
-                </tr>
-            `).join('');
-        }
-
-        function updateTopVendors() {
-            const vendorTotals = expenses.reduce((acc, expense) => {
-                acc[expense.vendor] = (acc[expense.vendor] || 0) + expense.amount;
-                return acc;
-            }, {});
-            const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-            const sortedVendors = Object.entries(vendorTotals)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 3);
-            const tbody = document.getElementById('topVendorsTable').querySelector('tbody');
-            
-            if (sortedVendors.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = sortedVendors.map(([vendor, amount], index) => `
-                <tr>
-                    <td>${index + 1}</td>
-                    <td>${vendor}</td>
-                    <td>₹${amount.toLocaleString()}</td>
-                    <td>${((amount / totalSpent) * 100).toFixed(1)}%</td>
-                </tr>
-            `).join('');
-        }
-
-        function updateWeeklySummary() {
-            const weeklyData = {};
-            expenses.forEach(expense => {
-                const expenseDate = new Date(expense.date);
-                const weekStart = new Date(expenseDate);
-                weekStart.setDate(expenseDate.getDate() - expenseDate.getDay());
-                
-                weekStart.setHours(0, 0, 0, 0);
-                const weekKey = weekStart.toISOString().split('T')[0];
-                
-                if (!weeklyData[weekKey]) {
-                    weeklyData[weekKey] = 0;
-                }
-                weeklyData[weekKey] += expense.amount;
-            });
-            const tbody = document.getElementById('weeklySummaryTable').querySelector('tbody');
-            const sortedWeeks = Object.entries(weeklyData).sort(([a], [b]) => new Date(b) - new Date(a));
-            if (sortedWeeks.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="3" style="text-align: center; color: #6b7280;">No data available</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = sortedWeeks.map(([weekStart, total], index) => {
-                const start = new Date(weekStart);
-                const end = new Date(start);
-                end.setDate(start.getDate() + 6);
-                
-                return `
-                    <tr>
-                        <td>Week ${index + 1}</td>
-                        <td>${start.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} - ${end.toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
-                        <td>₹${total.toLocaleString()}</td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        function updateMonthlySummary() {
-            const monthlyData = {};
-            expenses.forEach(expense => {
-                const expenseDate = new Date(expense.date);
-                const monthKey = `${expenseDate.getFullYear()}-${String(expenseDate.getMonth() + 1).padStart(2, '0')}`;
-                
-                if (!monthlyData[monthKey]) {
-                    monthlyData[monthKey] = { total: 0, categories: {} };
-                }
-                
-                monthlyData[monthKey].total += expense.amount;
-                monthlyData[monthKey].categories[expense.category] = 
-                    (monthlyData[monthKey].categories[expense.category] || 0) + expense.amount;
-            });
-            
-            const tbody = document.getElementById('monthlySummaryTable').querySelector('tbody');
-            const sortedMonths = Object.entries(monthlyData).sort(([a], [b]) => b.localeCompare(a));
-            
-            if (sortedMonths.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = sortedMonths.map(([month, data]) => {
-                const topCategory = Object.entries(data.categories)
-                    .sort(([,a], [,b]) => b - a)[0];
-                
-                const percentage = topCategory ? ((topCategory[1] / data.total) * 100).toFixed(1) : 0;
-                
-                return `
-                    <tr>
-                        <td>${new Date(month + '-01').toLocaleDateString('en-US', {year: 'numeric', month: 'long'})}</td>
-                        <td>₹${data.total.toLocaleString()}</td>
-                        <td>${topCategory ? topCategory[0] : 'N/A'}</td>
-                        <td>${percentage}%</td>
-                    </tr>
-                `;
-            }).join('');
         }
 
         // --- Export All Data Functions ---
@@ -1250,7 +1040,7 @@
                     expense.recordedBy || '',
                     expense.receipt ? 'Yes' : 'No' 
                 ])
-            ].map(row => row.map(field => `"${field.toString().replace(/"/g, '""')}"`).join(',')).join('\n'); // Added quoting for CSV fields
+            ].map(row => row.map(field => `"${field.toString().replace(/"/g, '""')}"`).join(',')).join('\n'); 
             const blob = new Blob([csvContent], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1291,97 +1081,6 @@
 
         // --- Chart Rendering Functions ---
 
-        // New Chart: Top Categories Stacked Bar Chart (Horizontal)
-        function renderTopCategoriesStackedBarChart() {
-            const ctx = document.getElementById('topCategoriesStackedBarChart').getContext('2d');
-            if (topCategoriesStackedBarChartInstance) {
-                topCategoriesStackedBarChartInstance.destroy();
-            }
-
-            const categoryTotals = expenses.reduce((acc, expense) => {
-                acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-                return acc;
-            }, {});
-            const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-
-            const sortedCategories = Object.entries(categoryTotals)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 5); // Show top 5 for horizontal bar
-
-            const labels = sortedCategories.map(entry => entry[0]);
-            const data = sortedCategories.map(entry => entry[1]);
-            const percentages = sortedCategories.map(entry => totalSpent > 0 ? ((entry[1] / totalSpent) * 100).toFixed(1) : '0.0');
-
-            topCategoriesStackedBarChartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Amount (₹)',
-                        data: data,
-                        backgroundColor: '#4f46e5',
-                        borderColor: '#3730a3',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y', // Horizontal bar chart
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Amount (₹)'
-                            },
-                             ticks: {
-                                callback: function(value) {
-                                    return '₹' + value.toLocaleString();
-                                }
-                            }
-                        },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Category'
-                            }
-                        }
-                    },
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Top Spending Categories (Amount & %)',
-                            font: {
-                                size: 16
-                            }
-                        },
-                        legend: {
-                            display: false 
-                        },
-                        datalabels: { 
-                            anchor: 'end',
-                            align: 'end',
-                            formatter: (value, ctx) => {
-                                if (value === 0) return ''; // Don't show label for 0 values
-                                return `₹${value.toLocaleString()} (${percentages[ctx.dataIndex]}%)`;
-                            },
-                            color: '#1f2937', 
-                            font: {
-                                weight: 'bold',
-                                size: 12
-                            },
-                            offset: 4, 
-                            display: function(context) {
-                                return context.dataset.data[context.dataIndex] > 0;
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-
         function renderCategoryPieChart() {
             const ctx = document.getElementById('categoryPieChart').getContext('2d');
             if (categoryPieChartInstance) {
@@ -1413,7 +1112,7 @@
             ];
 
             categoryPieChartInstance = new Chart(ctx, {
-                type: 'doughnut', // Changed to doughnut
+                type: 'doughnut', 
                 data: {
                     labels: labels,
                     datasets: [{
@@ -1449,25 +1148,24 @@
                                 }
                             }
                         },
-                        datalabels: { // Datalabels plugin configuration
+                        datalabels: { 
                             formatter: (value, ctx) => {
                                 const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
-                                if (total === 0) return '0%'; // Handle division by zero
+                                if (total === 0) return '0%'; 
                                 const percentage = (value * 100 / total).toFixed(1) + '%';
                                 if (value > 0) return percentage; 
                                 return '';
                             },
-                            color: '#fff', // White color for better visibility
+                            color: '#fff', 
                             font: {
                                 weight: 'bold',
                                 size: 10
                             },
-                            anchor: 'end', // Position label inside slice, at the end
-                            align: 'start', // Align text relative to anchor
-                            offset: 4, // Offset from the edge of the slice
+                            anchor: 'end', 
+                            align: 'start', 
+                            offset: 4, 
                             display: function(context) {
-                                // Only display if segment is large enough or value is positive
-                                return context.dataset.data[context.dataIndex] > 0 && context.chart.width > 200; // Adjust threshold if needed
+                                return context.dataset.data[context.dataIndex] > 0 && context.chart.width > 200; 
                             }
                         }
                     }
@@ -1545,10 +1243,10 @@
                                 }
                             }
                         },
-                        datalabels: { // Datalabels plugin configuration
+                        datalabels: { 
                             anchor: 'end', 
                             align: 'top', 
-                            formatter: (value) => value > 0 ? `₹${value.toLocaleString()}` : '', // Only show for positive values
+                            formatter: (value) => value > 0 ? `₹${value.toLocaleString()}` : '', 
                             color: '#1f2937', 
                             font: {
                                 weight: 'bold',
@@ -1578,12 +1276,11 @@
             expenses.forEach(expense => {
                 const expenseDate = new Date(expense.date);
                 if (expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear) {
-                    const dayKey = expenseDate.toISOString().split('T')[0]; //YYYY-MM-DD
+                    const dayKey = expenseDate.toISOString().split('T')[0]; 
                     dailyData[dayKey] = (dailyData[dayKey] || 0) + expense.amount;
                 }
             });
 
-            // Generate labels for all days of the current month
             const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
             const labels = [];
             const data = [];
@@ -1649,7 +1346,7 @@
                                 }
                             }
                         },
-                        datalabels: { // Datalabels plugin configuration
+                        datalabels: { 
                             align: 'top', 
                             formatter: (value) => value > 0 ? `₹${value.toLocaleString()}` : '',
                             color: '#1f2937',
@@ -1678,7 +1375,6 @@
             const currentMonth = today.getMonth();
             const currentYear = today.getFullYear();
 
-            // Filter expenses to only include the current month
             const monthlyFilteredExpenses = expenses.filter(expense => {
                 const expenseDate = new Date(expense.date);
                 return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
@@ -1688,15 +1384,13 @@
             monthlyFilteredExpenses.forEach(expense => {
                 const expenseDate = new Date(expense.date);
                 const weekStart = new Date(expenseDate);
-                // Ensure weekStart is Sunday, based on locale's getDay()
                 weekStart.setDate(expenseDate.getDate() - expenseDate.getDay());
-                weekStart.setHours(0, 0, 0, 0); // Normalize to start of day
-                const weekKey = weekStart.toISOString().split('T')[0]; //YYYY-MM-DD
+                weekStart.setHours(0, 0, 0, 0); 
+                const weekKey = weekStart.toISOString().split('T')[0]; 
                 
                 weeklyData[weekKey] = (weeklyData[weekKey] || 0) + expense.amount;
             });
 
-            // Generate labels and data for all weeks that *intersect* the current month
             const labels = [];
             const data = [];
 
@@ -1706,7 +1400,7 @@
             let currentWeekStartDate = new Date(firstDayOfMonth);
             currentWeekStartDate.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay());
 
-            while (currentWeekStartDate <= lastDayOfMonth || (currentWeekStartDate.getMonth() === currentMonth && currentWeekStartDate.getFullYear() === currentYear) || (currentWeekStartDate.getMonth() === (currentMonth + 1) % 12 && currentWeekStartDate.getDate() <= 7 && currentWeekStartDate.getFullYear() === currentYear) ) {
+            while (currentWeekStartDate <= lastDayOfMonth || currentWeekStartDate.getMonth() === currentMonth) {
                 const weekEndDate = new Date(currentWeekStartDate);
                 weekEndDate.setDate(currentWeekStartDate.getDate() + 6);
 
@@ -1714,42 +1408,16 @@
                 labels.push(`${currentWeekStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`);
                 data.push(weeklyData[weekKey] || 0);
 
-                // Move to the start of the next week
                 currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
             }
-            // Filter out labels/data that are significantly outside the current month
-            const finalLabels = [];
-            const finalData = [];
-            labels.forEach((label, index) => {
-                const [startPart] = label.split(' - ');
-                const checkDate = new Date(startPart + ', ' + currentYear); // Use current year to properly parse dates
-
-                if (
-                    (checkDate.getMonth() === currentMonth && checkDate.getFullYear() === currentYear) || // Week starts in current month
-                    (checkDate.getMonth() === (currentMonth -1 + 12) % 12 && checkDate.getFullYear() === currentYear && checkDate.getDate() > 20) || // Week ends in current month (started late last month)
-                    (checkDate < firstDayOfMonth && new Date(checkDate).setDate(checkDate.getDate() + 6) >= firstDayOfMonth) // Week spans across start of month
-                ) {
-                    finalLabels.push(label);
-                    finalData.push(data[index]);
-                } else if (checkDate > lastDayOfMonth) { // Stop if we've gone past the relevant period
-                    // This is a heuristic, adjust as needed
-                    if (checkDate.getMonth() !== currentMonth || checkDate.getDate() > 7) { 
-                        // If it's a new month and past the first week, break
-                        // Or if it's past the last day of the current month by a significant margin
-                        if (checkDate.getTime() > lastDayOfMonth.getTime() + (7 * 24 * 60 * 60 * 1000)) { // One week past month end
-                           // break; // Can't break in forEach, use a flag or regular for loop
-                        }
-                    }
-                }
-            });
-
+            
             weeklyLineChartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: finalLabels, 
+                    labels: labels, 
                     datasets: [{
                         label: `Weekly Spending for ${new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} (₹)`,
-                        data: finalData, 
+                        data: data, 
                         borderColor: '#22d3ee', 
                         backgroundColor: 'rgba(34, 211, 238, 0.2)',
                         fill: true,
@@ -1883,7 +1551,7 @@
                                 }
                             }
                         },
-                        datalabels: { // Datalabels plugin configuration
+                        datalabels: { 
                             anchor: 'end', 
                             align: 'top', 
                             formatter: (value) => value > 0 ? `₹${value.toLocaleString()}` : '',
