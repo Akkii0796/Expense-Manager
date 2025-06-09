@@ -51,6 +51,37 @@
             margin: 0 20px; /* Aligned with tab buttons */
             border-radius: 15px; /* Rounded corners for header */
             margin-bottom: 20px; /* Space between header and tabs */
+            position: relative;
+        }
+        .header .user-info {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+        }
+        .header .user-info img {
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            border: 2px solid white;
+            object-fit: cover;
+        }
+        .header .user-info button {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background 0.2s ease;
+        }
+        .header .user-info button:hover {
+            background: rgba(255,255,255,0.2);
         }
 
         .header h1 {
@@ -625,6 +656,9 @@
             flex: 1; /* Adjust flex for spacing */
         }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 </head>
@@ -634,6 +668,11 @@
             <h1 id="headerTitle">💰 Expense Tracker</h1>
             <p id="currentMonthYear"></p>
             <p>Track your expenses and manage your budget efficiently</p>
+            <div class="user-info">
+                <span id="userNameDisplay">Guest</span>
+                <img id="userPhoto" src="https://www.gravatar.com/avatar/?d=mp" alt="User Photo">
+                <button id="authButton" onclick="toggleAuth()">Login with Google</button>
+            </div>
         </div>
 
         <div class="tab-buttons">
@@ -649,8 +688,8 @@
                     <label for="budgetAmount">Budget Amount (₹)</label>
                     <input type="number" id="budgetAmount" placeholder="Enter your monthly budget">
                 </div>
-                <div class="download-buttons"> <button class="btn" onclick="setBudget(event)">Set Budget</button>
-                    <button class="btn btn-outline" onclick="resetBudget()">Reset Budget</button>
+                <div class="download-buttons"> <button class="btn" id="setBudgetBtn" onclick="setBudget(event)">Set Budget</button>
+                    <button class="btn btn-outline" id="resetBudgetBtn" onclick="resetBudget()">Reset Budget</button>
                 </div>
                 
                 <div class="budget-summary">
@@ -726,7 +765,7 @@
                     <small style="color: #6b7280; font-size: 0.8em; margin-top: 5px; display: block;">Max 1MB for optimal performance. Larger files may not save.</small>
                 </div>
                
-                <button class="btn btn-secondary" onclick="addExpense(event)">Add Expense</button>
+                <button class="btn btn-secondary" id="addExpenseBtn" onclick="addExpense(event)">Add Expense</button>
             </div>
 
             <div class="card full-width">
@@ -812,8 +851,8 @@
                     <label for="searchQuery">Search by Vendor, Category, Note or User</label>
                     <input type="text" id="searchQuery" placeholder="e.g., 'Grocery', 'Amazon', 'fuel', 'Akshay'">
                 </div>
-                <div class="download-buttons"> <button class="btn" onclick="performSearch()">Search</button>
-                    <button class="btn btn-outline" onclick="clearSearch()">Clear Search</button>
+                <div class="download-buttons"> <button class="btn" id="searchBtn" onclick="performSearch()">Search</button>
+                    <button class="btn btn-outline" id="clearSearchBtn" onclick="clearSearch()">Clear Search</button>
                 </div>
                 
                 <div id="searchResultsDisplay" class="table-container" style="margin-top: 20px;">
@@ -830,7 +869,7 @@
                     <label for="filterEndDate">End Date</label>
                     <input type="date" id="filterEndDate">
                 </div>
-                <button class="btn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
+                <button class="btn" id="applyFilterBtn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
            
                 <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px;">
                     </div>
@@ -843,19 +882,38 @@
 
             <div class="card full-width">
                 <h2><span class="icon">💾</span> Export All Data</h2>
-                <div class="download-buttons"> <button class="btn" onclick="downloadCSV()">📄 Download All CSV</button>
-                    <button class="btn" onclick="downloadPDF()">📊 Download All PDF</button>
+                <div class="download-buttons"> <button class="btn" id="downloadAllCsvBtn" onclick="downloadCSV()">📄 Download All CSV</button>
+                    <button class="btn" id="downloadAllPdfBtn" onclick="downloadPDF()">📊 Download All PDF</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Data storage using Local Storage
+        // Firebase Configuration
+        const firebaseConfig = {
+      apiKey: "AIzaSyCVcdGryuTGeMS2Aq9C2cqbeNmfnddDIu8",
+      authDomain: "monthly-expense-tracker-179de.firebaseapp.com",
+      databaseURL:
+        "https://monthly-expense-tracker-179de-default-rtdb.firebaseio.com",
+      projectId: "monthly-expense-tracker-179de",
+      storageBucket: "monthly-expense-tracker-179de.firebasestorage.app",
+      messagingSenderId: "927646586236",
+      appId: "1:927646586236:web:fc56a0334a31464cf000f9",
+      measurementId: "G-CVR339GKH9"
+    };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // Data storage using Firebase (replacing Local Storage)
         let budget = 0;
         let expenses = [];
         let filteredExpenses = []; 
         let currentSearchResults = []; 
+        let currentUser = null; // To store the authenticated user object
 
         // Chart instances
         let categoryPieChartInstance;
@@ -866,7 +924,6 @@
         let categoryCountBarChartInstance;
         
         document.addEventListener('DOMContentLoaded', () => {
-            loadData();
             updateHeaderMonth();
             
             // Set default dates for convenience (e.g., last 30 days)
@@ -881,7 +938,128 @@
 
             // Register the datalabels plugin globally
             Chart.register(ChartDataLabels);
+
+            // Listen for auth state changes
+            auth.onAuthStateChanged((user) => {
+                currentUser = user;
+                if (user) {
+                    console.log("User logged in:", user.displayName || user.email);
+                    document.getElementById('userNameDisplay').textContent = user.displayName || user.email;
+                    document.getElementById('userPhoto').src = user.photoURL || "https://www.gravatar.com/avatar/?d=mp";
+                    document.getElementById('authButton').textContent = 'Logout';
+                    enableUI();
+                    loadUserData(); // Load user-specific data from Firestore
+                } else {
+                    console.log("User logged out.");
+                    document.getElementById('userNameDisplay').textContent = 'Guest';
+                    document.getElementById('userPhoto').src = "https://www.gravatar.com/avatar/?d=mp";
+                    document.getElementById('authButton').textContent = 'Login with Google';
+                    disableUI();
+                    clearData(); // Clear all local data on logout
+                }
+            });
         });
+
+        // --- Authentication ---
+        function toggleAuth() {
+            if (currentUser) {
+                signOutUser();
+            } else {
+                signInWithGoogle();
+            }
+        }
+
+        function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    // Signed in
+                    console.log("Google Sign-In Successful:", result.user);
+                })
+                .catch((error) => {
+                    console.error("Google Sign-In Error:", error.message);
+                    alert("Error signing in: " + error.message);
+                });
+        }
+
+        function signOutUser() {
+            auth.signOut()
+                .then(() => {
+                    console.log("User signed out.");
+                })
+                .catch((error) => {
+                    console.error("Sign Out Error:", error.message);
+                    alert("Error signing out: " + error.message);
+                });
+        }
+
+        function enableUI() {
+            document.getElementById('budgetAmount').disabled = false;
+            document.getElementById('setBudgetBtn').disabled = false;
+            document.getElementById('resetBudgetBtn').disabled = false;
+            document.getElementById('category').disabled = false;
+            document.getElementById('vendor').disabled = false;
+            document.getElementById('amount').disabled = false;
+            document.getElementById('note').disabled = false;
+            document.getElementById('receiptUpload').disabled = false;
+            document.getElementById('addExpenseBtn').disabled = false;
+            document.getElementById('searchQuery').disabled = false;
+            document.getElementById('searchBtn').disabled = false;
+            document.getElementById('clearSearchBtn').disabled = false;
+            document.getElementById('filterStartDate').disabled = false;
+            document.getElementById('filterEndDate').disabled = false;
+            document.getElementById('applyFilterBtn').disabled = false;
+            document.getElementById('downloadAllCsvBtn').disabled = false;
+            document.getElementById('downloadAllPdfBtn').disabled = false;
+            // Also enable radio buttons
+            document.querySelectorAll('input[name="recordedBy"]').forEach(radio => radio.disabled = false);
+        }
+
+        function disableUI() {
+            document.getElementById('budgetAmount').disabled = true;
+            document.getElementById('setBudgetBtn').disabled = true;
+            document.getElementById('resetBudgetBtn').disabled = true;
+            document.getElementById('category').disabled = true;
+            document.getElementById('vendor').disabled = true;
+            document.getElementById('amount').disabled = true;
+            document.getElementById('note').disabled = true;
+            document.getElementById('receiptUpload').disabled = true;
+            document.getElementById('addExpenseBtn').disabled = true;
+            document.getElementById('searchQuery').disabled = true;
+            document.getElementById('searchBtn').disabled = true;
+            document.getElementById('clearSearchBtn').disabled = true;
+            document.getElementById('filterStartDate').disabled = true;
+            document.getElementById('filterEndDate').disabled = true;
+            document.getElementById('applyFilterBtn').disabled = true;
+            document.getElementById('downloadAllCsvBtn').disabled = true;
+            document.getElementById('downloadAllPdfBtn').disabled = true;
+            updateFilteredDownloadButtons(); // Disable filtered download buttons too
+            // Disable radio buttons
+            document.querySelectorAll('input[name="recordedBy"]').forEach(radio => radio.disabled = true);
+
+            clearData(); // Clear data from UI
+        }
+
+        function clearData() {
+            budget = 0;
+            expenses = [];
+            filteredExpenses = [];
+            currentSearchResults = [];
+            document.getElementById('budgetAmount').value = '';
+            updateDisplay();
+            document.getElementById('recentExpenses').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Please login to see your expenses.</p>';
+            document.getElementById('searchResultsDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Please login to search expenses.</p>';
+            document.getElementById('filteredExpensesDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Please login to filter expenses.</p>';
+            document.getElementById('topCategoriesList').innerHTML = '<li><span class="label">Please login to see summary.</span></li>';
+            document.getElementById('topVendorsList').innerHTML = '<li><span class="label">Please login to see summary.</span></li>';
+            // Destroy charts if they exist
+            if (categoryPieChartInstance) categoryPieChartInstance.destroy();
+            if (monthlyBarChartInstance) monthlyBarChartInstance.destroy();
+            if (dailyLineChartInstance) dailyLineChartInstance.destroy();
+            if (weeklyBarChartInstance) weeklyBarChartInstance.destroy();
+            if (userSpendingBarChartInstance) userSpendingBarChartInstance.destroy();
+            if (categoryCountBarChartInstance) categoryCountBarChartInstance.destroy();
+        }
 
         // --- Tab Management ---
         function showTab(tabId) {
@@ -916,72 +1094,108 @@
             }
         }
 
-        // --- Data Handling (Local Storage) ---
+        // --- Data Handling (Firebase) ---
+        function loadUserData() {
+            if (!currentUser) return;
+            const uid = currentUser.uid;
 
-        function loadData() {
-            const savedBudget = localStorage.getItem('budget');
-            if (savedBudget !== null) {
-                budget = parseFloat(savedBudget);
-                document.getElementById('budgetAmount').value = budget;
-            } else {
-                budget = 0;
-                document.getElementById('budgetAmount').value = '';
-            }
+            // Budget listener
+            db.collection('users').doc(uid).collection('budgets').doc('monthly')
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        budget = doc.data().amount || 0;
+                        document.getElementById('budgetAmount').value = budget;
+                    } else {
+                        budget = 0;
+                        document.getElementById('budgetAmount').value = '';
+                    }
+                    updateDisplay();
+                }, (error) => {
+                    console.error("Error fetching budget:", error);
+                });
 
-            const savedExpenses = localStorage.getItem('expenses');
-            if (savedExpenses) {
-                expenses = JSON.parse(savedExpenses);
-            } else {
-                expenses = [];
-            }
-
-            // Filter out expenses with unknown users (empty, null, undefined)
-            expenses = expenses.filter(expense => {
-                return expense.recordedBy !== null && expense.recordedBy !== undefined && expense.recordedBy.trim() !== '';
-            });
-            // Sort expenses (most recent first) after loading
-            expenses.sort((a, b) => {
-                const dateA = new Date(a.date + ' ' + a.time);
-                const dateB = new Date(b.date + ' ' + b.time);
-                return dateB - dateA;
-            });
-            updateDisplay();
+            // Expenses listener
+            db.collection('users').doc(uid).collection('expenses').orderBy('date', 'desc').orderBy('time', 'desc')
+                .onSnapshot((snapshot) => {
+                    expenses = [];
+                    snapshot.forEach((doc) => {
+                        expenses.push({ id: doc.id, ...doc.data() });
+                    });
+                    // Sort expenses (most recent first) after loading
+                    expenses.sort((a, b) => {
+                        const dateA = new Date(a.date + ' ' + a.time);
+                        const dateB = new Date(b.date + ' ' + b.time);
+                        return dateB - dateA;
+                    });
+                    updateDisplay();
+                }, (error) => {
+                    console.error("Error fetching expenses:", error);
+                });
         }
 
-        function setBudget(event) {
+        async function setBudget(event) {
+            if (!currentUser) {
+                alert('Please log in to set your budget.');
+                return;
+            }
+            const uid = currentUser.uid;
+
             const budgetInput = document.getElementById('budgetAmount');
             const newBudget = parseFloat(budgetInput.value);
             const btn = event.target;
             const originalText = btn.textContent;
             const originalBackground = btn.style.background;
+
             if (isNaN(newBudget) || newBudget < 0) { 
                 alert('Please enter a valid budget amount (0 or greater)');
                 return;
             }
             
-            budget = newBudget;
-            localStorage.setItem('budget', budget.toString()); 
-            updateDisplay();
-
-            btn.textContent = '✅ Budget Set!';
-            btn.style.background = 'linear-gradient(135deg, #9fe6b0, #7ee793)'; // Lighter green
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.background = originalBackground;
-            }, 2000);
+            try {
+                await db.collection('users').doc(uid).collection('budgets').doc('monthly').set({ amount: newBudget });
+                btn.textContent = '✅ Budget Set!';
+                btn.style.background = 'linear-gradient(135deg, #9fe6b0, #7ee793)'; // Lighter green
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = originalBackground;
+                }, 2000);
+            } catch (e) {
+                console.error("Error setting budget: ", e);
+                alert("Error setting budget: " + e.message);
+                btn.textContent = '❌ Failed!';
+                btn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = originalBackground;
+                }, 2000);
+            }
         }
 
-        function resetBudget() {
+        async function resetBudget() {
+            if (!currentUser) {
+                alert('Please log in to reset your budget.');
+                return;
+            }
+            const uid = currentUser.uid;
+
             if (confirm('Are you sure you want to reset your budget to ₹0? This will not affect your expenses.')) {
-                budget = 0;
-                localStorage.setItem('budget', '0');
-                document.getElementById('budgetAmount').value = '';
-                updateDisplay();
-                alert('Budget has been reset to ₹0.');
+                try {
+                    await db.collection('users').doc(uid).collection('budgets').doc('monthly').set({ amount: 0 });
+                    alert('Budget has been reset to ₹0.');
+                } catch (e) {
+                    console.error("Error resetting budget: ", e);
+                    alert("Error resetting budget: " + e.message);
+                }
             }
         }
 
         async function addExpense(event) {
+            if (!currentUser) {
+                alert('Please log in to add an expense.');
+                return;
+            }
+            const uid = currentUser.uid;
+
             const category = document.getElementById('category').value;
             const vendor = document.getElementById('vendor').value;
             const amount = parseFloat(document.getElementById('amount').value);
@@ -1022,35 +1236,44 @@
                     return;
                 }
             }
-
-            const expense = {
-                id: Date.now().toString(),
-                date: new Date().toISOString().split('T')[0],
-                time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
-                category: category,
-                vendor: vendor.trim(),
-                amount: amount,
-                note: note.trim(),
-                recordedBy: recordedBy,
-                receipt: receiptBase64
-            };
-            expenses.push(expense);
-            localStorage.setItem('expenses', JSON.stringify(expenses));
-
-            // Clear form fields
-            document.getElementById('vendor').value = '';
-            document.getElementById('amount').value = '';
-            document.getElementById('note').value = '';
-            document.querySelector('input[name="recordedBy"][value="Akshay"]').checked = true;
-            receiptInput.value = '';
-            updateDisplay();
-
             const btn = event.target;
             const originalText = btn.textContent;
-            btn.textContent = '✅ Added!';
-            setTimeout(() => {
-                btn.textContent = originalText;
-            }, 2000);
+
+            try {
+                const newExpenseRef = db.collection('users').doc(uid).collection('expenses').doc(); // Let Firestore generate ID
+                const expense = {
+                    date: new Date().toISOString().split('T')[0],
+                    time: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true }),
+                    category: category,
+                    vendor: vendor.trim(),
+                    amount: amount,
+                    note: note.trim(),
+                    recordedBy: recordedBy,
+                    receipt: receiptBase64
+                };
+                await newExpenseRef.set(expense);
+
+                // Clear form fields
+                document.getElementById('vendor').value = '';
+                document.getElementById('amount').value = '';
+                document.getElementById('note').value = '';
+                document.querySelector('input[name="recordedBy"][value="Akshay"]').checked = true;
+                receiptInput.value = '';
+                // updateDisplay() is called by the Firestore snapshot listener
+
+                btn.textContent = '✅ Added!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+
+            } catch (e) {
+                console.error("Error adding expense: ", e);
+                alert("Error adding expense: " + e.message);
+                btn.textContent = '❌ Failed!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            }
         }
 
         function readFileAsBase64(file) {
@@ -1062,26 +1285,21 @@
             });
         }
 
-        function deleteExpense(id) {
+        async function deleteExpense(id) {
+            if (!currentUser) {
+                alert('Please log in to delete expenses.');
+                return;
+            }
+            const uid = currentUser.uid;
+
             if (confirm('Are you sure you want to delete this expense?')) {
-                expenses = expenses.filter(expense => expense.id !== id);
-                localStorage.setItem('expenses', JSON.stringify(expenses));
-                updateDisplay();
-                // Re-apply filters/search after deletion if active
-                const currentTab = document.querySelector('.tab-content.active').id;
-                if (currentTab === 'searchTab') {
-                    const startDate = document.getElementById('filterStartDate').value;
-                    const endDate = document.getElementById('filterEndDate').value;
-                    if (startDate && endDate) {
-                        filterAndDisplayExpenses();
-                    }
-                    const searchQuery = document.getElementById('searchQuery').value;
-                    if (searchQuery) {
-                        performSearch();
-                    }
-                } else if (currentTab === 'summaryTab') {
-                    // Re-render all summary charts/tables if a deletion happened on summary tab
-                    showTab('summaryTab');
+                try {
+                    await db.collection('users').doc(uid).collection('expenses').doc(id).delete();
+                    // updateDisplay() will be called by the Firestore snapshot listener
+                    alert('Expense deleted successfully!');
+                } catch (e) {
+                    console.error("Error deleting expense: ", e);
+                    alert("Error deleting expense: " + e.message);
                 }
             }
         }
