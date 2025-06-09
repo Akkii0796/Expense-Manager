@@ -309,7 +309,7 @@
         }
 
         .table-container {
-            overflow-x: auto;
+            overflow-x: auto; /* Allows horizontal scrolling */
             margin-top: 15px;
             border-radius: 10px;
             border: 1px solid #e5e7eb;
@@ -320,7 +320,7 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
-            min-width: 700px; /* Increased min-width for better mobile scrolling experience */
+            min-width: 700px; /* Ensures table scrolls on small screens if content is wide */
         }
 
         th {
@@ -335,10 +335,10 @@
         td {
             padding: 12px 8px;
             border-bottom: 1px solid #e5e7eb;
-            white-space: nowrap; 
+            white-space: nowrap; /* Prevent wrapping by default */
             overflow: hidden;
-            text-overflow: ellipsis; 
-            max-width: 150px; 
+            text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+            max-width: 150px; /* Default max-width for most cells */
         }
         td:nth-child(1) { max-width: 180px; } /* Date column */
         td:nth-child(2) { max-width: 120px; } /* Category */
@@ -531,6 +531,7 @@
         .top-list {
             list-style: none;
             padding: 0;
+            margin-top: 10px; /* Added margin for header */
         }
         .top-list li {
             display: flex;
@@ -546,10 +547,33 @@
         .top-list .label {
             font-weight: 500;
             color: #374151;
+            flex: 2; /* Adjust flex for spacing */
         }
         .top-list .value {
             font-weight: bold;
             color: #4f46e5;
+            text-align: right;
+            flex: 1; /* Adjust flex for spacing */
+        }
+        .top-list-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e7ff; /* Thicker border for heading */
+            margin-bottom: 5px;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        .top-list-header span {
+            flex: 1; /* Default flex */
+        }
+        .top-list-header span:first-child {
+            flex: 2; /* Adjust flex for spacing */
+        }
+        .top-list-header span:last-child {
+            text-align: right;
+            flex: 1; /* Adjust flex for spacing */
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -711,11 +735,19 @@
             <div class="summary-tables">
                 <div class="card">
                     <h2><span class="icon">🏆</span> Top 3 Categories (by amount)</h2>
+                    <div class="top-list-header">
+                        <span style="flex: 2;">Category</span>
+                        <span style="flex: 1; text-align: right;">Amount (%)</span>
+                    </div>
                     <ul id="topCategoriesList" class="top-list">
                         </ul>
                 </div>
                 <div class="card">
                     <h2><span class="icon">🛍️</span> Top 3 Vendors (by amount)</h2>
+                    <div class="top-list-header">
+                        <span style="flex: 2;">Vendor</span>
+                        <span style="flex: 1; text-align: right;">Amount</span>
+                    </div>
                     <ul id="topVendorsList" class="top-list">
                         </ul>
                 </div>
@@ -735,8 +767,7 @@
                 </div>
                 
                 <div id="searchResultsDisplay" class="table-container" style="margin-top: 20px;">
-                    <p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>
-                </div>
+                    </div>
             </div>
 
             <div class="card full-width">
@@ -752,8 +783,7 @@
                 <button class="btn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
                 
                 <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px;">
-                    <p style="text-align: center; color: #6b7280; padding: 20px;">Select dates and click 'Apply Filter'.</p>
-                </div>
+                    </div>
 
                 <div class="download-buttons" style="margin-top: 15px;">
                     <button class="btn" id="downloadFilteredCsvBtn" onclick="downloadFilteredCSV()" disabled>📄 Download Filtered CSV</button>
@@ -1228,6 +1258,15 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             },
                             color: '#333'
                         },
+                        legend: { // Moved legend to bottom
+                            position: 'bottom',
+                            labels: {
+                                color: '#555',
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -1262,7 +1301,8 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             offset: 4, 
                             display: function(context) {
                                 // Only display if value is significant enough and chart size allows
-                                return context.dataset.data[context.dataIndex] > 0 && context.chart.width > 200 && context.percentage > 5; 
+                                // Increased percentage threshold slightly for better visibility
+                                return context.dataset.data[context.dataIndex] > 0 && context.chart.width > 200 && context.percentage >= 3; 
                             },
                             textShadow: {
                                 blur: 4,
@@ -1350,6 +1390,15 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                                 weight: 'bold'
                             },
                             color: '#333'
+                        },
+                        legend: { // Moved legend to bottom
+                            position: 'bottom',
+                            labels: {
+                                color: '#555',
+                                font: {
+                                    size: 11
+                                }
+                            }
                         },
                         tooltip: {
                             callbacks: {
@@ -1470,6 +1519,15 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             padding: {
                                 top: 10,
                                 bottom: 20
+                            }
+                        },
+                        legend: { // Moved legend to bottom
+                            position: 'bottom',
+                            labels: {
+                                color: '#555',
+                                font: {
+                                    size: 11
+                                }
                             }
                         },
                         tooltip: {
@@ -1622,6 +1680,15 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                                 bottom: 20
                             }
                         },
+                        legend: { // Moved legend to bottom
+                            position: 'bottom',
+                            labels: {
+                                color: '#555',
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -1736,6 +1803,15 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                                 bottom: 20
                             }
                         },
+                        legend: { // Moved legend to bottom
+                            position: 'bottom',
+                            labels: {
+                                color: '#555',
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -1838,6 +1914,15 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             },
                             color: '#333'
                         },
+                        legend: { // Moved legend to bottom
+                            position: 'bottom',
+                            labels: {
+                                color: '#555',
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -1867,11 +1952,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
         // Top Metrics Tables
         function updateTopCategories() {
             const container = document.getElementById('topCategoriesList');
-            if (expenses.length === 0) {
-                container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px;">No expenses yet.</li>';
-                return;
-            }
-
+            
             const categoryTotals = expenses.reduce((acc, expense) => {
                 acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
                 return acc;
@@ -1884,7 +1965,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                 .slice(0, 3);
 
             if (sortedCategories.length === 0) {
-                 container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px;">No categories found.</li>';
+                 container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px; flex-direction: column;">No categories found.</li>';
                  return;
             }
 
@@ -1901,11 +1982,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
 
         function updateTopVendors() {
             const container = document.getElementById('topVendorsList');
-            if (expenses.length === 0) {
-                container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px;">No expenses yet.</li>';
-                return;
-            }
-
+            
             const vendorTotals = expenses.reduce((acc, expense) => {
                 acc[expense.vendor] = (acc[expense.vendor] || 0) + expense.amount;
                 return acc;
@@ -1916,7 +1993,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                 .slice(0, 3);
 
             if (sortedVendors.length === 0) {
-                 container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px;">No vendors found.</li>';
+                 container.innerHTML = '<li style="text-align: center; color: #6b7280; padding: 10px; flex-direction: column;">No vendors found.</li>';
                  return;
             }
 
@@ -1946,7 +2023,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             const container = document.getElementById('filteredExpensesDisplay');
 
             if (!startDateInput || !endDateInput) {
-                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Please select both start and end dates.</p>';
+                container.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Please select both start and end dates to filter.</p>';
                 updateFilteredDownloadButtons();
                 return;
             }
@@ -2101,7 +2178,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             const searchResultsContainer = document.getElementById('searchResultsDisplay');
 
             if (query === '') {
-                searchResultsContainer.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Please enter a search term.</p>';
+                searchResultsContainer.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>';
                 currentSearchResults = [];
                 return;
             }
