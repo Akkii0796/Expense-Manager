@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #a7b8fa 0%, #c4a9ef 100%); /* Lighter background */
             min-height: 100vh;
             padding: 10px;
         }
@@ -41,7 +41,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #667eea, #764ba2); /* Slightly darker header */
             color: white;
             padding: 20px;
             text-align: center;
@@ -92,7 +92,7 @@
         }
 
         .tab-content {
-            display: none; /* Hidden by default - THIS WAS THE KEY FIX */
+            display: none; 
             padding: 20px;
             background: white;
             border-radius: 0 0 20px 20px;
@@ -101,7 +101,7 @@
         }
 
         .tab-content.active {
-            display: grid; /* Only active tab gets displayed as a grid */
+            display: grid; 
             grid-template-columns: 1fr;
             gap: 20px;
         }
@@ -129,26 +129,6 @@
         @media (min-width: 768px) {
             .tab-content .stats-grid {
                 grid-template-columns: 1fr 1fr; 
-            }
-        }
-
-
-        .main-content { /* This class is now less critical as content is directly inside tab-content */
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            padding: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        @media (min-width: 1024px) {
-            .main-content {
-                grid-template-columns: 1fr 1fr 1fr;
             }
         }
 
@@ -229,7 +209,7 @@
         }
 
         .btn {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #667eea, #764ba2); /* Slightly darker buttons */
             color: white;
             border: none;
             padding: 12px 24px;
@@ -260,7 +240,7 @@
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #10b981, #059669);
+            background: linear-gradient(135deg, #38b2ac, #319795); /* Teal */
         }
 
         .btn-danger {
@@ -333,32 +313,32 @@
             margin-top: 15px;
             border-radius: 10px;
             border: 1px solid #e5e7eb;
-            max-width: 100%; /* Ensure it doesn't overflow its parent */
+            max-width: 100%; 
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
-            min-width: 600px; /* Ensure a minimum width for columns on small screens */
+            min-width: 700px; /* Increased min-width for better mobile scrolling experience */
         }
 
         th {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: linear-gradient(135deg, #667eea, #764ba2); /* Consistent header color */
             color: white;
             padding: 12px 8px;
             text-align: left;
             font-weight: 600;
-            white-space: nowrap; /* Prevent headers from wrapping too much */
+            white-space: nowrap; 
         }
 
         td {
             padding: 12px 8px;
             border-bottom: 1px solid #e5e7eb;
-            white-space: nowrap; /* Keep content on one line */
+            white-space: nowrap; 
             overflow: hidden;
-            text-overflow: ellipsis; /* Add ellipsis for overflowed text */
-            max-width: 150px; /* Constrain cell width, allowing overflow-x on container */
+            text-overflow: ellipsis; 
+            max-width: 150px; 
         }
         td:nth-child(1) { max-width: 180px; } /* Date column */
         td:nth-child(2) { max-width: 120px; } /* Category */
@@ -399,6 +379,7 @@
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
+            margin-top: 15px; /* Added margin for search/filter buttons */
         }
 
         .download-buttons .btn {
@@ -411,9 +392,17 @@
                 font-size: 1.5rem;
             }
             
-            .main-content {
+            .tab-buttons {
+                margin: 0 10px;
+            }
+
+            .tab-button {
+                font-size: 0.9rem;
+                padding: 12px 10px;
+            }
+
+            .tab-content {
                 padding: 15px;
-                gap: 15px;
             }
             
             .card {
@@ -421,13 +410,23 @@
             }
             
             table {
-                font-size: 0.8rem;
+                font-size: 0.75rem; /* Smaller font for tables on very small screens */
             }
             
             th, td {
                 padding: 8px 4px;
             }
             td:nth-child(6) { white-space: normal; } /* Ensure note wraps on small screens */
+
+            .download-buttons .btn {
+                font-size: 0.9rem;
+                padding: 10px 15px;
+                min-width: unset; /* Remove min-width to allow shrinking */
+                flex-basis: 100%; /* Stack buttons on very small screens */
+            }
+            .download-buttons {
+                flex-direction: column; /* Stack buttons vertically */
+            }
         }
 
         .expense-item {
@@ -480,7 +479,7 @@
         .chart-container {
             position: relative;
             margin: auto;
-            height: 300px; /* Adjust height as needed */
+            height: 300px; 
             width: 100%;
         }
         
@@ -492,14 +491,14 @@
             height: 30px;
             overflow: hidden;
             position: relative;
-            margin-top: 20px; /* Moved below buttons */
+            margin-top: 20px; 
             margin-bottom: 15px;
         }
 
         .budget-progress-fill {
             height: 100%;
             width: 0%; 
-            background: linear-gradient(90deg, #10b981, #059669); 
+            background: linear-gradient(90deg, #9fe6b0, #7ee793); /* Lighter green */
             transition: width 0.5s ease-in-out;
             border-radius: 15px;
         }
@@ -520,12 +519,12 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
-            grid-column: 1 / -1; /* Span full width within the tab-content */
+            grid-column: 1 / -1; 
         }
 
         @media (min-width: 768px) {
             .summary-tables {
-                grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
+                grid-template-columns: 1fr 1fr; 
             }
         }
 
@@ -736,7 +735,8 @@
                 </div>
                 
                 <div id="searchResultsDisplay" class="table-container" style="margin-top: 20px;">
-                    </div>
+                    <p style="text-align: center; color: #6b7280; padding: 20px;">Enter your search term above.</p>
+                </div>
             </div>
 
             <div class="card full-width">
@@ -752,7 +752,8 @@
                 <button class="btn" onclick="filterAndDisplayExpenses()">Apply Filter</button>
                 
                 <div id="filteredExpensesDisplay" class="table-container" style="margin-top: 20px;">
-                    </div>
+                    <p style="text-align: center; color: #6b7280; padding: 20px;">Select dates and click 'Apply Filter'.</p>
+                </div>
 
                 <div class="download-buttons" style="margin-top: 15px;">
                     <button class="btn" id="downloadFilteredCsvBtn" onclick="downloadFilteredCSV()" disabled>📄 Download Filtered CSV</button>
@@ -781,9 +782,9 @@
         let categoryPieChartInstance;
         let monthlyBarChartInstance;
         let dailyLineChartInstance;
-        let weeklyBarChartInstance; // Changed from LineChart
+        let weeklyBarChartInstance; 
         let userSpendingBarChartInstance;
-        let categoryCountBarChartInstance; // New Chart
+        let categoryCountBarChartInstance; 
 
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
@@ -817,26 +818,23 @@
             // Re-render charts and update tables when their tab becomes active.
             // This is crucial because Chart.js can behave unexpectedly if rendered on hidden canvases.
             if (tabId === 'dashboardTab') {
-                updateBudgetSummary(); // Ensure summary is fresh
+                updateBudgetSummary(); 
                 updateBudgetProgressBar(); 
                 updateRecentExpenses();
             } else if (tabId === 'summaryTab') {
                 renderCategoryPieChart();
                 renderMonthlyBarChart();
                 renderDailyLineChart();
-                renderWeeklyBarChart(); // Changed to Bar Chart
-                renderCategoryCountBarChart(); // New Chart
+                renderWeeklyBarChart(); 
+                renderCategoryCountBarChart(); 
                 renderUserSpendingBarChart();
-                updateTopCategories(); // Re-added table update
-                updateTopVendors();   // Re-added table update
+                updateTopCategories(); 
+                updateTopVendors();   
             } else if (tabId === 'searchTab') {
-                // Clear search and filter displays when entering the tab
-                clearSearch();
-                document.getElementById('filteredExpensesDisplay').innerHTML = ''; // Clear filtered display on tab switch
-                // Pre-populate with instruction if no filter applied yet
-                if (!document.getElementById('filterStartDate').value || !document.getElementById('filterEndDate').value) {
-                    document.getElementById('filteredExpensesDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Select dates and click \'Apply Filter\'.</p>';
-                }
+                clearSearch(); // Reset search display
+                // Reset filter display to initial message
+                document.getElementById('filteredExpensesDisplay').innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">Select dates and click \'Apply Filter\'.</p>';
+                updateFilteredDownloadButtons(); // Disable buttons
             }
         }
 
@@ -848,7 +846,7 @@
                 budget = parseFloat(savedBudget);
                 document.getElementById('budgetAmount').value = budget;
             } else {
-                budget = 0; // Default budget if nothing in local storage
+                budget = 0; 
                 document.getElementById('budgetAmount').value = '';
             }
 
@@ -890,7 +888,7 @@
             updateDisplay();
 
             btn.textContent = '✅ Budget Set!';
-            btn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            btn.style.background = 'linear-gradient(135deg, #9fe6b0, #7ee793)'; // Lighter green
             setTimeout(() => {
                 btn.textContent = originalText;
                 btn.style.background = originalBackground;
@@ -1000,9 +998,10 @@
                 updateDisplay(); 
                 
                 // Re-apply filters/search after deletion if active
-                const startDate = document.getElementById('filterStartDate').value;
-                const endDate = document.getElementById('filterEndDate').value;
-                if (document.getElementById('searchTab').classList.contains('active')) { // Only if search tab is active
+                const currentTab = document.querySelector('.tab-content.active').id;
+                if (currentTab === 'searchTab') {
+                    const startDate = document.getElementById('filterStartDate').value;
+                    const endDate = document.getElementById('filterEndDate').value;
                     if (startDate && endDate) {
                         filterAndDisplayExpenses();
                     }
@@ -1010,6 +1009,9 @@
                     if (searchQuery) {
                         performSearch();
                     }
+                } else if (currentTab === 'summaryTab') {
+                    // Re-render all summary charts/tables if a deletion happened on summary tab
+                    showTab('summaryTab');
                 }
             }
         }
@@ -1027,9 +1029,9 @@
             const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
             const remaining = budget - totalSpent;
             
-            document.getElementById('budgetDisplay').textContent = `₹${budget.toLocaleString()}`;
-            document.getElementById('totalSpent').textContent = `₹${totalSpent.toLocaleString()}`;
-            document.getElementById('remaining').textContent = `₹${remaining.toLocaleString()}`;
+            document.getElementById('budgetDisplay').textContent = `₹${budget.toLocaleString('en-IN')}`;
+            document.getElementById('totalSpent').textContent = `₹${totalSpent.toLocaleString('en-IN')}`;
+            document.getElementById('remaining').textContent = `₹${remaining.toLocaleString('en-IN')}`;
         }
 
         // Budget Progress Bar Update
@@ -1048,16 +1050,16 @@
 
             // Change color based on percentage
             if (percentage > 100) {
-                progressBarFill.style.background = 'linear-gradient(90deg, #ef4444, #dc2626)'; 
+                progressBarFill.style.background = 'linear-gradient(90deg, #fca5a5, #f87171)'; // Lighter red 
                 progressBarText.textContent = `OVER BUDGET! (${percentage.toFixed(1)}%)`;
                 progressBarText.style.color = '#fff'; 
                 progressBarText.style.textShadow = '0 1px 2px rgba(0,0,0,0.5)';
             } else if (percentage >= 80) {
-                progressBarFill.style.background = 'linear-gradient(90deg, #f59e0b, #d97706)'; 
+                progressBarFill.style.background = 'linear-gradient(90deg, #fcd34d, #fbbf24)'; // Lighter amber
                 progressBarText.style.color = '#1f2937';
                 progressBarText.style.textShadow = '0 1px 2px rgba(255,255,255,0.5)';
             } else {
-                progressBarFill.style.background = 'linear-gradient(90deg, #10b981, #059669)'; 
+                progressBarFill.style.background = 'linear-gradient(90deg, #9fe6b0, #7ee793)'; // Lighter green
                 progressBarText.style.color = '#1f2937';
                 progressBarText.style.textShadow = '0 1px 2px rgba(255,255,255,0.5)';
             }
@@ -1082,13 +1084,13 @@
                     <div class="expense-details">
                         <div class="expense-category">${expense.category}</div>
                         <div class="expense-vendor">
-                            ${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
+                            ${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
                             ${expense.recordedBy ? ` <span style="font-style: italic; color: #9ca3af;">by ${expense.recordedBy}</span>` : ''}
                         </div>
                         ${expense.note ? `<div style="font-size: 0.8rem; color: #6b7280; margin-top: 4px;">${expense.note}</div>` : ''}
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <div class="expense-amount">₹${expense.amount.toLocaleString()}</div>
+                        <div class="expense-amount">₹${expense.amount.toLocaleString('en-IN')}</div>
                         ${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem; margin-left: 10px;">🧾 View Receipt</a>` : ''}
                         <button class="btn btn-danger" onclick="deleteExpense('${expense.id}')">🗑️</button>
                     </div>
@@ -1135,11 +1137,11 @@
             let content = `
 EXPENSE REPORT (ALL DATA)
 --------------------------
-Generated On: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+Generated On: ${new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
 
-Budget:          ₹${budget.toLocaleString()}
-Total Spent:     ₹${expenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString()}
-Remaining Budget:₹${(budget - expenses.reduce((sum, expense) => sum + expense.amount, 0)).toLocaleString()}
+Budget:          ₹${budget.toLocaleString('en-IN')}
+Total Spent:     ₹${expenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString('en-IN')}
+Remaining Budget:₹${(budget - expenses.reduce((sum, expense) => sum + expense.amount, 0)).toLocaleString('en-IN')}
 
 --------------------------
 EXPENSES DETAILS:
@@ -1148,10 +1150,10 @@ EXPENSES DETAILS:
 
             expenses.forEach(expense => {
                 content += `
-Date:           ${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
+Date:           ${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
 Category:       ${expense.category}
 Vendor:         ${expense.vendor}
-Amount:         ₹${expense.amount.toLocaleString()}
+Amount:         ₹${expense.amount.toLocaleString('en-IN')}
 Recorded By:    ${expense.recordedBy || 'N/A'}
 Note:           ${expense.note || 'N/A'}
 Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
@@ -1169,6 +1171,23 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
 
         // --- Chart Rendering Functions ---
 
+        const CHART_COLORS = [
+            '#a3bbf3', // Light Indigo
+            '#84e1b5', // Light Green
+            '#fcd34d', // Light Amber
+            '#fca5a5', // Light Red
+            '#c7d2fe', // Lighter Indigo
+            '#d1fae5', // Lighter Green
+            '#fef08a', // Lighter Amber
+            '#f87171', // Lighter Red
+            '#c084fc', // Light Purple
+            '#bef264', // Light Lime
+            '#f0abfc', // Light Fuchsia
+            '#fbcfe8', // Light Pink
+            '#93c5fd', // Light Blue
+            '#fde047'  // Light Yellow
+        ];
+
         function renderCategoryPieChart() {
             const ctx = document.getElementById('categoryPieChart').getContext('2d');
             if (categoryPieChartInstance) {
@@ -1182,22 +1201,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
 
             const labels = Object.keys(categoryTotals);
             const data = Object.values(categoryTotals);
-            const backgroundColors = [
-                '#4f46e5', // Indigo
-                '#10b981', // Green
-                '#f59e0b', // Amber
-                '#ef4444', // Red
-                '#6366f1', // Indigo-lighter
-                '#34d399', // Green-lighter
-                '#fbbf24', // Amber-lighter
-                '#f87171', // Red-lighter
-                '#a78bfa', // Purple
-                '#a3e635', // Lime
-                '#d946ef', // Fuchsia
-                '#e879f9', // Pink
-                '#60a5fa', // Blue
-                '#eab308'  // Yellow
-            ];
+            const backgroundColors = labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
 
             categoryPieChartInstance = new Chart(ctx, {
                 type: 'doughnut', 
@@ -1206,6 +1210,8 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     datasets: [{
                         data: data,
                         backgroundColor: backgroundColors,
+                        borderColor: '#fff',
+                        borderWidth: 2,
                         hoverOffset: 4
                     }]
                 },
@@ -1217,8 +1223,10 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             display: true,
                             text: 'Spending by Category',
                             font: {
-                                size: 16
-                            }
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#333'
                         },
                         tooltip: {
                             callbacks: {
@@ -1230,7 +1238,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                                     if (context.parsed !== null) {
                                         const total = context.dataset.data.reduce((a, b) => a + b, 0);
                                         const percentage = (context.parsed / total * 100).toFixed(1);
-                                        label += `₹${context.parsed.toLocaleString()} (${percentage}%)`;
+                                        label += `₹${context.parsed.toLocaleString('en-IN')} (${percentage}%)`;
                                     }
                                     return label;
                                 }
@@ -1244,7 +1252,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                                 if (value > 0) return percentage; 
                                 return '';
                             },
-                            color: '#fff', 
+                            color: '#1f2937', 
                             font: {
                                 weight: 'bold',
                                 size: 10
@@ -1253,7 +1261,12 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             align: 'start', 
                             offset: 4, 
                             display: function(context) {
-                                return context.dataset.data[context.dataIndex] > 0 && context.chart.width > 200; 
+                                // Only display if value is significant enough and chart size allows
+                                return context.dataset.data[context.dataIndex] > 0 && context.chart.width > 200 && context.percentage > 5; 
+                            },
+                            textShadow: {
+                                blur: 4,
+                                color: 'rgba(255,255,255,0.7)'
                             }
                         }
                     }
@@ -1277,7 +1290,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             const sortedMonthKeys = Object.keys(monthlyData).sort(); 
             const labels = sortedMonthKeys.map(key => {
                 const [year, month] = key.split('-');
-                return new Date(year, month - 1).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+                return new Date(year, month - 1).toLocaleDateString('en-IN', { year: 'numeric', month: 'short' });
             });
             const data = sortedMonthKeys.map(key => monthlyData[key]);
 
@@ -1288,8 +1301,8 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     datasets: [{
                         label: 'Monthly Spending (₹)',
                         data: data,
-                        backgroundColor: '#4f46e5', 
-                        borderColor: '#3730a3',
+                        backgroundColor: '#84e1b5', /* Lighter Green */
+                        borderColor: '#38b2ac',
                         borderWidth: 1
                     }]
                 },
@@ -1301,18 +1314,30 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Amount (₹)'
+                                text: 'Amount (₹)',
+                                color: '#555'
                             },
                              ticks: {
                                 callback: function(value) {
-                                    return '₹' + value.toLocaleString();
-                                }
+                                    return '₹' + value.toLocaleString('en-IN');
+                                },
+                                color: '#555'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         },
                         x: {
                             title: {
                                 display: true,
-                                text: 'Month'
+                                text: 'Month',
+                                color: '#555'
+                            },
+                            ticks: {
+                                color: '#555'
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     },
@@ -1321,20 +1346,22 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             display: true,
                             text: 'Total Monthly Spending',
                             font: {
-                                size: 16
-                            }
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#333'
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `₹${context.raw.toLocaleString()}`;
+                                    return `₹${context.raw.toLocaleString('en-IN')}`;
                                 }
                             }
                         },
                         datalabels: { 
                             anchor: 'end', 
                             align: 'top', 
-                            formatter: (value) => value > 0 ? `₹${value.toLocaleString()}` : '', 
+                            formatter: (value) => value > 0 ? `₹${value.toLocaleString('en-IN')}` : '', 
                             color: '#1f2937', 
                             font: {
                                 weight: 'bold',
@@ -1375,7 +1402,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             for (let i = 1; i <= daysInMonth; i++) {
                 const date = new Date(currentYear, currentMonth, i);
                 const dayKey = date.toISOString().split('T')[0];
-                labels.push(date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' }));
+                labels.push(date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }));
                 data.push(dailyData[dayKey] || 0); 
             }
 
@@ -1384,13 +1411,13 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: `Daily Spending for ${new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} (₹)`,
+                        label: `Daily Spending (₹)`,
                         data: data,
-                        borderColor: '#2563eb', 
-                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        borderColor: '#93c5fd', /* Light Blue */
+                        backgroundColor: 'rgba(147, 197, 253, 0.3)', /* Lighter blue fill */
                         fill: true,
                         tension: 0.3,
-                        pointBackgroundColor: '#2563eb',
+                        pointBackgroundColor: '#60a5fa',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
                         pointHoverBorderColor: '#2563eb'
@@ -1404,39 +1431,57 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Amount (₹)'
+                                text: 'Amount (₹)',
+                                color: '#555'
                             },
                              ticks: {
                                 callback: function(value) {
-                                    return '₹' + value.toLocaleString();
-                                }
+                                    return '₹' + value.toLocaleString('en-IN');
+                                },
+                                color: '#555'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         },
                         x: {
                             title: {
                                 display: true,
-                                text: 'Day of Month'
+                                text: 'Day of Month',
+                                color: '#555'
+                            },
+                            ticks: {
+                                color: '#555'
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     },
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Daily Spending Trend (Current Month)',
+                            text: `Daily Spending Trend (Current Month)`,
                             font: {
-                                size: 16
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#333',
+                            padding: {
+                                top: 10,
+                                bottom: 20
                             }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `₹${context.raw.toLocaleString()}`;
+                                    return `₹${context.raw.toLocaleString('en-IN')}`;
                                 }
                             }
                         },
                         datalabels: { 
                             align: 'top', 
-                            formatter: (value) => value > 0 ? `₹${value.toLocaleString()}` : '',
+                            formatter: (value) => value > 0 ? `₹${value.toLocaleString('en-IN')}` : '',
                             color: '#1f2937',
                             font: {
                                 weight: 'bold',
@@ -1444,7 +1489,8 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             },
                             offset: 8,
                             display: function(context) {
-                                return context.dataset.data[context.dataIndex] > 0;
+                                // Only display if value is greater than 0 and there's enough space
+                                return context.dataset.data[context.dataIndex] > 0 && context.chart.width > 300;
                             }
                         }
                     }
@@ -1452,7 +1498,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             });
         }
 
-        // Weekly Spending Trend (Bar Chart)
+        // Weekly Spending Trend (Bar Chart) - Now with percentages
         function renderWeeklyBarChart() {
             const ctx = document.getElementById('weeklyBarChart').getContext('2d');
             if (weeklyBarChartInstance) {
@@ -1468,9 +1514,12 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                 return expenseDate.getMonth() === currentMonth && expenseDate.getFullYear() === currentYear;
             });
 
+            const totalMonthlySpend = monthlyFilteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+
             const weeklyData = {};
             monthlyFilteredExpenses.forEach(expense => {
                 const expenseDate = new Date(expense.date);
+                // Get the start of the week (Sunday)
                 const weekStart = new Date(expenseDate);
                 weekStart.setDate(expenseDate.getDate() - expenseDate.getDay());
                 weekStart.setHours(0, 0, 0, 0); 
@@ -1480,34 +1529,47 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             });
 
             const labels = [];
-            const data = [];
+            const percentages = [];
 
             const firstDayOfMonth = new Date(currentYear, currentMonth, 1);
             const lastDayOfMonth = new Date(currentYear, currentMonth + 1, 0); 
 
             let currentWeekStartDate = new Date(firstDayOfMonth);
+            // Adjust to the first Sunday that falls within or before the first day of the month
             currentWeekStartDate.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay());
+            currentWeekStartDate.setHours(0,0,0,0);
 
-            while (currentWeekStartDate <= lastDayOfMonth || currentWeekStartDate.getMonth() === currentMonth) {
+
+            while (currentWeekStartDate <= lastDayOfMonth || (currentWeekStartDate.getMonth() === currentMonth && currentWeekStartDate.getDay() !== 0) ) {
                 const weekEndDate = new Date(currentWeekStartDate);
                 weekEndDate.setDate(currentWeekStartDate.getDate() + 6);
 
                 const weekKey = currentWeekStartDate.toISOString().split('T')[0];
-                labels.push(`${currentWeekStartDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${weekEndDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`);
-                data.push(weeklyData[weekKey] || 0);
+                const weekSpend = weeklyData[weekKey] || 0;
+                const percentage = totalMonthlySpend > 0 ? (weekSpend / totalMonthlySpend * 100) : 0;
+
+                labels.push(`${currentWeekStartDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })} - ${weekEndDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}`);
+                percentages.push(percentage);
 
                 currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
+                currentWeekStartDate.setHours(0,0,0,0); // Reset hours for clean comparison
             }
-            
+            // Remove any trailing empty weeks if they extend far into the next month without data
+            while (labels.length > 0 && percentages[labels.length - 1] === 0 && currentWeekStartDate.getMonth() !== currentMonth) {
+                labels.pop();
+                percentages.pop();
+            }
+
+
             weeklyBarChartInstance = new Chart(ctx, {
-                type: 'bar', // Changed to bar chart
+                type: 'bar', 
                 data: {
                     labels: labels, 
                     datasets: [{
-                        label: `Weekly Spending for ${new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} (₹)`,
-                        data: data, 
-                        backgroundColor: '#22d3ee', // Bar color
-                        borderColor: '#06b6d4',
+                        label: `Weekly Spending % of Total Monthly Expenses`,
+                        data: percentages, 
+                        backgroundColor: '#84e1b5', /* Lighter green */
+                        borderColor: '#38b2ac',
                         borderWidth: 1
                     }]
                 },
@@ -1519,40 +1581,70 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Amount (₹)'
+                                text: '% of Monthly Total',
+                                color: '#555'
                             },
                              ticks: {
                                 callback: function(value) {
-                                    return '₹' + value.toLocaleString();
-                                }
+                                    return value.toFixed(0) + '%';
+                                },
+                                color: '#555'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         },
                         x: {
                             title: {
                                 display: true,
-                                text: 'Week (Sunday - Saturday)'
+                                text: 'Week (Sunday - Saturday)',
+                                color: '#555'
+                            },
+                            ticks: {
+                                color: '#555'
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     },
                     plugins: {
                         title: {
                             display: true,
-                            text: `Weekly Spending Trend (${new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })})`,
+                            text: `Weekly Spending Trend (${new Date(currentYear, currentMonth).toLocaleDateString('en-IN', { month: 'long', year: 'numeric' })})`,
                             font: {
-                                size: 16
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#333',
+                            padding: {
+                                top: 10,
+                                bottom: 20
                             }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `₹${context.raw.toLocaleString()}`;
+                                    const weekKey = labels[context.dataIndex].split(' ')[0]; // Extract the start date part of the label
+                                    const originalWeekStartDate = new Date(currentYear, currentMonth); // Reconstruct initial date
+                                    originalWeekStartDate.setDate(1);
+                                    originalWeekStartDate.setDate(originalWeekStartDate.getDate() - originalWeekStartDate.getDay()); // First Sunday of the month
+                                    
+                                    let actualWeekSpend = 0;
+                                    // Find the actual spending for this week from weeklyData map
+                                    for (let i = 0; i < context.dataIndex; i++) {
+                                        originalWeekStartDate.setDate(originalWeekStartDate.getDate() + 7);
+                                    }
+                                    actualWeekSpend = weeklyData[originalWeekStartDate.toISOString().split('T')[0]] || 0;
+
+                                    return `₹${actualWeekSpend.toLocaleString('en-IN')} (${context.raw.toFixed(1)}%)`;
                                 }
                             }
                         },
                         datalabels: { 
                             anchor: 'end', 
                             align: 'top', 
-                            formatter: (value) => value > 0 ? `₹${value.toLocaleString()}` : '',
+                            formatter: (value) => value > 0 ? `${value.toFixed(1)}%` : '',
                             color: '#1f2937',
                             font: {
                                 weight: 'bold',
@@ -1583,18 +1675,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             const labels = Object.keys(categoryCounts);
             const data = Object.values(categoryCounts);
 
-            const backgroundColors = [
-                '#a78bfa', // Purple
-                '#a3e635', // Lime
-                '#d946ef', // Fuchsia
-                '#e879f9', // Pink
-                '#60a5fa', // Blue
-                '#eab308',  // Yellow
-                '#4f46e5', 
-                '#10b981', 
-                '#f59e0b', 
-                '#ef4444'
-            ];
+            const backgroundColors = labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
 
             categoryCountBarChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -1604,7 +1685,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                         label: 'Number of Spends',
                         data: data,
                         backgroundColor: backgroundColors,
-                        borderColor: backgroundColors.map(color => color.replace('0.2)', '1)')), // Darker border
+                        borderColor: backgroundColors.map(color => color.replace('0.2)', '1)')), 
                         borderWidth: 1
                     }]
                 },
@@ -1616,16 +1697,28 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Number of Spends'
+                                text: 'Number of Spends',
+                                color: '#555'
                             },
                             ticks: {
-                                precision: 0 // Ensure whole numbers for counts
+                                precision: 0, 
+                                color: '#555'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         },
                         x: {
                             title: {
                                 display: true,
-                                text: 'Category'
+                                text: 'Category',
+                                color: '#555'
+                            },
+                            ticks: {
+                                color: '#555'
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     },
@@ -1634,20 +1727,26 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             display: true,
                             text: 'Number of Spends for Each Category',
                             font: {
-                                size: 16
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#333',
+                            padding: {
+                                top: 10,
+                                bottom: 20
                             }
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `Spends: ${context.raw.toLocaleString()}`;
+                                    return `Spends: ${context.raw.toLocaleString('en-IN')}`;
                                 }
                             }
                         },
                         datalabels: { 
                             anchor: 'end', 
                             align: 'top', 
-                            formatter: (value) => value > 0 ? value.toLocaleString() : '',
+                            formatter: (value) => value > 0 ? value.toLocaleString('en-IN') : '',
                             color: '#1f2937',
                             font: {
                                 weight: 'bold',
@@ -1680,10 +1779,7 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             const labels = Object.keys(userSpending);
             const data = Object.values(userSpending);
 
-            const backgroundColors = labels.map((_, index) => {
-                const colors = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444']; 
-                return colors[index % colors.length];
-            });
+            const backgroundColors = labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
 
             userSpendingBarChartInstance = new Chart(ctx, {
                 type: 'bar',
@@ -1705,18 +1801,30 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Amount (₹)'
+                                text: 'Amount (₹)',
+                                color: '#555'
                             },
                              ticks: {
                                 callback: function(value) {
-                                    return '₹' + value.toLocaleString();
-                                }
+                                    return '₹' + value.toLocaleString('en-IN');
+                                },
+                                color: '#555'
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
                             }
                         },
                         x: {
                             title: {
                                 display: true,
-                                text: 'User'
+                                text: 'User',
+                                color: '#555'
+                            },
+                            ticks: {
+                                color: '#555'
+                            },
+                            grid: {
+                                display: false
                             }
                         }
                     },
@@ -1725,20 +1833,22 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                             display: true,
                             text: 'Spending by User',
                             font: {
-                                size: 16
-                            }
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#333'
                         },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return `₹${context.raw.toLocaleString()}`;
+                                    return `₹${context.raw.toLocaleString('en-IN')}`;
                                 }
                             }
                         },
                         datalabels: { 
                             anchor: 'end', 
                             align: 'top', 
-                            formatter: (value) => value > 0 ? `₹${value.toLocaleString()}` : '',
+                            formatter: (value) => value > 0 ? `₹${value.toLocaleString('en-IN')}` : '',
                             color: '#1f2937',
                             font: {
                                 weight: 'bold',
@@ -1767,6 +1877,8 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                 return acc;
             }, {});
 
+            const totalSpentOverall = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+
             const sortedCategories = Object.entries(categoryTotals)
                 .sort(([, a], [, b]) => b - a)
                 .slice(0, 3);
@@ -1776,12 +1888,15 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                  return;
             }
 
-            container.innerHTML = sortedCategories.map(([category, amount]) => `
+            container.innerHTML = sortedCategories.map(([category, amount]) => {
+                const percentage = totalSpentOverall > 0 ? (amount / totalSpentOverall * 100).toFixed(1) : 0;
+                return `
                 <li>
                     <span class="label">${category}</span>
-                    <span class="value">₹${amount.toLocaleString()}</span>
+                    <span class="value">₹${amount.toLocaleString('en-IN')} (${percentage}%)</span>
                 </li>
-            `).join('');
+                `;
+            }).join('');
         }
 
         function updateTopVendors() {
@@ -1808,17 +1923,16 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             container.innerHTML = sortedVendors.map(([vendor, amount]) => `
                 <li>
                     <span class="label">${vendor}</span>
-                    <span class="value">₹${amount.toLocaleString()}</span>
+                    <span class="value">₹${amount.toLocaleString('en-IN')}</span>
                 </li>
             `).join('');
         }
 
 
-        // Helper to update header month (assuming for current month's title)
+        // Helper to update header month 
         function updateHeaderMonth() {
             const today = new Date();
-            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            const currentMonthName = monthNames[today.getMonth()];
+            const currentMonthName = today.toLocaleDateString('en-IN', { month: 'long' });
             const currentYear = today.getFullYear();
             document.getElementById('headerTitle').textContent = `💰 Expense Tracker - ${currentMonthName} ${currentYear}`;
         }
@@ -1880,10 +1994,10 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     <tbody>
                         ${filteredExpenses.map(expense => `
                             <tr>
-                                <td>${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
+                                <td>${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
                                 <td>${expense.category}</td>
                                 <td>${expense.vendor}</td>
-                                <td>₹${expense.amount.toLocaleString()}</td>
+                                <td>₹${expense.amount.toLocaleString('en-IN')}</td>
                                 <td>${expense.recordedBy || 'N/A'}</td>
                                 <td>${expense.note || ''}</td>
                                 <td>${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">🧾</a>` : 'N/A'}</td>
@@ -1950,10 +2064,10 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
             let content = `
 EXPENSE REPORT (FILTERED DATA)
 ------------------------------
-Generated On: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-Date Range:   ${startDate} to ${endDate}
+Generated On: ${new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+Date Range:   ${new Date(startDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} to ${new Date(endDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
 
-Total Expenses in Filter: ₹${filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString()}
+Total Expenses in Filter: ₹${filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0).toLocaleString('en-IN')}
 
 ------------------------------
 FILTERED EXPENSES DETAILS:
@@ -1962,10 +2076,10 @@ FILTERED EXPENSES DETAILS:
             
             filteredExpenses.forEach(expense => {
                 content += `
-Date:           ${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
+Date:           ${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}
 Category:       ${expense.category}
 Vendor:         ${expense.vendor}
-Amount:         ₹${expense.amount.toLocaleString()}
+Amount:         ₹${expense.amount.toLocaleString('en-IN')}
 Recorded By:    ${expense.recordedBy || 'N/A'}
 Note:           ${expense.note || 'N/A'}
 Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
@@ -2026,10 +2140,10 @@ Receipt:        ${expense.receipt ? 'Attached (View in App)' : 'No'}
                     <tbody>
                         ${currentSearchResults.map(expense => `
                             <tr>
-                                <td>${new Date(expense.date).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
+                                <td>${new Date(expense.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })} ${expense.time}</td>
                                 <td>${expense.category}</td>
                                 <td>${expense.vendor}</td>
-                                <td>₹${expense.amount.toLocaleString()}</td>
+                                <td>₹${expense.amount.toLocaleString('en-IN')}</td>
                                 <td>${expense.recordedBy || 'N/A'}</td>
                                 <td>${expense.note || ''}</td>
                                 <td>${expense.receipt ? `<a href="${expense.receipt}" target="_blank" class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.8rem;">🧾</a>` : 'N/A'}</td>
