@@ -425,6 +425,43 @@
     height: 32px !important;
     border-radius: 8px !important;
 }
+
+@media (max-width: 600px) {
+    .budget-summary {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        gap: 8px;
+    }
+    .budget-item {
+        width: 100%;
+        max-width: 320px;
+        padding: 10px;
+    }
+    .budget-item .amount { font-size: 1rem; }
+    .budget-item h3 { font-size: 0.85rem; }
+}
+
+@media (max-width: 600px) {
+  .budget-indicator-bar-container {
+    max-width: 320px;
+    margin: 0 auto;
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    grid-template-columns: 1fr !important;
+    justify-items: center;
+  }
+  .card {
+    width: 100%;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
@@ -470,7 +507,7 @@
                 <div id="budgetIndicatorWrapper" style="margin-top:4px;">
   <div style="display:flex;align-items:center;gap:10px;">
     <span style="font-size:1.2em;">📊</span>
-    <div style="flex:1;position:relative;background:#e5e7eb;border-radius:8px;height:24px;overflow:hidden;">
+    <div class="budget-indicator-bar-container" style="flex:1;position:relative;background:#e5e7eb;border-radius:8px;height:24px;overflow:hidden;">
       <div id="budgetIndicatorBar" style="height:100%;background:#10b981;width:100%;border-radius:8px 0 0 8px;transition:width 0.4s,background 0.4s;"></div>
       <span id="budgetIndicatorText" style="position:absolute;left:0;right:0;text-align:center;top:0;line-height:24px;font-weight:bold;color:#1f2937;font-size:0.96em;">100% left</span>
     </div>
