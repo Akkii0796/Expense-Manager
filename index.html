@@ -691,14 +691,14 @@
 <canvas id="typeDoughnutChart" style="width:100%;max-width:600px;height:300px;"></canvas>
 </div>
 
-<div class="card">
+<!-- <div class="card">
 <h2><span class="icon">📊</span> Weekly Summary</h2>
 <canvas id="weeklySummaryChart" style="width:100%;max-width:600px;height:250px;"></canvas>
 </div>
 <div class="card">
 <h2><span class="icon">📈</span> Monthly Summary</h2>
 <canvas id="monthlySummaryChart" style="width:100%;max-width:600px;height:250px;"></canvas>
-</div>
+</div> -->
 <div class="card full-width">
 <h2><span class="icon">👥</span> Expenses by Person</h2>
 <canvas id="byPersonChart" style="width:100%;max-width:600px;height:250px;"></canvas>
@@ -982,8 +982,8 @@ let exportExpenses = [];
             updateRecentExpenses();
             // updateTopCategories();
             // updateTopVendors();
-            updateWeeklySummary();
-            updateMonthlySummary();
+            // updateWeeklySummary();
+            // updateMonthlySummary();
             updateByPersonChart();
             updateCategoryDoughnutChart();
             updateTypeDoughnutChart();
@@ -1150,141 +1150,141 @@ function clearExpenseSearch() {
 
 //         }
 
-        let weeklyChart;
+    //     let weeklyChart;
 
-        function updateWeeklySummary() {
-            const weeklyData = {};
-            expenses.forEach(expense => {
-                const expenseDate = new Date(expense.date);
-                const weekStart = new Date(expenseDate);
-                weekStart.setDate(expenseDate.getDate() - expenseDate.getDay());
-                weekStart.setHours(0, 0, 0, 0);
-                const weekKey = weekStart.toISOString().split('T')[0];
-                if (!weeklyData[weekKey]) weeklyData[weekKey] = 0;
-                weeklyData[weekKey] += expense.amount;
-            });
+    //     function updateWeeklySummary() {
+    //         const weeklyData = {};
+    //         expenses.forEach(expense => {
+    //             const expenseDate = new Date(expense.date);
+    //             const weekStart = new Date(expenseDate);
+    //             weekStart.setDate(expenseDate.getDate() - expenseDate.getDay());
+    //             weekStart.setHours(0, 0, 0, 0);
+    //             const weekKey = weekStart.toISOString().split('T')[0];
+    //             if (!weeklyData[weekKey]) weeklyData[weekKey] = 0;
+    //             weeklyData[weekKey] += expense.amount;
+    //         });
 
-            const sortedWeeks = Object.entries(weeklyData).sort(([a], [b]) => new Date(a) - new Date(b));
-            const labels = sortedWeeks.map(([weekStart]) => {
-                const d = new Date(weekStart);
-                const dEnd = new Date(d);
-                dEnd.setDate(d.getDate() + 6);
-                return `${d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })} - ${dEnd.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}`;
-            });
-            const data = sortedWeeks.map(([, total]) => total);
+    //         const sortedWeeks = Object.entries(weeklyData).sort(([a], [b]) => new Date(a) - new Date(b));
+    //         const labels = sortedWeeks.map(([weekStart]) => {
+    //             const d = new Date(weekStart);
+    //             const dEnd = new Date(d);
+    //             dEnd.setDate(d.getDate() + 6);
+    //             return `${d.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })} - ${dEnd.toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}`;
+    //         });
+    //         const data = sortedWeeks.map(([, total]) => total);
 
-            const ctx = document.getElementById('weeklySummaryChart').getContext('2d');
-            if (weeklyChart) weeklyChart.destroy();
-            weeklyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Total Spent',
-                        data: data,
-                        borderRadius: 7,
-                        backgroundColor: '#7c3aed',
-                        maxBarThickness: 80,
-                        barPercentage: 0.7
-                    }]
-                },
-                options: {
-                    responsive: true,
-        //             layout: {
-        // padding: {
-        //     top: 50   // This adds space above the chart
-        // }
-    // },
-                    plugins: {
-                        legend: { display: false },
-                        datalabels: {
-                            anchor: 'center',
-        align: 'center',
-        font: {
-            weight: 'bold',
-            size: 14
-        },
-        color: '#fff',
-        formatter: value => '₹' + value.toLocaleString(),
-                            clamp: true,
-                            clip: true
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { callback: v => '₹' + v }
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
-        }
-
-        let monthlyChart;
-
-        function updateMonthlySummary() {
-            const monthlyData = {};
-            expenses.forEach(expense => {
-                const expenseDate = new Date(expense.date);
-                const monthKey = `${expenseDate.getFullYear()}-${String(expenseDate.getMonth() + 1).padStart(2, '0')}`;
-                if (!monthlyData[monthKey]) monthlyData[monthKey] = 0;
-                monthlyData[monthKey] += expense.amount;
-            });
-
-            const sortedMonths = Object.entries(monthlyData).sort(([a], [b]) => a.localeCompare(b));
-            const labels = sortedMonths.map(([month]) =>
-                new Date(month + '-01').toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
-            );
-            const data = sortedMonths.map(([, total]) => total);
-
-            const ctx = document.getElementById('monthlySummaryChart').getContext('2d');
-            if (monthlyChart) monthlyChart.destroy();
-            monthlyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Total Spent',
-                        data: data,
-                        borderRadius: 7,
-                        backgroundColor: '#4f46e5',
-                        maxBarThickness: 80,
-                        barPercentage: 0.7
-                    }]
-                },
-                options: {
-                    responsive: true,
-    //                 layout: {
-    //     padding: {
-    //         top: 50   // This adds space above the chart
+    //         const ctx = document.getElementById('weeklySummaryChart').getContext('2d');
+    //         if (weeklyChart) weeklyChart.destroy();
+    //         weeklyChart = new Chart(ctx, {
+    //             type: 'bar',
+    //             data: {
+    //                 labels: labels,
+    //                 datasets: [{
+    //                     label: 'Total Spent',
+    //                     data: data,
+    //                     borderRadius: 7,
+    //                     backgroundColor: '#7c3aed',
+    //                     maxBarThickness: 80,
+    //                     barPercentage: 0.7
+    //                 }]
+    //             },
+    //             options: {
+    //                 responsive: true,
+    //     //             layout: {
+    //     // padding: {
+    //     //     top: 50   // This adds space above the chart
+    //     // }
+    // // },
+    //                 plugins: {
+    //                     legend: { display: false },
+    //                     datalabels: {
+    //                         anchor: 'center',
+    //     align: 'center',
+    //     font: {
+    //         weight: 'bold',
+    //         size: 14
+    //     },
+    //     color: '#fff',
+    //     formatter: value => '₹' + value.toLocaleString(),
+    //                         clamp: true,
+    //                         clip: true
+    //                     }
+    //                 },
+    //                 scales: {
+    //                     y: {
+    //                         beginAtZero: true,
+    //                         ticks: { callback: v => '₹' + v }
+    //                     }
+    //                 }
+    //             },
+    //             plugins: [ChartDataLabels]
+    //         });
     //     }
-    // },
-                    plugins: {
-                        legend: { display: false },
-                        datalabels: {
-                            anchor: 'center',
-        align: 'center',
-        font: {
-            weight: 'bold',
-            size: 14
-        },
-        color: '#fff',
-        formatter: value => '₹' + value.toLocaleString(),
-                            clamp: true,
-                            clip: true
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { callback: v => '₹' + v }
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
-        }
+
+    //     let monthlyChart;
+
+    //     function updateMonthlySummary() {
+    //         const monthlyData = {};
+    //         expenses.forEach(expense => {
+    //             const expenseDate = new Date(expense.date);
+    //             const monthKey = `${expenseDate.getFullYear()}-${String(expenseDate.getMonth() + 1).padStart(2, '0')}`;
+    //             if (!monthlyData[monthKey]) monthlyData[monthKey] = 0;
+    //             monthlyData[monthKey] += expense.amount;
+    //         });
+
+    //         const sortedMonths = Object.entries(monthlyData).sort(([a], [b]) => a.localeCompare(b));
+    //         const labels = sortedMonths.map(([month]) =>
+    //             new Date(month + '-01').toLocaleDateString('en-US', { year: 'numeric', month: 'short' })
+    //         );
+    //         const data = sortedMonths.map(([, total]) => total);
+
+    //         const ctx = document.getElementById('monthlySummaryChart').getContext('2d');
+    //         if (monthlyChart) monthlyChart.destroy();
+    //         monthlyChart = new Chart(ctx, {
+    //             type: 'bar',
+    //             data: {
+    //                 labels: labels,
+    //                 datasets: [{
+    //                     label: 'Total Spent',
+    //                     data: data,
+    //                     borderRadius: 7,
+    //                     backgroundColor: '#4f46e5',
+    //                     maxBarThickness: 80,
+    //                     barPercentage: 0.7
+    //                 }]
+    //             },
+    //             options: {
+    //                 responsive: true,
+    // //                 layout: {
+    // //     padding: {
+    // //         top: 50   // This adds space above the chart
+    // //     }
+    // // },
+    //                 plugins: {
+    //                     legend: { display: false },
+    //                     datalabels: {
+    //                         anchor: 'center',
+    //     align: 'center',
+    //     font: {
+    //         weight: 'bold',
+    //         size: 14
+    //     },
+    //     color: '#fff',
+    //     formatter: value => '₹' + value.toLocaleString(),
+    //                         clamp: true,
+    //                         clip: true
+    //                     }
+    //                 },
+    //                 scales: {
+    //                     y: {
+    //                         beginAtZero: true,
+    //                         ticks: { callback: v => '₹' + v }
+    //                     }
+    //                 }
+    //             },
+    //             plugins: [ChartDataLabels]
+    //         });
+    //     }
 
         let byPersonChart;
 
