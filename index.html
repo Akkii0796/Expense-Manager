@@ -633,7 +633,7 @@
 <p style="text-align: center; color: #6b7280; padding: 20px;">No expenses added yet</p>
 </div>
 </div>
-<div class="card full-width">
+<!-- <div class="card full-width">
 <h2><span class="icon">🗂️</span> View Archived Month</h2>
 <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
 <label for="archiveMonth" style="font-size:0.95em;">Select Month:</label>
@@ -642,7 +642,7 @@
 </select>
 <span id="archiveNotice" style="font-size:0.9em;color:#6b7280;"></span>
 </div>
-</div>
+</div> -->
 <!-- <div class="stats-grid">
 <div class="card">
 <h2><span class="icon">🏆</span> Top 3 Categories</h2>
@@ -703,6 +703,18 @@
 <h2><span class="icon">👥</span> Expenses by Person</h2>
 <canvas id="byPersonChart" style="width:100%;max-width:600px;height:250px;"></canvas>
 </div>
+
+<div class="card full-width">
+<h2><span class="icon">🗂️</span> View Archived Month</h2>
+<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+<label for="archiveMonth" style="font-size:0.95em;">Select Month:</label>
+<select id="archiveMonth" onchange="loadArchivedMonth()" style="padding:8px 12px;border-radius:8px;border:1.5px solid #e5e7eb;">
+<option value="">-- Current Month --</option>
+</select>
+<span id="archiveNotice" style="font-size:0.9em;color:#6b7280;"></span>
+</div>
+</div>
+
 <div class="card full-width">
 <h2><span class="icon">💾</span> Export Data</h2>
 <div style="margin-bottom:10px;">
