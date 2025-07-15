@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Tracker</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Expense Tracker</title>
+<style>
                * {
             margin: 0;
             padding: 0;
@@ -189,7 +190,7 @@
     margin-bottom: 2px;
 }
 .budget-item .amount {
-    font-size: 0.9rem;
+    font-size: 1.1rem;
     font-weight: bold;
     color: #1f2937;
 }
@@ -207,8 +208,10 @@
         margin-bottom: 0;
     }
     .budget-item .amount {
-        font-size: 1rem;
-    }
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #1f2937;
+}
 }
 
 
@@ -238,10 +241,10 @@
         }
 
         .budget-item .amount {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #1f2937;
-        }
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #1f2937;
+}
 
         .table-container {
             overflow-x: auto;
@@ -424,217 +427,297 @@
     border-radius: 8px !important;
 }
 
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    
+@media (max-width: 480px) {
+  .btn-square {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.85rem !important;
+  }
+  #categoryManager {
+    width: 90vw !important;
+    right: 5vw !important;
+  }
+  #categoryManager input {
+    font-size: 1rem;
+    padding: 6px;
+  }
+  #categoryManager .btn {
+    font-size: 0.85rem !important;
+    padding: 6px 10px !important;
+  }
+}
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 
+@media (max-width: 480px) {
+  .btn-square {
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 0.75rem !important;
+  }
+  .header h1 {
+    font-size: 1.3rem !important;
+  }
+  #categoryManager {
+    width: 90vw !important;
+    right: 5vw !important;
+  }
+  #categoryManager input {
+    font-size: 0.9rem;
+    padding: 6px;
+    max-width: 70%;
+  }
+  #categoryManager .btn {
+    font-size: 0.75rem !important;
+    padding: 4px 8px !important;
+    min-width: unset !important;
+  }
+  #categoryList button.btn-danger {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 0.7rem !important;
+    padding: 0 !important;
+  }
+}
+
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 </head>
 <body>
-    <div id="pinLockScreen" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10000;background:#f3f4f6;display:flex;align-items:center;justify-content:center;flex-direction:column;">
-        <h2 style="margin-bottom:16px;color:#4f46e5;">Please enter the PIN </h2>
-        <input id="pinInput" type="password" placeholder="Enter PIN" style="padding:12px 16px;font-size:1.2rem;border-radius:10px;border:2px solid #e5e7eb;margin-bottom:12px;width:220px;text-align:center;" maxlength="10" autofocus>
-        <button onclick="unlockApp()" style="padding:12px 32px;font-size:1.1rem;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;cursor:pointer;">Unlock</button>
-        <div id="pinError" style="color:#dc2626;margin-top:10px;height:20px;"></div>
-    </div>
-
-    <div class="container" id="appContent" style="display:none;">
-        <div class="header">
-            <h1 id="headerTitle">💰 Expense Tracker</h1>
-        </div>
-
-        <div class="main-content">
-            <div class="card">
-                <h2><span class="icon">🎯</span> Set Monthly Budget</h2>
-                <div class="input-group">
-                    <label for="budgetAmount">Budget Amount (₹)</label>
-                    <input type="number" id="budgetAmount" placeholder="Enter your monthly budget">
-                </div>
-                <div style="display:flex;gap:10px;align-items:stretch;margin-bottom:0;">
-  <button class="btn" style="flex:1;min-width:100px;height:38px;font-size:0.85rem;line-height:1;" onclick="setBudget(event)">Set Budget</button>
-<button class="btn btn-danger" style="flex:1;min-width:100px;height:38px;font-size:0.85rem;line-height:1;" onclick="resetBudget()">Reset Budget</button>
+<div id="pinLockScreen" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:10000;background:#f3f4f6;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+<h2 style="margin-bottom:16px;color:#4f46e5;">Please enter the PIN </h2>
+<input autofocus="" id="pinInput" maxlength="10" placeholder="Enter PIN" style="padding:12px 16px;font-size:1.2rem;border-radius:10px;border:2px solid #e5e7eb;margin-bottom:12px;width:220px;text-align:center;" type="password"/>
+<button onclick="unlockApp()" style="padding:12px 32px;font-size:1.1rem;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff;border:none;border-radius:10px;cursor:pointer;">Unlock</button>
+<div id="pinError" style="color:#dc2626;margin-top:10px;height:20px;"></div>
 </div>
-
-
+<div class="container" id="appContent" style="display:none;">
+<div class="header">
+<div style="position:absolute;top:16px;right:16px;width:36px;height:36px;padding:4px;">
+<button class="btn btn-secondary btn-sm" onclick="toggleCategoryManager()">⚙️</button>
 </div>
-
-
-                <div id="budgetIndicatorWrapper" style="margin-top:4px;">
-  <div style="display:flex;align-items:center;gap:10px;">
-    <span style="font-size:1.2em;">📊</span>
-    <div style="flex:1;position:relative;background:#e5e7eb;border-radius:8px;height:24px;overflow:hidden;">
-      <div id="budgetIndicatorBar" style="height:100%;background:#10b981;width:100%;border-radius:8px 0 0 8px;transition:width 0.4s,background 0.4s;"></div>
-      <span id="budgetIndicatorText" style="position:absolute;left:0;right:0;text-align:center;top:0;line-height:24px;font-weight:bold;color:#1f2937;font-size:0.96em;">100% left</span>
-    </div>
-  </div>
+<div id="categoryManager" style="display:none;width:300px;max-width:90vw; position:absolute; top:60px; right:20px; z-index:999; padding:12px; border:1px solid #e5e7eb; border-radius:10px; background:#f9fafb; max-width:250px;">
+<h4 style="margin-bottom:6px;">🛠️ Manage Categories</h4>
+<div style="display:flex;gap:10px;margin-bottom:10px;">
+<input id="newCategoryInput" placeholder="Add new category..." style="flex:1;padding:8px;border:1px solid #ccc;border-radius:6px;" type="text"/>
+<button class="btn btn-secondary btn-sm" onclick="addNewCategory()" style="width:auto;">➕ Add</button>
 </div>
-
-                
-                <div class="budget-summary">
-                    <div class="budget-item budget">
-                        <h3>Budget</h3>
-                        <div class="amount" id="budgetDisplay">₹0</div>
-                    </div>
-                    <div class="budget-item spent">
-                        <h3>Expenses</h3>
-                        <div class="amount" id="totalSpent">₹0</div>
-                    </div>
-                    <div class="budget-item remaining">
-                        <h3>Balance</h3>
-                        <div class="amount" id="remaining">₹0</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2><span class="icon">➕</span> Add Expense</h2>
-                <div class="input-group">
-                    <label for="category">Category</label>
-                    <select id="category">
-                        <option value="Grocery">Grocery</option>
-                        <option value="Bills">Bills</option>
-                        <option value="Online shopping">Online shopping</option>
-                        <option value="Travelling">Travelling</option>
-                        <option value="Food">Food</option>
-                        <option value="Medical expenses">Medical expenses</option>
-                        <option value="Debt">Debt</option>
-                        <option value="Petrol">Petrol</option>
-                        <option value="Home expenses other than grocery">Home expenses other than grocery</option>
-                        <option value="Maintenance">Maintenance</option>
-                        <option value="EMI">EMI</option>
-                        <option value="Investment">Investment</option>
-                        <option value="Entertainment">Entertainment</option>
-                        <option value="Others">Others</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="vendor">Vendor</label>
-                    <input type="text" id="vendor" placeholder="Enter vendor name">
-                </div>
-                <div class="input-group">
-                    <label for="amount">Amount (₹)</label>
-                    <input type="number" id="amount" placeholder="Enter amount">
-                </div>
-                <div class="input-group">
-                    <label for="note">Note</label>
-                    <textarea id="note" rows="1" placeholder="Add a note (optional)"></textarea>
-                </div>
-                <div class="input-group">
-    <label>Added By</label>
-    <div style="display:flex;gap:20px;align-items:center;">
-        <label style="display:flex;align-items:center;">
-            <input type="radio" name="addedByRadio" value="Akshay" id="addedByAkshay" checked style="margin-right:6px;">
+<ul id="categoryList" style="list-style:none;padding-left:0;margin-top:6px;color:#111827;"></ul>
+</div>
+<h1 id="headerTitle">💰 Expense Tracker</h1>
+</div>
+<div class="main-content"><div style="display: flex; gap: 10px; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap;"><button onclick="const budgetSection=document.getElementById('budgetSection');budgetSection.style.display = (budgetSection.style.display === 'none') ? 'block' : 'none';" style="flex: 1; min-width: 150px; background: linear-gradient(135deg, #10b981, #059669);color: white; border: none; padding: 10px 20px; border-radius: 10px;font-size: 1rem; font-weight: 600; cursor: pointer;">💰 Set Monthly Budget</button><button onclick="const addExpSection=document.getElementById('addExpenseSection');addExpSection.style.display = (addExpSection.style.display === 'none') ? 'block' : 'none';" style="flex: 1; min-width: 150px; background: linear-gradient(135deg, #ef4444, #dc2626);color: white; border: none; padding: 10px 20px; border-radius: 10px;font-size: 1rem; font-weight: 600; cursor: pointer;">➕ Add Expense</button></div><div id="budgetSection" style="display: none;"><div class="card">
+<h2><span class="icon">🎯</span> Set Monthly Budget</h2>
+<div class="input-group">
+<label for="budgetAmount">Budget Amount (₹)</label>
+<input id="budgetAmount" placeholder="Enter your monthly budget" type="number"/>
+</div>
+<div style="display:flex;gap:10px;align-items:stretch;margin-bottom:0;">
+<button class="btn" onclick="setBudget(event)" style="flex:1;min-width:100px;height:38px;font-size:0.85rem;line-height:1;">Set Budget</button>
+<button class="btn btn-danger" onclick="resetBudget()" style="flex:1;min-width:100px;height:38px;font-size:0.85rem;line-height:1;">Reset Budget</button>
+</div>
+</div></div><div id="addExpenseSection" style="display: none;"><div class="card">
+<h2><span class="icon">➕</span> Add Expense</h2>
+<div class="input-group">
+<label for="category">Category</label>
+<select id="category">
+<option value="Grocery">Grocery</option>
+<option value="Bills">Bills</option>
+<option value="Online shopping">Online shopping</option>
+<option value="Travelling">Travelling</option>
+<option value="Food">Food</option>
+<option value="Medical expenses">Medical expenses</option>
+<option value="Debt">Debt</option>
+<option value="Petrol">Petrol</option>
+<option value="Home expenses other than grocery">Home expenses other than grocery</option>
+<option value="Maintenance">Maintenance</option>
+<option value="EMI">EMI</option>
+<option value="Investment">Investment</option>
+<option value="Entertainment">Entertainment</option>
+<option value="Others">Others</option>
+</select>
+</div>
+<div class="input-group">
+<label for="vendor">Vendor</label>
+<input id="vendor" placeholder="Enter vendor name" type="text"/>
+</div>
+<div class="input-group">
+<label for="amount">Amount (₹)</label>
+<input id="amount" placeholder="Enter amount" type="number"/>
+</div>
+<div class="input-group">
+<label for="note">Note</label>
+<textarea id="note" placeholder="Add a note (optional)" rows="1"></textarea>
+</div>
+<div class="input-group">
+<label for="expenseDate">Date</label>
+<input id="expenseDate" type="date" value=""/>
+</div>
+<div class="input-group">
+<label>Added By</label>
+<div style="display:flex;gap:20px;align-items:center;">
+<label style="display:flex;align-items:center;">
+<input checked="" id="addedByAkshay" name="addedByRadio" style="margin-right:6px;" type="radio" value="Akshay"/>
             Akshay
         </label>
-        <label style="display:flex;align-items:center;">
-            <input type="radio" name="addedByRadio" value="Achal" id="addedByAchal" style="margin-right:6px;">
+<label style="display:flex;align-items:center;">
+<input id="addedByAchal" name="addedByRadio" style="margin-right:6px;" type="radio" value="Achal"/>
             Achal
         </label>
-    </div>
 </div>
-                <button class="btn btn-secondary" id="addExpenseBtn" onclick="addExpense()">Add Expense</button>
-            </div>
-
-            <div class="card full-width">
-                <h2><span class="icon">📋</span> Recent Expenses</h2>
-                <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
-    <label for="startDate" style="font-size:0.95em;">From:</label>
-    <input type="date" id="startDate" style="padding:6px;border-radius:6px;">
-    <label for="endDate" style="font-size:0.95em;">To:</label>
-    <input type="date" id="endDate" style="padding:6px;border-radius:6px;">
 </div>
-<div style="margin-bottom:6px;">
-    <input
-        type="text"
-        id="searchExpenseInput"
-        placeholder="🔎 Search expenses (vendor, note, category...)"
-        style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e5e7eb;font-size:1rem;"
-    />
+<div class="input-group">
+<label>Type of Expense</label>
+<div style="display:flex;gap:20px;align-items:center;">
+<label style="display:flex;align-items:center;">
+<input checked="" id="typeFixed" name="expenseType" style="margin-right:6px;" type="radio" value="Fixed"/>
+      Fixed
+    </label>
+<label style="display:flex;align-items:center;">
+<input id="typeVariable" name="expenseType" style="margin-right:6px;" type="radio" value="Variable"/>
+      Variable
+    </label>
 </div>
-<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;">
-    <button class="btn btn-secondary btn-sm" style="padding:4px 16px;min-width:unset;font-size:0.97em;border-radius:8px;" onclick="searchExpenses()">Search</button>
-    <button class="btn btn-danger btn-sm" style="padding:4px 16px;min-width:unset;font-size:0.97em;border-radius:8px;" onclick="clearExpenseSearch()">Clear</button>
 </div>
-
-
-                <div id="recentExpenses">
-                    <p style="text-align: center; color: #6b7280; padding: 20px;">No expenses added yet</p>
-                </div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="card">
-                    <h2><span class="icon">🏆</span> Top 3 Categories</h2>
-                    <div class="table-container">
-                        <table id="topCategoriesTable">
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Category</th>
-                                    <th>Amount</th>
-                                    <th>%</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <h2><span class="icon">🛍️</span> Top 3 Vendors</h2>
-                    <div class="table-container">
-                        <table id="topVendorsTable">
-                            <thead>
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Vendor</th>
-                                    <th>Amount</th>
-                                    <th>%</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-    <h2><span class="icon">📊</span> Weekly Summary</h2>
-    <canvas id="weeklySummaryChart" style="width:100%;max-width:600px;height:250px;"></canvas>
-
+<button class="btn btn-secondary" id="addExpenseBtn" onclick="addExpense()" style="background: linear-gradient(135deg, #ef4444, #dc2626);color: white; border: none; padding: 10px 20px;border-radius: 10px; font-size: 1rem; font-weight: 600;cursor: pointer; margin-bottom: 10px; display: block;">Add Expense</button>
+</div></div>
+<div id="budgetIndicatorWrapper" style="margin-top:4px;">
+<div style="display:flex;align-items:center;gap:10px;">
+<span style="font-size:1.2em;">📊</span>
+<div style="flex:1;position:relative;background:#e5e7eb;border-radius:8px;height:24px;overflow:hidden;">
+<div id="budgetIndicatorBar" style="height:100%;background:#10b981;width:100%;border-radius:8px 0 0 8px;transition:width 0.4s,background 0.4s;"></div>
+<span id="budgetIndicatorText" style="position:absolute;left:0;right:0;text-align:center;top:0;line-height:24px;font-weight:bold;color:#1f2937;font-size:0.96em;">100% left</span>
 </div>
-
-
-            <div class="card">
-    <h2><span class="icon">📈</span> Monthly Summary</h2>
-    <canvas id="monthlySummaryChart" style="width:100%;max-width:600px;height:250px;"></canvas>
-
+</div>
+</div>
+<div class="budget-summary">
+<div class="budget-item budget">
+<h3>Budget</h3>
+<div class="amount" id="budgetDisplay">₹0</div>
+</div>
+<div class="budget-item spent">
+<h3>Expenses</h3>
+<div class="amount" id="totalSpent">₹0</div>
+</div>
+<div class="budget-item remaining">
+<h3>Balance</h3>
+<div class="amount" id="remaining">₹0</div>
+</div>
+</div>
 </div>
 <div class="card full-width">
-    <h2><span class="icon">👥</span> Expenses by Person</h2>
-    <canvas id="byPersonChart" style="width:100%;max-width:600px;height:250px;"></canvas>
+<h2><span class="icon">📉</span> Daily Expense Trend</h2>
+<canvas id="dailyExpenseChart" style="width:100%;max-height:180px;"></canvas>
 </div>
-            <div class="card full-width">
-                <h2><span class="icon">💾</span> Export Data</h2>
-                <div class="download-buttons">
-                    <button class="btn" onclick="downloadCSV()">📄 Download CSV</button>
-                    <button class="btn" onclick="downloadPDF()">📝 Download PDF</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
+<div class="card full-width">
+<h2><span class="icon">📋</span> Recent Expenses</h2>
+<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+<label for="startDate" style="font-size:0.95em;">From:</label>
+<input id="startDate" style="padding:6px;border-radius:6px;" type="date"/>
+<label for="endDate" style="font-size:0.95em;">To:</label>
+<input id="endDate" style="padding:6px;border-radius:6px;" type="date"/>
+</div>
+<div style="margin-bottom:6px;">
+<input id="searchExpenseInput" placeholder="🔎 Search expenses (vendor, note, category...)" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid #e5e7eb;font-size:1rem;" type="text"/>
+</div>
+<div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:12px;">
+<button class="btn btn-secondary btn-sm" onclick="searchExpenses()" style="padding:4px 16px;min-width:unset;font-size:0.97em;border-radius:8px;">Search</button>
+<button class="btn btn-danger btn-sm" onclick="clearExpenseSearch()" style="padding:4px 16px;min-width:unset;font-size:0.97em;border-radius:8px;">Clear</button>
+</div>
+<div id="recentExpenses">
+<p style="text-align: center; color: #6b7280; padding: 20px;">No expenses added yet</p>
+</div>
+</div>
+<div class="card full-width">
+<h2><span class="icon">🗂️</span> View Archived Month</h2>
+<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+<label for="archiveMonth" style="font-size:0.95em;">Select Month:</label>
+<select id="archiveMonth" onchange="loadArchivedMonth()" style="padding:8px 12px;border-radius:8px;border:1.5px solid #e5e7eb;">
+<option value="">-- Current Month --</option>
+</select>
+<span id="archiveNotice" style="font-size:0.9em;color:#6b7280;"></span>
+</div>
+</div>
+<div class="stats-grid">
+<div class="card">
+<h2><span class="icon">🏆</span> Top 3 Categories</h2>
+<div class="table-container">
+<table id="topCategoriesTable">
+<thead>
+<tr>
+<th>Rank</th>
+<th>Category</th>
+<th>Amount</th>
+<th>%</th>
+</tr>
+</thead>
+<tbody>
+<tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="card">
+<h2><span class="icon">🛍️</span> Top 3 Vendors</h2>
+<div class="table-container">
+<table id="topVendorsTable">
+<thead>
+<tr>
+<th>Rank</th>
+<th>Vendor</th>
+<th>Amount</th>
+<th>%</th>
+</tr>
+</thead>
+<tbody>
+<tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 
-    <script>
+<div class="card">
+<h2><span class="icon">🍩</span> Category-wise Breakdown</h2>
+<canvas id="categoryDoughnutChart" style="width:100%;max-width:600px;height:300px;"></canvas>
+</div>
+<div class="card">
+<h2><span class="icon">🎯</span> Fixed vs Variable</h2>
+<canvas id="typeDoughnutChart" style="width:100%;max-width:600px;height:300px;"></canvas>
+</div>
+
+<div class="card">
+<h2><span class="icon">📊</span> Weekly Summary</h2>
+<canvas id="weeklySummaryChart" style="width:100%;max-width:600px;height:250px;"></canvas>
+</div>
+<div class="card">
+<h2><span class="icon">📈</span> Monthly Summary</h2>
+<canvas id="monthlySummaryChart" style="width:100%;max-width:600px;height:250px;"></canvas>
+</div>
+<div class="card full-width">
+<h2><span class="icon">👥</span> Expenses by Person</h2>
+<canvas id="byPersonChart" style="width:100%;max-width:600px;height:250px;"></canvas>
+</div>
+<div class="card full-width">
+<h2><span class="icon">💾</span> Export Data</h2>
+<div style="margin-bottom:10px;">
+<label for="exportMonth" style="font-size:0.95em;">Select Month to Export:</label>
+<select id="exportMonth" onchange="loadExportData()" style="padding:8px 12px;border-radius:8px;border:1.5px solid #e5e7eb;margin-left:10px;">
+<option value="">-- Current Month --</option>
+</select>
+</div>
+<div class="download-buttons">
+<button class="btn" onclick="downloadCSV()">📄 Download CSV</button>
+<button class="btn" onclick="downloadPDF()">📝 Download PDF</button>
+</div>
+</div>
+</div>
+<script>
         // === PIN PROTECTION ===
         const CORRECT_PIN = "0277";
         function unlockApp() {
@@ -643,7 +726,7 @@
                 document.getElementById('pinLockScreen').style.display = 'none';
                 document.getElementById('appContent').style.display = '';
                 updateHeaderMonth(); 
-                // loadData(); // No longer needed as Firebase listens for changes
+                 loadData(); // No longer needed as Firebase listens for changes
             } else {
                 document.getElementById('pinError').textContent = "Incorrect PIN. Try again.";
                 document.getElementById('pinInput').value = '';
@@ -672,6 +755,7 @@
         
         let budget = 0;
         let expenses = [];
+let exportExpenses = [];
         let editingExpenseId = null;
 
         function updateHeaderMonth() {
@@ -752,6 +836,7 @@
             const amount = parseFloat(document.getElementById('amount').value);
             const note = document.getElementById('note').value;
             const addedBy = document.querySelector('input[name="addedByRadio"]:checked').value;
+            const expenseType = document.querySelector('input[name="expenseType"]:checked').value;
 
             if (!vendor.trim()) {
                 alert('Please enter a vendor name');
@@ -762,9 +847,13 @@
                 return;
             }
             
+            const selectedDate = document.getElementById('expenseDate').value;
+            const today = new Date();
+            const expenseDate = selectedDate || today.toLocaleDateString('en-CA');
             const newExpense = {
+                type: expenseType,
                 timestamp: Date.now(), // For sorting
-                date: new Date().toISOString().split('T')[0],
+                date: expenseDate,
                 time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                 category: category,
                 vendor: vendor.trim(),
@@ -778,7 +867,13 @@
                     document.getElementById('vendor').value = '';
                     document.getElementById('amount').value = '';
                     document.getElementById('note').value = '';
-                    document.getElementById("addedByAkshay").checked = true; 
+                    document.getElementById("addedByAkshay").checked = true;
+            if (exp.type === "Variable") {
+                document.getElementById("typeVariable").checked = true;
+            } else {
+                document.getElementById("typeFixed").checked = true;
+            }
+ 
 
                     const btn = document.getElementById('addExpenseBtn');
                     const originalText = btn.textContent;
@@ -806,6 +901,12 @@
                 document.getElementById("addedByAchal").checked = true;
             } else {
                 document.getElementById("addedByAkshay").checked = true;
+            if (exp.type === "Variable") {
+                document.getElementById("typeVariable").checked = true;
+            } else {
+                document.getElementById("typeFixed").checked = true;
+            }
+
             }
 
             const btn = document.getElementById('addExpenseBtn');
@@ -821,6 +922,7 @@
             const amount = parseFloat(document.getElementById('amount').value);
             const note = document.getElementById('note').value;
             const addedBy = document.querySelector('input[name="addedByRadio"]:checked').value;
+            const expenseType = document.querySelector('input[name="expenseType"]:checked').value;
 
             if (!vendor.trim()) {
                 alert('Please enter a vendor name');
@@ -832,6 +934,7 @@
             }
 
             const updatedExpenseData = {
+                type: expenseType,
                 category,
                 vendor: vendor.trim(),
                 amount,
@@ -845,7 +948,13 @@
                     document.getElementById('vendor').value = '';
                     document.getElementById('amount').value = '';
                     document.getElementById('note').value = '';
-                    document.getElementById("addedByAkshay").checked = true; 
+                    document.getElementById("addedByAkshay").checked = true;
+            if (exp.type === "Variable") {
+                document.getElementById("typeVariable").checked = true;
+            } else {
+                document.getElementById("typeFixed").checked = true;
+            }
+ 
                     const btn = document.getElementById('addExpenseBtn');
                     btn.textContent = "Add Expense";
                     btn.onclick = addExpense; // Reset button to Add Expense functionality
@@ -866,7 +975,9 @@
             }
         }
 
-        function updateDisplay() {
+        function updateDisplay(expensesList = expenses) {
+    
+    updateDailyExpenseChart();
             updateBudgetSummary();
             updateRecentExpenses();
             updateTopCategories();
@@ -874,6 +985,8 @@
             updateWeeklySummary();
             updateMonthlySummary();
             updateByPersonChart();
+            updateCategoryDoughnutChart();
+            updateTypeDoughnutChart();
         }
 
 function clearExpenseSearch() {
@@ -1314,6 +1427,373 @@ function clearExpenseSearch() {
         document.addEventListener('DOMContentLoaded', () => {
              // We will call loadData after the PIN is entered successfully
         });
-    </script>
+    
+let dailyChart;
+
+function updateDailyExpenseChart(expensesList = expenses) {
+        const dailyTotals = {};
+    expensesList.forEach(exp => {
+        if (!dailyTotals[exp.date]) dailyTotals[exp.date] = 0;
+        dailyTotals[exp.date] += exp.amount;
+    });
+
+    const sortedDates = Object.keys(dailyTotals).sort((a, b) => new Date(a) - new Date(b));
+    const data = sortedDates.map(date => dailyTotals[date]);
+
+    const ctx = document.getElementById('dailyExpenseChart').getContext('2d');
+    if (dailyChart) dailyChart.destroy();
+
+    dailyChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: sortedDates,
+        datasets: [{
+            data: data,
+            borderColor: '#4f46e5',
+            backgroundColor: 'rgba(79,70,229,0.05)',
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            fill: true
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            tooltip: {
+                enabled: true,
+                callbacks: {
+                    label: function(context) {
+                        return `₹${context.raw.toLocaleString()}`;
+                    }
+                }
+            },
+            datalabels: {
+                align: 'top',
+                anchor: 'end',
+                font: { weight: 'bold', size: 10 },
+                color: '#374151',
+                formatter: value => `₹${value.toLocaleString()}`
+            }
+        },
+        scales: {
+            x: {
+                ticks: { display: false },
+                grid: { display: false }
+            },
+            y: {
+                ticks: {
+                    callback: function(value) {
+                        return '₹' + value;
+                    }
+                },
+                grid: { display: false }
+            }
+        }
+    },
+    plugins: [ChartDataLabels]
+});}
+
+
+let archiveMode = false;
+let currentMonthKey = new Date().toISOString().slice(0,7);
+
+function populateArchiveDropdown() {
+    const archiveRef = database.ref('archive');
+    archiveRef.once('value').then(snapshot => {
+        const select = document.getElementById('archiveMonth');
+        snapshot.forEach(monthSnap => {
+            const key = monthSnap.key;
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = new Date(key + '-01').toLocaleString('default', { month: 'long', year: 'numeric' });
+            select.appendChild(option);
+        });
+    });
+}
+
+function loadArchivedMonth() {
+    const selectedMonth = document.getElementById('archiveMonth').value;
+    const notice = document.getElementById('archiveNotice');
+    if (!selectedMonth) {
+        archiveMode = false;
+        notice.textContent = '';
+        loadData(); // restore current month
+        return;
+    }
+    archiveMode = true;
+    const ref = database.ref('archive/' + selectedMonth);
+    ref.once('value').then(snapshot => {
+        const data = snapshot.val();
+        expenses = [];
+        for (let key in data) {
+            expenses.push({ id: key, ...data[key] });
+        }
+        expenses.sort((a, b) => b.timestamp - a.timestamp);
+        updateDisplay(expenses);
+        notice.textContent = `📅 Viewing Archived Month: ${new Date(selectedMonth + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}`;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    populateArchiveDropdown();
+});
+
+
+let categoriesRef = database.ref('categories');
+let defaultCategories = [
+    "Grocery", "Bills", "Online shopping", "Travelling", "Food",
+    "Medical expenses", "Debt", "Petrol", "Home expenses other than grocery",
+    "Maintenance", "EMI", "Investment", "Entertainment", "Others"
+];
+
+function loadCategories() {
+    categoriesRef.once('value').then(snapshot => {
+        let list = snapshot.val();
+        if (!list || !Array.isArray(list)) {
+            list = defaultCategories;
+            categoriesRef.set(list);
+        }
+        populateCategoryDropdown(list);
+        populateCategoryManager(list);
+    });
+}
+
+function populateCategoryDropdown(list) {
+    const select = document.getElementById('category');
+    select.innerHTML = '';
+    list.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        select.appendChild(option);
+    });
+}
+
+function populateCategoryManager(list) {
+    const ul = document.getElementById('categoryList');
+    ul.innerHTML = '';
+    list.forEach((cat, index) => {
+        const li = document.createElement('li');
+        li.style.display = 'flex';
+        li.style.justifyContent = 'space-between';
+        li.style.marginBottom = '4px';
+        li.innerHTML = `
+            <span>${cat}</span>
+            <button class="btn btn-danger btn-sm" style="width:26px;height:26px;font-size:0.85rem;" onclick="deleteCategory(${index})">🗑️</button>
+        `;
+        ul.appendChild(li);
+    });
+}
+
+function toggleCategoryManager() {
+    const div = document.getElementById('categoryManager');
+    div.style.display = div.style.display === 'none' ? 'block' : 'none';
+}
+
+function addNewCategory() {
+    const input = document.getElementById('newCategoryInput');
+    const newCat = input.value.trim();
+    if (!newCat) return alert('Enter a category name');
+    categoriesRef.once('value').then(snapshot => {
+        let list = snapshot.val() || [];
+        if (!Array.isArray(list)) list = [];
+        if (list.includes(newCat)) {
+            alert('Category already exists');
+            return;
+        }
+        list.push(newCat);
+        categoriesRef.set(list).then(() => {
+            loadCategories();
+            input.value = '';
+        });
+    });
+}
+
+function deleteCategory(index) {
+    categoriesRef.once('value').then(snapshot => {
+        let list = snapshot.val() || [];
+        if (list.length <= 1) {
+            alert('At least one category must remain.');
+            return;
+        }
+        list.splice(index, 1);
+        categoriesRef.set(list).then(() => {
+            loadCategories();
+        });
+    });
+}
+
+// Load categories when app unlocks
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        if (typeof firebase !== 'undefined') {
+            loadCategories();
+        }
+    }, 600);
+});
+
+
+function populateExportMonthDropdown() {
+    const archiveRef = database.ref('archive');
+    archiveRef.once('value').then(snapshot => {
+        const select = document.getElementById('exportMonth');
+        snapshot.forEach(monthSnap => {
+            const key = monthSnap.key;
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = new Date(key + '-01').toLocaleString('default', { month: 'long', year: 'numeric' });
+            select.appendChild(option);
+        });
+    });
+}
+
+function loadExportData() {
+    const selectedMonth = document.getElementById('exportMonth').value;
+    if (!selectedMonth) {
+        exportExpenses = expenses;
+        return;
+    }
+    const ref = database.ref('archive/' + selectedMonth);
+    ref.once('value').then(snapshot => {
+        const data = snapshot.val();
+        exportExpenses = [];
+        for (let key in data) {
+            exportExpenses.push({ id: key, ...data[key] });
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    populateExportMonthDropdown();
+    exportExpenses = expenses;
+});
+
+
+let categoryDoughnut;
+
+function updateCategoryDoughnutChart() {
+    const categoryTotals = expenses.reduce((acc, expense) => {
+        acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+        return acc;
+    }, {});
+    const labels = Object.keys(categoryTotals);
+    const data = Object.values(categoryTotals);
+    const total = data.reduce((sum, val) => sum + val, 0);
+
+    const ctx = document.getElementById('categoryDoughnutChart').getContext('2d');
+    if (categoryDoughnut) categoryDoughnut.destroy();
+
+    categoryDoughnut = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: [
+                    '#4f46e5', '#10b981', '#f59e0b', '#ef4444',
+                    '#8b5cf6', '#3b82f6', '#ec4899', '#22d3ee',
+                    '#f87171', '#a3e635', '#eab308', '#6366f1', '#14b8a6'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let value = context.raw;
+                            let percentage = ((value / total) * 100).toFixed(1);
+                            return `${context.label}: ₹${value.toLocaleString()} (${percentage}%)`;
+                        }
+                    }
+                },
+                legend: {
+                    position: 'right',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 10
+                    }
+                },
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        const percent = ((value / total) * 100).toFixed(1);
+                        return percent + '%';
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+
+let typeDoughnut;
+
+function updateTypeDoughnutChart() {
+    const typeTotals = { Fixed: 0, Variable: 0 };
+    expenses.forEach(exp => {
+        const type = exp.type || "Fixed";
+        typeTotals[type] = (typeTotals[type] || 0) + exp.amount;
+    });
+
+    const labels = Object.keys(typeTotals);
+    const data = Object.values(typeTotals);
+    const total = data.reduce((sum, val) => sum + val, 0);
+
+    const ctx = document.getElementById('typeDoughnutChart').getContext('2d');
+    if (typeDoughnut) typeDoughnut.destroy();
+
+    typeDoughnut = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: ['#10b981', '#ef4444']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let value = context.raw;
+                            let percentage = ((value / total) * 100).toFixed(1);
+                            return `${context.label}: ₹${value.toLocaleString()} (${percentage}%)`;
+                        }
+                    }
+                },
+                legend: {
+                    position: 'right',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 10
+                    }
+                },
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        const percent = ((value / total) * 100).toFixed(1);
+                        return percent + '%';
+                    },
+                    color: '#fff',
+                    font: {
+                        weight: 'bold',
+                        size: 12
+                    }
+                }
+            }
+        },
+        plugins: [ChartDataLabels]
+    });
+}
+</script>
 </body>
 </html>
