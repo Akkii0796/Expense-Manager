@@ -610,10 +610,10 @@
 </div>
 </div>
 </div>
-<div class="card full-width">
+<!-- <div class="card full-width">
 <h2><span class="icon">📉</span> Daily Expense Trend</h2>
 <canvas id="dailyExpenseChart" style="width:100%;max-height:180px;"></canvas>
-</div>
+</div> -->
 <div class="card full-width">
 <h2><span class="icon">📋</span> Recent Expenses</h2>
 <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">
@@ -977,7 +977,7 @@ let exportExpenses = [];
 
         function updateDisplay(expensesList = expenses) {
     
-    updateDailyExpenseChart();
+    // updateDailyExpenseChart();
             updateBudgetSummary();
             updateRecentExpenses();
             updateTopCategories();
@@ -1428,72 +1428,72 @@ function clearExpenseSearch() {
              // We will call loadData after the PIN is entered successfully
         });
     
-let dailyChart;
+// let dailyChart;
 
-function updateDailyExpenseChart(expensesList = expenses) {
-        const dailyTotals = {};
-    expensesList.forEach(exp => {
-        if (!dailyTotals[exp.date]) dailyTotals[exp.date] = 0;
-        dailyTotals[exp.date] += exp.amount;
-    });
+// function updateDailyExpenseChart(expensesList = expenses) {
+//         const dailyTotals = {};
+//     expensesList.forEach(exp => {
+//         if (!dailyTotals[exp.date]) dailyTotals[exp.date] = 0;
+//         dailyTotals[exp.date] += exp.amount;
+//     });
 
-    const sortedDates = Object.keys(dailyTotals).sort((a, b) => new Date(a) - new Date(b));
-    const data = sortedDates.map(date => dailyTotals[date]);
+//     const sortedDates = Object.keys(dailyTotals).sort((a, b) => new Date(a) - new Date(b));
+//     const data = sortedDates.map(date => dailyTotals[date]);
 
-    const ctx = document.getElementById('dailyExpenseChart').getContext('2d');
-    if (dailyChart) dailyChart.destroy();
+//     const ctx = document.getElementById('dailyExpenseChart').getContext('2d');
+//     if (dailyChart) dailyChart.destroy();
 
-    dailyChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: sortedDates,
-        datasets: [{
-            data: data,
-            borderColor: '#4f46e5',
-            backgroundColor: 'rgba(79,70,229,0.05)',
-            tension: 0.3,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            fill: true
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { display: false },
-            tooltip: {
-                enabled: true,
-                callbacks: {
-                    label: function(context) {
-                        return `₹${context.raw.toLocaleString()}`;
-                    }
-                }
-            },
-            datalabels: {
-                align: 'top',
-                anchor: 'end',
-                font: { weight: 'bold', size: 10 },
-                color: '#374151',
-                formatter: value => `₹${value.toLocaleString()}`
-            }
-        },
-        scales: {
-            x: {
-                ticks: { display: false },
-                grid: { display: false }
-            },
-            y: {
-                ticks: {
-                    callback: function(value) {
-                        return '₹' + value;
-                    }
-                },
-                grid: { display: false }
-            }
-        }
-    },
-    plugins: [ChartDataLabels]
-});}
+//     dailyChart = new Chart(ctx, {
+//     type: 'line',
+//     data: {
+//         labels: sortedDates,
+//         datasets: [{
+//             data: data,
+//             borderColor: '#4f46e5',
+//             backgroundColor: 'rgba(79,70,229,0.05)',
+//             tension: 0.3,
+//             pointRadius: 4,
+//             pointHoverRadius: 6,
+//             fill: true
+//         }]
+//     },
+//     options: {
+//         responsive: true,
+//         plugins: {
+//             legend: { display: false },
+//             tooltip: {
+//                 enabled: true,
+//                 callbacks: {
+//                     label: function(context) {
+//                         return `₹${context.raw.toLocaleString()}`;
+//                     }
+//                 }
+//             },
+//             datalabels: {
+//                 align: 'top',
+//                 anchor: 'end',
+//                 font: { weight: 'bold', size: 10 },
+//                 color: '#374151',
+//                 formatter: value => `₹${value.toLocaleString()}`
+//             }
+//         },
+//         scales: {
+//             x: {
+//                 ticks: { display: false },
+//                 grid: { display: false }
+//             },
+//             y: {
+//                 ticks: {
+//                     callback: function(value) {
+//                         return '₹' + value;
+//                     }
+//                 },
+//                 grid: { display: false }
+//             }
+//         }
+//     },
+//     plugins: [ChartDataLabels]
+// });}
 
 
 let archiveMode = false;
