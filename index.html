@@ -643,7 +643,7 @@
 <span id="archiveNotice" style="font-size:0.9em;color:#6b7280;"></span>
 </div>
 </div>
-<div class="stats-grid">
+<!-- <div class="stats-grid">
 <div class="card">
 <h2><span class="icon">🏆</span> Top 3 Categories</h2>
 <div class="table-container">
@@ -661,7 +661,7 @@
 </tbody>
 </table>
 </div>
-</div>
+</div> -->
 <div class="card">
 <h2><span class="icon">🛍️</span> Top 3 Vendors</h2>
 <div class="table-container">
@@ -980,7 +980,7 @@ let exportExpenses = [];
     // updateDailyExpenseChart();
             updateBudgetSummary();
             updateRecentExpenses();
-            updateTopCategories();
+            // updateTopCategories();
             updateTopVendors();
             updateWeeklySummary();
             updateMonthlySummary();
@@ -1099,30 +1099,30 @@ function clearExpenseSearch() {
             `).join('');
         }
 
-        function updateTopCategories() {
-            const categoryTotals = expenses.reduce((acc, expense) => {
-                acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-                return acc;
-            }, {});
-            const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-            const sortedCategories = Object.entries(categoryTotals)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 3);
-            const tbody = document.getElementById('topCategoriesTable').querySelector('tbody');
-            if (sortedCategories.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>';
-                return;
-            }
-            tbody.innerHTML = sortedCategories.map(([category, amount], index) => `
-    <tr ${amount > 5000 ? 'style="background:#fee2e2;"' : ''}>
-        <td>${index + 1}</td>
-        <td>${category}</td>
-        <td style="font-weight:bold;">₹${amount.toLocaleString()}</td>
-        <td>${((amount / totalSpent) * 100).toFixed(1)}%</td>
-    </tr>
-`).join('');
+//         function updateTopCategories() {
+//             const categoryTotals = expenses.reduce((acc, expense) => {
+//                 acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+//                 return acc;
+//             }, {});
+//             const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+//             const sortedCategories = Object.entries(categoryTotals)
+//                 .sort(([,a], [,b]) => b - a)
+//                 .slice(0, 3);
+//             const tbody = document.getElementById('topCategoriesTable').querySelector('tbody');
+//             if (sortedCategories.length === 0) {
+//                 tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>';
+//                 return;
+//             }
+//             tbody.innerHTML = sortedCategories.map(([category, amount], index) => `
+//     <tr ${amount > 5000 ? 'style="background:#fee2e2;"' : ''}>
+//         <td>${index + 1}</td>
+//         <td>${category}</td>
+//         <td style="font-weight:bold;">₹${amount.toLocaleString()}</td>
+//         <td>${((amount / totalSpent) * 100).toFixed(1)}%</td>
+//     </tr>
+// `).join('');
 
-        }
+//         }
 
         function updateTopVendors() {
             const vendorTotals = expenses.reduce((acc, expense) => {
