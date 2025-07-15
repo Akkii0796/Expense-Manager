@@ -662,7 +662,7 @@
 </table>
 </div>
 </div> -->
-<div class="card">
+<!-- <div class="card">
 <h2><span class="icon">🛍️</span> Top 3 Vendors</h2>
 <div class="table-container">
 <table id="topVendorsTable">
@@ -680,7 +680,7 @@
 </table>
 </div>
 </div>
-</div>
+</div> -->
 
 <div class="card">
 <h2><span class="icon">🍩</span> Category-wise Breakdown</h2>
@@ -981,7 +981,7 @@ let exportExpenses = [];
             updateBudgetSummary();
             updateRecentExpenses();
             // updateTopCategories();
-            updateTopVendors();
+            // updateTopVendors();
             updateWeeklySummary();
             updateMonthlySummary();
             updateByPersonChart();
@@ -1124,31 +1124,31 @@ function clearExpenseSearch() {
 
 //         }
 
-        function updateTopVendors() {
-            const vendorTotals = expenses.reduce((acc, expense) => {
-                acc[expense.vendor] = (acc[expense.vendor] || 0) + expense.amount;
-                return acc;
-            }, {});
-            const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
-            const sortedVendors = Object.entries(vendorTotals)
-                .sort(([,a], [,b]) => b - a)
-                .slice(0, 3);
-            const tbody = document.getElementById('topVendorsTable').querySelector('tbody');
-            if (sortedVendors.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>';
-                return;
-            }
-            tbody.innerHTML = sortedVendors.map(([vendor, amount], index) => `
-    <tr ${amount > 5000 ? 'style="background:#fee2e2;"' : ''}>
-        <td>${index + 1}</td>
-        <td>${vendor}</td>
-        <td style="font-weight:bold;">₹${amount.toLocaleString()}</td>
-        <td>${((amount / totalSpent) * 100).toFixed(1)}%</td>
-    </tr>
-`).join('');
+//         function updateTopVendors() {
+//             const vendorTotals = expenses.reduce((acc, expense) => {
+//                 acc[expense.vendor] = (acc[expense.vendor] || 0) + expense.amount;
+//                 return acc;
+//             }, {});
+//             const totalSpent = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+//             const sortedVendors = Object.entries(vendorTotals)
+//                 .sort(([,a], [,b]) => b - a)
+//                 .slice(0, 3);
+//             const tbody = document.getElementById('topVendorsTable').querySelector('tbody');
+//             if (sortedVendors.length === 0) {
+//                 tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: #6b7280;">No data available</td></tr>';
+//                 return;
+//             }
+//             tbody.innerHTML = sortedVendors.map(([vendor, amount], index) => `
+//     <tr ${amount > 5000 ? 'style="background:#fee2e2;"' : ''}>
+//         <td>${index + 1}</td>
+//         <td>${vendor}</td>
+//         <td style="font-weight:bold;">₹${amount.toLocaleString()}</td>
+//         <td>${((amount / totalSpent) * 100).toFixed(1)}%</td>
+//     </tr>
+// `).join('');
 
 
-        }
+//         }
 
         let weeklyChart;
 
