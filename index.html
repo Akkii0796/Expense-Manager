@@ -767,6 +767,24 @@
   </div>
 </div>
 
+<div id="personBreakdownModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:white; border-radius:12px; max-width:600px; width:90%; padding:20px; position:relative;">
+    <button onclick="closePersonBreakdownModal()" style="position:absolute; top:10px; right:14px; font-size:1.4rem; border:none; background:none; cursor:pointer;">✖️</button>
+    <h3 id="personBreakdownTitle" style="margin-bottom:16px; color:#4f46e5;">Breakdown</h3>
+    <div style="max-height:400px; overflow-y:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.95rem;">
+        <thead>
+          <tr style="background:#f3f4f6;">
+            <th style="padding:8px; text-align:left;">Vendor</th>
+            <th style="padding:8px; text-align:right;">Amount</th>
+            <th style="padding:8px; text-align:right;">%</th>
+          </tr>
+        </thead>
+        <tbody id="personBreakdownBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
 </div>
 </div>
@@ -1354,49 +1372,57 @@ function clearExpenseSearch() {
             if (byPersonChart) byPersonChart.destroy();
 
             byPersonChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: people,
-                    datasets: [{
-                        label: 'Total Spent',
-                        data: totals,
-                        backgroundColor: ['#4f46e5', '#10b981'], 
-                        borderRadius: 7,
-                        maxBarThickness: 80,
-                        barPercentage: 0.7
-                    }]
-                },
-                options: {
-                    responsive: true,
-    //                 layout: {
-    //     padding: {
-    //         top: 50   // This adds space above the chart
-    //     }
-    // },
-                    plugins: {
-                        legend: { display: false },
-                        datalabels: {
-                            anchor: 'center',
-        align: 'center',
-        font: {
-            weight: 'bold',
-            size: 14
-        },
-        color: '#fff',
-        formatter: value => '₹' + value.toLocaleString(),
-                            clamp: true
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { callback: v => '₹' + v }
-                        }
+    type: 'doughnut',
+    data: {
+        labels: people,
+        datasets: [{
+            data: totals,
+            backgroundColor: ['#4f46e5', '#10b981']
+        }]
+    },
+    options: {
+        responsive: true,
+        onClick: (e, elements) => {
+    if (elements.length > 0) {
+        const index = elements[0].index;
+        const selectedPerson = people[index];
+        showPersonBreakdown(selectedPerson);
+    }
+},
+
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let value = context.raw;
+                        let percentage = ((value / totals.reduce((a, b) => a + b, 0)) * 100).toFixed(1);
+                        return `${context.label}: ₹${value.toLocaleString()} (${percentage}%)`;
                     }
+                }
+            },
+            legend: {
+                position: 'right',
+                labels: {
+                    boxWidth: 12,
+                    padding: 10
+                }
+            },
+            datalabels: {
+                formatter: (value, ctx) => {
+                    const percent = ((value / totals.reduce((a, b) => a + b, 0)) * 100).toFixed(1);
+                    return percent + '%';
                 },
-                plugins: [ChartDataLabels]
-            });
+                color: '#fff',
+                font: {
+                    weight: 'bold',
+                    size: 12
+                }
+            }
         }
+    },
+    plugins: [ChartDataLabels]
+});
+}
 
         function downloadCSV() {
             if (expenses.length === 0) {
@@ -1919,6 +1945,34 @@ function showTypeBreakdown(type) {
 
 function closeTypeBreakdownModal() {
     document.getElementById("typeBreakdownModal").style.display = "none";
+}
+
+function showPersonBreakdown(person) {
+    const filtered = expenses.filter(exp => exp.addedBy === person);
+    const vendorTotals = {};
+    let total = 0;
+    filtered.forEach(exp => {
+        const vendor = exp.vendor || "Unknown";
+        vendorTotals[vendor] = (vendorTotals[vendor] || 0) + exp.amount;
+        total += exp.amount;
+    });
+
+    const sorted = Object.entries(vendorTotals).sort(([, a], [, b]) => b - a);
+    const tbody = document.getElementById("personBreakdownBody");
+    tbody.innerHTML = sorted.map(([vendor, amt]) => `
+        <tr>
+            <td style="padding:8px;">${vendor}</td>
+            <td style="padding:8px; text-align:right;">₹${amt.toLocaleString()}</td>
+            <td style="padding:8px; text-align:right;">${((amt / total) * 100).toFixed(1)}%</td>
+        </tr>
+    `).join('');
+
+    document.getElementById("personBreakdownTitle").textContent = `Breakdown for: ${person}`;
+    document.getElementById("personBreakdownModal").style.display = "flex";
+}
+
+function closePersonBreakdownModal() {
+    document.getElementById("personBreakdownModal").style.display = "none";
 }
 
 </script>
