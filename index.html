@@ -479,6 +479,28 @@
     padding: 0 !important;
   }
 }
+.breakdown-panel {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+}
+.breakdown-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.breakdown-panel th,
+.breakdown-panel td {
+  padding: 8px;
+  text-align: right;
+}
+.breakdown-panel th:first-child,
+.breakdown-panel td:first-child {
+  text-align: left;
+}
 
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -686,10 +708,13 @@
 <div class="card">
 <h2><span class="icon">🍩</span> Category-wise Breakdown</h2>
 <canvas id="categoryDoughnutChart" style="width:100%;max-width:600px;height:300px;"></canvas>
+<div id="categoryBreakdownPanel" class="breakdown-panel" style="display:none;"></div>
 </div>
 <div class="card">
 <h2><span class="icon">🎯</span> Fixed vs Variable</h2>
 <canvas id="typeDoughnutChart" style="width:100%;max-width:600px;height:300px;"></canvas>
+<div id="typeBreakdownPanel" class="breakdown-panel" style="display:none;"></div>
+
 </div>
 
 <!-- <div class="card">
@@ -703,6 +728,7 @@
 <div class="card full-width">
 <h2><span class="icon">👥</span> Expenses by Person</h2>
 <canvas id="byPersonChart" style="width:100%;max-width:600px;height:250px;"></canvas>
+<div id="personBreakdownPanel" class="breakdown-panel" style="display:none;"></div>
 </div>
 
 <div class="card full-width">
@@ -1901,17 +1927,27 @@ function showCategoryBreakdown(category) {
     });
 
     const sortedVendors = Object.entries(vendorTotals).sort(([, a], [, b]) => b - a);
-    const tbody = document.getElementById("breakdownTableBody");
-    tbody.innerHTML = sortedVendors.map(([vendor, amt]) => `
-        <tr>
-            <td style="padding:8px;">${vendor}</td>
-            <td style="padding:8px; text-align:right;">₹${amt.toLocaleString()}</td>
-            <td style="padding:8px; text-align:right;">${((amt / total) * 100).toFixed(1)}%</td>
-        </tr>
-    `).join('');
 
-    document.getElementById("breakdownTitle").textContent = `Breakdown for: ${category}`;
-    document.getElementById("categoryBreakdownModal").style.display = "flex";
+    const breakdownHTML = `
+      <h3 style="margin-bottom:10px; color:#4f46e5;">Breakdown for: ${category}</h3>
+      <table>
+        <thead>
+          <tr><th>Vendor</th><th>Amount</th><th>%</th></tr>
+        </thead>
+        <tbody>
+          ${sortedVendors.map(([vendor, amt]) => `
+            <tr>
+              <td>${vendor}</td>
+              <td>₹${amt.toLocaleString()}</td>
+              <td>${((amt / total) * 100).toFixed(1)}%</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+
+    document.getElementById("categoryBreakdownPanel").innerHTML = breakdownHTML;
+    document.getElementById("categoryBreakdownPanel").style.display = "block";
 }
 
 function closeBreakdownModal() {
@@ -1930,18 +1966,29 @@ function showTypeBreakdown(type) {
     });
 
     const sorted = Object.entries(vendorTotals).sort(([, a], [, b]) => b - a);
-    const tbody = document.getElementById("typeBreakdownBody");
-    tbody.innerHTML = sorted.map(([vendor, amt]) => `
-        <tr>
-            <td style="padding:8px;">${vendor}</td>
-            <td style="padding:8px; text-align:right;">₹${amt.toLocaleString()}</td>
-            <td style="padding:8px; text-align:right;">${((amt / total) * 100).toFixed(1)}%</td>
-        </tr>
-    `).join('');
 
-    document.getElementById("typeBreakdownTitle").textContent = `Breakdown for: ${type} Expenses`;
-    document.getElementById("typeBreakdownModal").style.display = "flex";
+    const breakdownHTML = `
+      <h3 style="margin-bottom:10px; color:#4f46e5;">Breakdown for: ${type} Expenses</h3>
+      <table>
+        <thead>
+          <tr><th>Vendor</th><th>Amount</th><th>%</th></tr>
+        </thead>
+        <tbody>
+          ${sorted.map(([vendor, amt]) => `
+            <tr>
+              <td>${vendor}</td>
+              <td>₹${amt.toLocaleString()}</td>
+              <td>${((amt / total) * 100).toFixed(1)}%</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+
+    document.getElementById("typeBreakdownPanel").innerHTML = breakdownHTML;
+    document.getElementById("typeBreakdownPanel").style.display = "block";
 }
+
 
 function closeTypeBreakdownModal() {
     document.getElementById("typeBreakdownModal").style.display = "none";
@@ -1958,18 +2005,29 @@ function showPersonBreakdown(person) {
     });
 
     const sorted = Object.entries(vendorTotals).sort(([, a], [, b]) => b - a);
-    const tbody = document.getElementById("personBreakdownBody");
-    tbody.innerHTML = sorted.map(([vendor, amt]) => `
-        <tr>
-            <td style="padding:8px;">${vendor}</td>
-            <td style="padding:8px; text-align:right;">₹${amt.toLocaleString()}</td>
-            <td style="padding:8px; text-align:right;">${((amt / total) * 100).toFixed(1)}%</td>
-        </tr>
-    `).join('');
 
-    document.getElementById("personBreakdownTitle").textContent = `Breakdown for: ${person}`;
-    document.getElementById("personBreakdownModal").style.display = "flex";
+    const breakdownHTML = `
+      <h3 style="margin-bottom:10px; color:#4f46e5;">Breakdown for: ${person}</h3>
+      <table>
+        <thead>
+          <tr><th>Vendor</th><th>Amount</th><th>%</th></tr>
+        </thead>
+        <tbody>
+          ${sorted.map(([vendor, amt]) => `
+            <tr>
+              <td>${vendor}</td>
+              <td>₹${amt.toLocaleString()}</td>
+              <td>${((amt / total) * 100).toFixed(1)}%</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+
+    document.getElementById("personBreakdownPanel").innerHTML = breakdownHTML;
+    document.getElementById("personBreakdownPanel").style.display = "block";
 }
+
 
 function closePersonBreakdownModal() {
     document.getElementById("personBreakdownModal").style.display = "none";
