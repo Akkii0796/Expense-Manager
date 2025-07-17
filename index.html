@@ -748,6 +748,26 @@
 </div>
 <!-- 🔼 END OF MODAL -->
 
+<div id="typeBreakdownModal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); z-index:9999; align-items:center; justify-content:center;">
+  <div style="background:white; border-radius:12px; max-width:600px; width:90%; padding:20px; position:relative;">
+    <button onclick="closeTypeBreakdownModal()" style="position:absolute; top:10px; right:14px; font-size:1.4rem; border:none; background:none; cursor:pointer;">✖️</button>
+    <h3 id="typeBreakdownTitle" style="margin-bottom:16px; color:#4f46e5;">Breakdown</h3>
+    <div style="max-height:400px; overflow-y:auto;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.95rem;">
+        <thead>
+          <tr style="background:#f3f4f6;">
+            <th style="padding:8px; text-align:left;">Vendor</th>
+            <th style="padding:8px; text-align:right;">Amount</th>
+            <th style="padding:8px; text-align:right;">%</th>
+          </tr>
+        </thead>
+        <tbody id="typeBreakdownBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
 </div>
 </div>
 
@@ -1803,6 +1823,14 @@ function updateTypeDoughnutChart() {
         },
         options: {
             responsive: true,
+            onClick: (e, elements) => {
+    if (elements.length > 0) {
+        const index = elements[0].index;
+        const selectedType = typeDoughnut.data.labels[index];
+        showTypeBreakdown(selectedType);
+    }
+},
+
             plugins: {
                 tooltip: {
                     callbacks: {
@@ -1862,6 +1890,35 @@ function showCategoryBreakdown(category) {
 
 function closeBreakdownModal() {
     document.getElementById("categoryBreakdownModal").style.display = "none";
+}
+
+
+function showTypeBreakdown(type) {
+    const filtered = expenses.filter(exp => exp.type === type);
+    const vendorTotals = {};
+    let total = 0;
+    filtered.forEach(exp => {
+        const vendor = exp.vendor || "Unknown";
+        vendorTotals[vendor] = (vendorTotals[vendor] || 0) + exp.amount;
+        total += exp.amount;
+    });
+
+    const sorted = Object.entries(vendorTotals).sort(([, a], [, b]) => b - a);
+    const tbody = document.getElementById("typeBreakdownBody");
+    tbody.innerHTML = sorted.map(([vendor, amt]) => `
+        <tr>
+            <td style="padding:8px;">${vendor}</td>
+            <td style="padding:8px; text-align:right;">₹${amt.toLocaleString()}</td>
+            <td style="padding:8px; text-align:right;">${((amt / total) * 100).toFixed(1)}%</td>
+        </tr>
+    `).join('');
+
+    document.getElementById("typeBreakdownTitle").textContent = `Breakdown for: ${type} Expenses`;
+    document.getElementById("typeBreakdownModal").style.display = "flex";
+}
+
+function closeTypeBreakdownModal() {
+    document.getElementById("typeBreakdownModal").style.display = "none";
 }
 
 </script>
