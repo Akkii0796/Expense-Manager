@@ -855,6 +855,8 @@
         let expenses = [];
 let exportExpenses = [];
         let editingExpenseId = null;
+        let currentPage = 1;
+const itemsPerPage = 5;
 
         function updateHeaderMonth() {
             const date = new Date();
@@ -1776,6 +1778,7 @@ document.addEventListener('DOMContentLoaded', () => {
     exportExpenses = expenses;
 });
 
+let activeCategory = null;
 
 let categoryDoughnut;
 
@@ -1917,6 +1920,16 @@ function updateTypeDoughnutChart() {
     });
 }
 function showCategoryBreakdown(category) {
+    const panel = document.getElementById("categoryBreakdownPanel");
+
+    if (activeCategory === category && panel.style.display === "block") {
+        // toggle off
+        panel.style.display = "none";
+        activeCategory = null;
+        return;
+    }
+
+    // show breakdown
     const filtered = expenses.filter(exp => exp.category === category);
     const vendorTotals = {};
     let total = 0;
@@ -1926,16 +1939,16 @@ function showCategoryBreakdown(category) {
         total += exp.amount;
     });
 
-    const sortedVendors = Object.entries(vendorTotals).sort(([, a], [, b]) => b - a);
+    const sorted = Object.entries(vendorTotals).sort(([, a], [, b]) => b - a);
 
-    const breakdownHTML = `
+    panel.innerHTML = `
       <h3 style="margin-bottom:10px; color:#4f46e5;">Breakdown for: ${category}</h3>
       <table>
         <thead>
           <tr><th>Vendor</th><th>Amount</th><th>%</th></tr>
         </thead>
         <tbody>
-          ${sortedVendors.map(([vendor, amt]) => `
+          ${sorted.map(([vendor, amt]) => `
             <tr>
               <td>${vendor}</td>
               <td>₹${amt.toLocaleString()}</td>
@@ -1945,17 +1958,24 @@ function showCategoryBreakdown(category) {
         </tbody>
       </table>
     `;
-
-    document.getElementById("categoryBreakdownPanel").innerHTML = breakdownHTML;
-    document.getElementById("categoryBreakdownPanel").style.display = "block";
+    panel.style.display = "block";
+    activeCategory = category;
 }
 
 function closeBreakdownModal() {
     document.getElementById("categoryBreakdownModal").style.display = "none";
 }
 
-
+let activeType = null;
 function showTypeBreakdown(type) {
+    const panel = document.getElementById("typeBreakdownPanel");
+
+    if (activeType === type && panel.style.display === "block") {
+        panel.style.display = "none";
+        activeType = null;
+        return;
+    }
+
     const filtered = expenses.filter(exp => exp.type === type);
     const vendorTotals = {};
     let total = 0;
@@ -1967,7 +1987,7 @@ function showTypeBreakdown(type) {
 
     const sorted = Object.entries(vendorTotals).sort(([, a], [, b]) => b - a);
 
-    const breakdownHTML = `
+    panel.innerHTML = `
       <h3 style="margin-bottom:10px; color:#4f46e5;">Breakdown for: ${type} Expenses</h3>
       <table>
         <thead>
@@ -1984,17 +2004,27 @@ function showTypeBreakdown(type) {
         </tbody>
       </table>
     `;
-
-    document.getElementById("typeBreakdownPanel").innerHTML = breakdownHTML;
-    document.getElementById("typeBreakdownPanel").style.display = "block";
+    panel.style.display = "block";
+    activeType = type;
 }
+
 
 
 function closeTypeBreakdownModal() {
     document.getElementById("typeBreakdownModal").style.display = "none";
 }
 
+let activePerson = null;
+
 function showPersonBreakdown(person) {
+    const panel = document.getElementById("personBreakdownPanel");
+
+    if (activePerson === person && panel.style.display === "block") {
+        panel.style.display = "none";
+        activePerson = null;
+        return;
+    }
+
     const filtered = expenses.filter(exp => exp.addedBy === person);
     const vendorTotals = {};
     let total = 0;
@@ -2006,7 +2036,7 @@ function showPersonBreakdown(person) {
 
     const sorted = Object.entries(vendorTotals).sort(([, a], [, b]) => b - a);
 
-    const breakdownHTML = `
+    panel.innerHTML = `
       <h3 style="margin-bottom:10px; color:#4f46e5;">Breakdown for: ${person}</h3>
       <table>
         <thead>
@@ -2023,9 +2053,8 @@ function showPersonBreakdown(person) {
         </tbody>
       </table>
     `;
-
-    document.getElementById("personBreakdownPanel").innerHTML = breakdownHTML;
-    document.getElementById("personBreakdownPanel").style.display = "block";
+    panel.style.display = "block";
+    activePerson = person;
 }
 
 
